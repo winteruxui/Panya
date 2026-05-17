@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panya — Ask Panya</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-base:       #FAFAFA;
+  --bg-surface:    #FFFFFF;
+  --bg-elevated:   #F4F4F5;
+  --bg-overlay:    #ECECED;
+  --border-subtle: #F0F0F1;
+  --border-default:#E4E4E7;
+  --border-strong: #D4D4D8;
+  --text-primary:  #18181B;
+  --text-secondary:#71717A;
+  --text-muted:    #A1A1AA;
+
+  --teal:    #00C7A8; --teal-m:   rgba(0,199,168,0.10);
+  --amber:   #F59E0B; --amber-m:  rgba(245,158,11,0.10);
+  --red:     #EF4444; --red-m:    rgba(239,68,68,0.10);
+  --blue:    #60A5FA; --blue-m:   rgba(96,165,250,0.10);
+  --purple:  #A78BFA; --purple-m: rgba(167,139,250,0.10);
+  --orange:  #F97316; --orange-m: rgba(249,115,22,0.10);
+  --gray:    #71717A; --gray-m:   rgba(113,113,122,0.10);
+
+  --font-ui:      'DM Sans', sans-serif;
+  --font-display: 'Instrument Serif', Georgia, serif;
+  --font-mono:    'JetBrains Mono', monospace;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+
+  --r-sm: 4px; --r-md: 8px; --r-lg: 12px; --r-full: 9999px;
+}
+
+html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-base); color: var(--text-primary); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+.app { display: flex; height: 100vh; overflow: hidden; }
+
+/* ── Sidebar (nav) ────────────────────────────── */
+.sidebar { width: 220px; min-width: 220px; background: var(--bg-surface); border-right: 1px solid var(--border-default); display: flex; flex-direction: column; height: 100vh; z-index: 20; }
+.sidebar-inner { display: flex; flex-direction: column; height: 100%; padding: 20px 0; overflow-y: auto; }
+.logo { padding: 0 20px 16px; border-bottom: 1px solid var(--border-subtle); margin-bottom: 16px; }
+.logo-text { font-family: var(--font-display); font-style: italic; font-size: 22px; color: var(--text-primary); letter-spacing: -0.02em; }
+.logo-dot { color: var(--teal); }
+.nav { flex: 1; padding: 0 10px; display: flex; flex-direction: column; gap: 2px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: var(--r-md); cursor: pointer; text-decoration: none; color: var(--text-secondary); font-size: 14px; font-weight: 500; transition: all 150ms ease; }
+.nav-item:hover { background: var(--bg-elevated); color: var(--text-primary); }
+.nav-item.active { background: var(--teal-m); color: var(--teal); }
+.nav-icon { width: 16px; height: 16px; flex-shrink: 0; }
+.nav-label { flex: 1; }
+.nav-badge { font-size: 10px; font-weight: 700; font-family: var(--font-mono); padding: 1px 6px; border-radius: var(--r-full); background: var(--amber-m); color: var(--amber); }
+.nav-badge.red { background: var(--red-m); color: var(--red); }
+.nav-divider { height: 1px; background: var(--border-subtle); margin: 6px 10px; }
+.sidebar-user { border-top: 1px solid var(--border-subtle); padding: 12px 10px 0; margin-top: 8px; }
+.user-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: var(--r-md); cursor: pointer; transition: background 150ms; }
+.user-row:hover { background: var(--bg-elevated); }
+.u-avatar { width: 28px; height: 28px; border-radius: var(--r-full); background: var(--teal-m); color: var(--teal); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+.u-email { font-size: 12px; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; }
+.u-role { font-size: 11px; color: var(--text-muted); }
+
+/* ── Chat layout ─────────────────────────────── */
+.chat-shell { display: flex; flex: 1; overflow: hidden; }
+
+.history-panel { width: 248px; min-width: 248px; background: var(--bg-surface); border-right: 1px solid var(--border-default); display: flex; flex-direction: column; height: 100vh; }
+.history-head { padding: 20px 16px 14px; border-bottom: 1px solid var(--border-subtle); }
+.history-title { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 10px; }
+.btn-new-chat { display: flex; align-items: center; gap: 6px; width: 100%; padding: 8px 12px; border-radius: var(--r-md); border: 1px dashed var(--border-strong); background: none; font-family: var(--font-ui); font-size: 13px; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 150ms; }
+.btn-new-chat:hover { border-color: var(--teal); color: var(--teal); background: var(--teal-m); }
+.history-list { flex: 1; overflow-y: auto; padding: 10px 8px; }
+.history-group-label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; padding: 8px 8px 4px; }
+.convo-item { display: flex; flex-direction: column; gap: 2px; padding: 9px 10px; border-radius: var(--r-md); cursor: pointer; transition: background 150ms; text-decoration: none; }
+.convo-item:hover { background: var(--bg-elevated); }
+.convo-item.active { background: var(--teal-m); }
+.convo-title { font-size: 13px; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.convo-item.active .convo-title { color: var(--teal); }
+.convo-meta { font-size: 11px; color: var(--text-muted); }
+
+.chat-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.chat-header { padding: 18px 28px; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; background: var(--bg-surface); }
+.chat-header-title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+.chat-context-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: var(--r-full); background: var(--teal-m); color: var(--teal); font-size: 12px; font-weight: 600; }
+
+.messages { flex: 1; overflow-y: auto; padding: 24px 28px; display: flex; flex-direction: column; gap: 24px; }
+.msg-row { display: flex; gap: 12px; max-width: 720px; }
+.msg-row.user { flex-direction: row-reverse; align-self: flex-end; max-width: 600px; }
+.msg-avatar { width: 32px; height: 32px; border-radius: var(--r-full); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
+.msg-avatar.ai { background: linear-gradient(135deg, var(--teal) 0%, #00A88F 100%); color: white; }
+.msg-avatar.user { background: var(--bg-elevated); color: var(--text-secondary); }
+.msg-bubble { padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.65; }
+.msg-row.ai .msg-bubble { background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: 4px 16px 16px 16px; color: var(--text-primary); }
+.msg-row.user .msg-bubble { background: var(--teal); color: white; border-radius: 16px 4px 16px 16px; }
+.msg-time { font-size: 11px; color: var(--text-muted); margin-top: 4px; text-align: right; }
+.msg-row.ai .msg-time { text-align: left; }
+
+.ai-actions { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+.ai-action-btn { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: var(--r-full); border: 1px solid var(--border-default); background: var(--bg-surface); font-family: var(--font-ui); font-size: 12px; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 150ms; }
+.ai-action-btn:hover { border-color: var(--teal); color: var(--teal); background: var(--teal-m); }
+
+.caption-card { background: var(--bg-base); border: 1px solid var(--border-default); border-radius: var(--r-md); padding: 12px 14px; margin-top: 6px; }
+.caption-platform { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 6px; }
+.caption-text { font-size: 13px; color: var(--text-primary); line-height: 1.6; }
+.caption-score { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; font-family: var(--font-mono); color: var(--teal); margin-top: 8px; }
+
+.typing { display: flex; gap: 4px; align-items: center; padding: 12px 16px; }
+.typing-dot { width: 6px; height: 6px; border-radius: var(--r-full); background: var(--text-muted); animation: bounce 1.2s infinite; }
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
+
+.suggested-bar { padding: 12px 28px; border-top: 1px solid var(--border-subtle); display: flex; gap: 8px; overflow-x: auto; flex-shrink: 0; scrollbar-width: none; }
+.suggested-bar::-webkit-scrollbar { display: none; }
+.sugg-chip { white-space: nowrap; padding: 6px 12px; border-radius: var(--r-full); border: 1px solid var(--border-default); background: var(--bg-surface); font-size: 12px; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 150ms; flex-shrink: 0; }
+.sugg-chip:hover { border-color: var(--teal); color: var(--teal); background: var(--teal-m); }
+
+.input-area { padding: 12px 28px 20px; flex-shrink: 0; }
+.input-box { display: flex; align-items: flex-end; gap: 10px; background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: 14px; padding: 10px 12px; transition: border-color 150ms, box-shadow 150ms; }
+.input-box:focus-within { border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-m); }
+.input-field { flex: 1; border: none; outline: none; font-family: var(--font-ui); font-size: 14px; color: var(--text-primary); background: none; resize: none; min-height: 22px; max-height: 120px; line-height: 1.5; }
+.input-field::placeholder { color: var(--text-muted); }
+.input-actions { display: flex; align-items: center; gap: 6px; }
+.input-btn { width: 34px; height: 34px; border-radius: 10px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 150ms; }
+.input-btn.attach { background: var(--bg-elevated); color: var(--text-secondary); }
+.input-btn.attach:hover { background: var(--bg-overlay); color: var(--text-primary); }
+.input-btn.send { background: var(--teal); color: white; }
+.input-btn.send:hover { background: #00b397; }
+.input-hint { font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 8px; }
+
+/* check result rows */
+.check-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: var(--bg-base); border-radius: var(--r-md); border: 1px solid var(--border-subtle); }
+.check-row.warn { background: rgba(245,158,11,0.06); border-color: rgba(245,158,11,0.20); }
+.check-icon { font-size: 16px; flex-shrink: 0; }
+.check-label { font-size: 12px; font-weight: 600; color: var(--text-primary); }
+.check-desc { font-size: 12px; color: var(--text-secondary); }
+
+/* Toast */
+#toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+.toast { display: flex; align-items: flex-start; gap: 10px; min-width: 280px; max-width: 380px; padding: 13px 16px; background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: var(--r-lg); box-shadow: var(--shadow-md); pointer-events: all; font-size: 13px; animation: slideUp 220ms ease; position: relative; overflow: hidden; }
+.toast::before { font-size: 14px; flex-shrink: 0; }
+.toast-success::before { content: '✓'; color: var(--teal); }
+.toast-error::before { content: '✕'; color: var(--red); }
+.toast-warning::before { content: '!'; color: var(--amber); }
+.toast-info::before { content: 'i'; color: var(--blue); font-style: italic; font-weight: 700; }
+.toast-msg { flex: 1; color: var(--text-primary); line-height: 1.4; }
+.toast-close { flex-shrink: 0; background: none; border: none; font-size: 16px; color: var(--text-muted); cursor: pointer; padding: 0 2px; line-height: 1; }
+.toast-close:hover { color: var(--text-primary); }
+.toast-progress { position: absolute; bottom: 0; left: 0; height: 2px; animation: shrink linear forwards; transform-origin: left; }
+.toast-success .toast-progress { background: var(--teal); }
+.toast-error .toast-progress { background: var(--red); }
+.toast-warning .toast-progress { background: var(--amber); }
+.toast-info .toast-progress { background: var(--blue); }
+@keyframes slideUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes shrink { from { width: 100%; } to { width: 0%; } }
+</style>
+</head>
+<body>
+<div class="app">
+
+<aside class="sidebar">
+<div class="sidebar-inner">
+  <div class="logo">
+    <span class="logo-text">Panya<span class="logo-dot">.</span></span>
+  </div>
+  <nav class="nav">
+    <a class="nav-item" href="dashboard.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+        <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+      </svg>
+      <span class="nav-label">Dashboard</span>
+    </a>
+    <a class="nav-item" href="plans.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="4" width="18" height="18" rx="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+      <span class="nav-label">Plans</span>
+      <span class="nav-badge">2</span>
+    </a>
+    <a class="nav-item" href="content-tools.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+      </svg>
+      <span class="nav-label">Content Tools</span>
+    </a>
+    <a class="nav-item" href="brand-library.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
+      </svg>
+      <span class="nav-label">Brand Library</span>
+    </a>
+    <a class="nav-item" href="insights.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+      </svg>
+      <span class="nav-label">Insights</span>
+    </a>
+    <a class="nav-item active" href="ask-panya.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+      </svg>
+      <span class="nav-label">Ask Panya</span>
+    </a>
+    <div class="nav-divider"></div>
+    <a class="nav-item" href="admin.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+      <span class="nav-label">Admin</span>
+      <span class="nav-badge red">1</span>
+    </a>
+  </nav>
+  <div class="sidebar-user">
+    <div class="user-row">
+      <div class="u-avatar">P</div>
+      <div style="flex:1;min-width:0">
+        <div class="u-email">por.zax@gmail.com</div>
+        <div class="u-role">Admin</div>
+      </div>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-muted);flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </div>
+</div>
+</aside>
+
+<!-- ── Chat shell ─────────────────────────────── -->
+<div class="chat-shell">
+
+  <!-- Conversation history -->
+  <div class="history-panel">
+    <div class="history-head">
+      <div class="history-title">Conversations</div>
+      <button class="btn-new-chat" onclick="newChat()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New conversation
+      </button>
+    </div>
+    <div class="history-list">
+      <div class="history-group-label">Today</div>
+      <div class="convo-item active" onclick="selectConvo(this)">
+        <span class="convo-title">Bonchon May captions</span>
+        <span class="convo-meta">Just now</span>
+      </div>
+      <div class="convo-item" onclick="selectConvo(this)">
+        <span class="convo-title">Haier brand voice check</span>
+        <span class="convo-meta">2 hours ago</span>
+      </div>
+      <div class="history-group-label">Yesterday</div>
+      <div class="convo-item" onclick="selectConvo(this)">
+        <span class="convo-title">MK Restaurant TikTok ideas</span>
+        <span class="convo-meta">Yesterday, 3:40 PM</span>
+      </div>
+      <div class="convo-item" onclick="selectConvo(this)">
+        <span class="convo-title">Central Retail Songkran plan</span>
+        <span class="convo-meta">Yesterday, 10:15 AM</span>
+      </div>
+      <div class="convo-item" onclick="selectConvo(this)">
+        <span class="convo-title">Hashtag strategy May 2026</span>
+        <span class="convo-meta">Yesterday, 9:02 AM</span>
+      </div>
+      <div class="history-group-label">This week</div>
+      <div class="convo-item" onclick="selectConvo(this)">
+        <span class="convo-title">Policy check — alcohol ads</span>
+        <span class="convo-meta">14 May</span>
+      </div>
+      <div class="convo-item" onclick="selectConvo(this)">
+        <span class="convo-title">Engagement analysis Q1</span>
+        <span class="convo-meta">13 May</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main chat -->
+  <div class="chat-main">
+
+    <div class="chat-header">
+      <div class="chat-header-title">Bonchon May captions</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="chat-context-chip">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+          Bonchon
+        </span>
+        <button style="padding:6px 12px;border-radius:var(--r-md);border:1px solid var(--border-default);background:none;font-family:var(--font-ui);font-size:12px;font-weight:500;color:var(--text-secondary);cursor:pointer" onclick="window.location='plans.html'">Open in Plan →</button>
+      </div>
+    </div>
+
+    <!-- Pre-rendered message thread -->
+    <div class="messages" id="messages">
+
+      <div class="msg-row user">
+        <div class="msg-avatar user">P</div>
+        <div>
+          <div class="msg-bubble">Write 3 Facebook captions for Bonchon's Songkran campaign. Tone should be festive and fun, target 25–35 Thai office workers. Include a promo: buy 2 get 1 free on wings.</div>
+          <div class="msg-time">10:24 AM</div>
+        </div>
+      </div>
+
+      <div class="msg-row ai">
+        <div class="msg-avatar ai">P</div>
+        <div style="flex:1">
+          <div class="msg-bubble">
+            <div style="margin-bottom:10px">Here are 3 Facebook captions for Bonchon's Songkran campaign — all optimised for Thai Facebook audience and your promo deal.</div>
+
+            <div class="caption-card">
+              <div class="caption-platform">Option 1 — Festive Hook</div>
+              <div class="caption-text">🎉 สงกรานต์นี้ฉลองด้วยไก่ทอดบอนชอน! ซื้อ 2 แถม 1 ฟรีทุกเมนูวิง — แค่วันที่ 13–15 เมษายนนี้เท่านั้น อย่าปล่อยให้โปรดีๆ หลุดมือ 🍗🔥</div>
+              <div class="caption-score">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                Score 89
+              </div>
+            </div>
+
+            <div class="caption-card">
+              <div class="caption-platform">Option 2 — Relatable / Office Worker</div>
+              <div class="caption-text">🫧 หยุดยาวสงกรานต์มาแล้ว! ออฟฟิศวอร์คเกอร์ทั้งหลาย พักจากคอมฯ แล้วมากินวิงด้วยกัน บอนชอนฉลองเทศกาลด้วยโปร ซื้อ 2 แถม 1 ฟรี — เหนื่อยมาทั้งปี รางวัลนี้สมควรได้รับ 🍗</div>
+              <div class="caption-score">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                Score 91
+              </div>
+            </div>
+
+            <div class="caption-card">
+              <div class="caption-platform">Option 3 — FOMO Urgency</div>
+              <div class="caption-text">⏳ โปรนี้มีแค่ช่วงสงกรานต์! บอนชอนวิง ซื้อ 2 แถม 1 ฟรี — ใครพลาดอย่ามาแอบเสียใจนะ 😂 มีทุกสาขา 13–15 เมษายน 2026 เท่านั้น 🍗🎊</div>
+              <div class="caption-score">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                Score 87
+              </div>
+            </div>
+
+            <div style="margin-top:12px;font-size:13px;color:var(--text-secondary)">Option 2 scores highest — the office worker angle directly speaks to your target demographic. Want me to adapt these for Instagram or run a policy check?</div>
+
+            <div class="ai-actions">
+              <button class="ai-action-btn" onclick="useInPlan()">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Use in Plan
+              </button>
+              <button class="ai-action-btn" onclick="window.toast('Adapting for Instagram…','info',2000)">
+                Adapt for Instagram
+              </button>
+              <button class="ai-action-btn" onclick="window.toast('Running policy check…','info',2000)">
+                Policy check
+              </button>
+            </div>
+          </div>
+          <div class="msg-time">10:24 AM · 3 captions generated</div>
+        </div>
+      </div>
+
+      <div class="msg-row user">
+        <div class="msg-avatar user">P</div>
+        <div>
+          <div class="msg-bubble">Can you run a policy check on Option 2?</div>
+          <div class="msg-time">10:26 AM</div>
+        </div>
+      </div>
+
+      <div class="msg-row ai">
+        <div class="msg-avatar ai">P</div>
+        <div style="flex:1">
+          <div class="msg-bubble">
+            <div style="margin-bottom:12px;font-weight:600">Policy check for Option 2:</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div class="check-row">
+                <span class="check-icon" style="color:var(--teal)">✓</span>
+                <div><div class="check-label">Platform TOS</div><div class="check-desc">No prohibited content — food promos are allowed on Facebook</div></div>
+              </div>
+              <div class="check-row">
+                <span class="check-icon" style="color:var(--teal)">✓</span>
+                <div><div class="check-label">Claims &amp; Accuracy</div><div class="check-desc">Promo dates present, no superlative claims</div></div>
+              </div>
+              <div class="check-row warn">
+                <span class="check-icon" style="color:var(--amber)">⚠</span>
+                <div><div class="check-label">Brand Voice</div><div class="check-desc">Minor: emoji density (4 emojis) slightly above Bonchon's guideline of ≤3 per post</div></div>
+              </div>
+              <div class="check-row">
+                <span class="check-icon" style="color:var(--teal)">✓</span>
+                <div><div class="check-label">Brand Safety</div><div class="check-desc">No sensitive topics, neutral sentiment, safe for all audiences</div></div>
+              </div>
+            </div>
+            <div style="margin-top:12px;font-size:13px;color:var(--text-secondary)">Overall: good to go — just remove one emoji to stay within brand guidelines. Want me to fix it?</div>
+            <div class="ai-actions">
+              <button class="ai-action-btn" onclick="window.toast('Emoji count fixed — Option 2 updated','success',2500)">Auto-fix emoji count</button>
+              <button class="ai-action-btn" onclick="useInPlan()">Use in Plan anyway</button>
+            </div>
+          </div>
+          <div class="msg-time">10:26 AM</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Suggested prompts -->
+    <div class="suggested-bar">
+      <span style="font-size:11px;color:var(--text-muted);white-space:nowrap;padding:6px 0;line-height:1.6;flex-shrink:0">Try:</span>
+      <button class="sugg-chip" onclick="sendSugg('Adapt Option 2 for Instagram')">Adapt Option 2 for Instagram</button>
+      <button class="sugg-chip" onclick="sendSugg('Suggest 5 hashtags for this post')">Suggest 5 hashtags for this post</button>
+      <button class="sugg-chip" onclick="sendSugg('Write an English version')">Write an English version</button>
+      <button class="sugg-chip" onclick="sendSugg('Shorten to under 100 characters')">Shorten to under 100 characters</button>
+      <button class="sugg-chip" onclick="sendSugg('Add a stronger CTA')">Add a stronger CTA</button>
+    </div>
+
+    <!-- Input -->
+    <div class="input-area">
+      <div class="input-box">
+        <textarea class="input-field" id="chat-input" placeholder="Ask Panya anything about your brands or content…" rows="1" onkeydown="handleKey(event)" oninput="autoGrow(this)"></textarea>
+        <div class="input-actions">
+          <button class="input-btn attach" title="Attach file">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+          </button>
+          <button class="input-btn send" onclick="sendMessage()" title="Send">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="input-hint">Panya uses your Brand Library and Plan context to generate on-brand content.</div>
+    </div>
+
+  </div>
+</div>
+
+</div>
+
+<div id="toast-container"></div>
+<script src="toast.js"></script>
+<script>
+function clearChildren(el) {
+  while (el.firstChild) { el.removeChild(el.firstChild); }
+}
+
+function newChat() {
+  document.querySelectorAll('.convo-item').forEach(function(c) { c.classList.remove('active'); });
+  clearChildren(document.getElementById('messages'));
+  document.getElementById('chat-input').value = '';
+  window.toast('New conversation started', 'success', 2000);
+}
+
+function selectConvo(el) {
+  document.querySelectorAll('.convo-item').forEach(function(c) { c.classList.remove('active'); });
+  el.classList.add('active');
+}
+
+function sendMessage() {
+  var input = document.getElementById('chat-input');
+  var text = input.value.trim();
+  if (!text) return;
+  addUserMsg(text);
+  input.value = '';
+  autoGrow(input);
+  setTimeout(function() { addTyping(); }, 300);
+  setTimeout(function() {
+    removeTyping();
+    addAiMsg('Working on your request. In a live build, this would call the Panya AI to generate on-brand content using your Brand Library and Plan context.');
+  }, 2000);
+}
+
+function sendSugg(text) {
+  addUserMsg(text);
+  setTimeout(function() { addTyping(); }, 300);
+  setTimeout(function() {
+    removeTyping();
+    addAiMsg('Generating response for: "' + text + '" — in a live build this would produce a full AI-generated result.');
+  }, 2000);
+}
+
+function addUserMsg(text) {
+  var msgs = document.getElementById('messages');
+  var row = document.createElement('div');
+  row.className = 'msg-row user';
+  var av = document.createElement('div');
+  av.className = 'msg-avatar user';
+  av.textContent = 'P';
+  var right = document.createElement('div');
+  var bubble = document.createElement('div');
+  bubble.className = 'msg-bubble';
+  bubble.textContent = text;
+  var time = document.createElement('div');
+  time.className = 'msg-time';
+  time.textContent = new Date().toLocaleTimeString('en-GB', {hour:'2-digit',minute:'2-digit'});
+  right.appendChild(bubble);
+  right.appendChild(time);
+  row.appendChild(av);
+  row.appendChild(right);
+  msgs.appendChild(row);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addAiMsg(text) {
+  var msgs = document.getElementById('messages');
+  var row = document.createElement('div');
+  row.className = 'msg-row ai';
+  var av = document.createElement('div');
+  av.className = 'msg-avatar ai';
+  av.textContent = 'P';
+  var right = document.createElement('div');
+  right.style.flex = '1';
+  var bubble = document.createElement('div');
+  bubble.className = 'msg-bubble';
+  bubble.textContent = text;
+  var time = document.createElement('div');
+  time.className = 'msg-time';
+  time.textContent = new Date().toLocaleTimeString('en-GB', {hour:'2-digit',minute:'2-digit'});
+  right.appendChild(bubble);
+  right.appendChild(time);
+  row.appendChild(av);
+  row.appendChild(right);
+  msgs.appendChild(row);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addTyping() {
+  var msgs = document.getElementById('messages');
+  var row = document.createElement('div');
+  row.className = 'msg-row ai';
+  row.id = 'typing-indicator';
+  var av = document.createElement('div');
+  av.className = 'msg-avatar ai';
+  av.textContent = 'P';
+  var bubble = document.createElement('div');
+  bubble.className = 'msg-bubble';
+  var typing = document.createElement('div');
+  typing.className = 'typing';
+  for (var i = 0; i < 3; i++) {
+    var dot = document.createElement('div');
+    dot.className = 'typing-dot';
+    typing.appendChild(dot);
+  }
+  bubble.appendChild(typing);
+  row.appendChild(av);
+  row.appendChild(bubble);
+  msgs.appendChild(row);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeTyping() {
+  var el = document.getElementById('typing-indicator');
+  if (el) el.remove();
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+
+function autoGrow(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+function useInPlan() {
+  window.toast('Caption saved to Bonchon May Plan', 'success', 2500);
+  setTimeout(function() { window.location = 'plans-detail.html'; }, 1600);
+}
+</script>
+</body>
+</html>

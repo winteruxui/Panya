@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panya — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-base:       #FAFAFA;
+  --bg-surface:    #FFFFFF;
+  --bg-elevated:   #F4F4F5;
+  --bg-overlay:    #ECECED;
+  --border-subtle: #F0F0F1;
+  --border-default:#E4E4E7;
+  --border-strong: #D4D4D8;
+  --text-primary:  #18181B;
+  --text-secondary:#71717A;
+  --text-muted:    #A1A1AA;
+
+  --teal:    #00C7A8; --teal-m:   rgba(0,199,168,0.10);
+  --amber:   #F59E0B; --amber-m:  rgba(245,158,11,0.10);
+  --red:     #EF4444; --red-m:    rgba(239,68,68,0.10);
+  --blue:    #60A5FA; --blue-m:   rgba(96,165,250,0.10);
+  --purple:  #A78BFA; --purple-m: rgba(167,139,250,0.10);
+  --orange:  #F97316; --orange-m: rgba(249,115,22,0.10);
+  --green:   #22C55E; --green-m:  rgba(34,197,94,0.10);
+  --gray:    #71717A; --gray-m:   rgba(113,113,122,0.10);
+
+  --font-ui:      'DM Sans', sans-serif;
+  --font-display: 'Instrument Serif', Georgia, serif;
+  --font-mono:    'JetBrains Mono', monospace;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+
+  --r-sm: 4px; --r-md: 8px; --r-lg: 12px; --r-full: 9999px;
+}
+
+html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-base); color: var(--text-primary); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+.app { display: flex; height: 100vh; overflow: hidden; }
+
+/* ── Sidebar ─────────────────────────────────── */
+.sidebar { width: 220px; min-width: 220px; background: var(--bg-surface); border-right: 1px solid var(--border-default); display: flex; flex-direction: column; height: 100vh; z-index: 20; }
+.sidebar-inner { display: flex; flex-direction: column; height: 100%; padding: 20px 0; overflow-y: auto; }
+.logo { padding: 0 20px 16px; border-bottom: 1px solid var(--border-subtle); margin-bottom: 16px; }
+.logo-text { font-family: var(--font-display); font-style: italic; font-size: 22px; color: var(--text-primary); letter-spacing: -0.02em; }
+.logo-dot { color: var(--teal); }
+.nav { flex: 1; padding: 0 10px; display: flex; flex-direction: column; gap: 2px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: var(--r-md); cursor: pointer; text-decoration: none; color: var(--text-secondary); font-size: 14px; font-weight: 500; transition: all 150ms ease; }
+.nav-item:hover { background: var(--bg-elevated); color: var(--text-primary); }
+.nav-item.active { background: var(--teal-m); color: var(--teal); }
+.nav-icon { width: 16px; height: 16px; flex-shrink: 0; }
+.nav-label { flex: 1; }
+.nav-badge { font-size: 10px; font-weight: 700; font-family: var(--font-mono); padding: 1px 6px; border-radius: var(--r-full); background: var(--amber-m); color: var(--amber); }
+.nav-badge.red { background: var(--red-m); color: var(--red); }
+.nav-divider { height: 1px; background: var(--border-subtle); margin: 6px 10px; }
+.sidebar-user { border-top: 1px solid var(--border-subtle); padding: 12px 10px 0; margin-top: 8px; }
+.user-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: var(--r-md); cursor: pointer; transition: background 150ms; }
+.user-row:hover { background: var(--bg-elevated); }
+.u-avatar { width: 28px; height: 28px; border-radius: var(--r-full); background: var(--teal-m); color: var(--teal); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+.u-email { font-size: 12px; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; }
+.u-role { font-size: 11px; color: var(--text-muted); }
+
+/* ── Main ────────────────────────────────────── */
+.main { flex: 1; overflow-y: auto; padding: 40px 48px; }
+.inner { max-width: 920px; margin: 0 auto; }
+
+/* Page header */
+.page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.page-title { font-family: var(--font-display); font-size: 28px; font-weight: 400; letter-spacing: -0.02em; line-height: 1.3; }
+.page-sub { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+
+/* Alert banner */
+.alert-banner { display: flex; align-items: center; gap: 14px; padding: 14px 18px; background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.25); border-radius: var(--r-lg); margin-bottom: 28px; }
+.alert-icon { width: 36px; height: 36px; border-radius: var(--r-full); background: var(--red-m); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.alert-body { flex: 1; }
+.alert-title { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+.alert-desc { font-size: 12px; color: var(--text-secondary); }
+
+/* Tabs */
+.tab-bar { display: flex; border-bottom: 1px solid var(--border-default); margin-bottom: 28px; }
+.tab { padding: 10px 18px; font-size: 14px; font-weight: 500; color: var(--text-secondary); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 150ms; }
+.tab:hover { color: var(--text-primary); }
+.tab.active { color: var(--teal); border-bottom-color: var(--teal); font-weight: 600; }
+
+/* Tab panels */
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* KPI row */
+.kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
+.kpi-card { background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: var(--r-lg); padding: 18px 20px; }
+.kpi-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+.kpi-value { font-size: 26px; font-weight: 700; font-family: var(--font-mono); color: var(--text-primary); line-height: 1; }
+.kpi-sub { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+
+/* Section */
+.section { background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: var(--r-lg); margin-bottom: 20px; overflow: hidden; }
+.section-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; border-bottom: 1px solid var(--border-subtle); }
+.section-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.btn-sm { padding: 6px 14px; border-radius: var(--r-md); border: 1px solid var(--border-default); background: var(--bg-surface); font-family: var(--font-ui); font-size: 12px; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 150ms; }
+.btn-sm:hover { border-color: var(--teal); color: var(--teal); }
+.btn-sm.primary { background: var(--teal); border-color: var(--teal); color: white; }
+.btn-sm.primary:hover { background: #00b397; }
+.btn-sm.danger { border-color: var(--red-m); color: var(--red); background: var(--red-m); }
+
+/* Data table */
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; padding: 8px 22px; text-align: left; border-bottom: 1px solid var(--border-subtle); }
+.data-table td { padding: 13px 22px; font-size: 13px; border-bottom: 1px solid var(--border-subtle); vertical-align: middle; }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: var(--bg-base); }
+
+/* Member avatar */
+.member-row { display: flex; align-items: center; gap: 10px; }
+.m-avatar { width: 30px; height: 30px; border-radius: var(--r-full); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+.m-name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+.m-email { font-size: 11px; color: var(--text-muted); }
+
+/* Role badge */
+.role-badge { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: var(--r-full); }
+.role-admin { background: var(--teal-m); color: var(--teal); }
+.role-editor { background: var(--blue-m); color: var(--blue); }
+.role-viewer { background: var(--gray-m); color: var(--gray); }
+
+/* Status dot */
+.status-dot { width: 7px; height: 7px; border-radius: var(--r-full); display: inline-block; margin-right: 5px; }
+.dot-active { background: var(--green); }
+.dot-pending { background: var(--amber); }
+.dot-inactive { background: var(--gray); }
+
+/* Activity list */
+.activity-list { padding: 0; }
+.activity-item { display: flex; align-items: flex-start; gap: 12px; padding: 13px 22px; border-bottom: 1px solid var(--border-subtle); }
+.activity-item:last-child { border-bottom: none; }
+.activity-icon { width: 28px; height: 28px; border-radius: var(--r-full); display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+.activity-body { flex: 1; }
+.activity-text { font-size: 13px; color: var(--text-primary); line-height: 1.5; }
+.activity-text strong { font-weight: 600; }
+.activity-time { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+/* Billing card */
+.billing-card { background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: var(--r-lg); padding: 22px 24px; margin-bottom: 20px; }
+.billing-plan-name { font-size: 18px; font-weight: 700; color: var(--text-primary); }
+.billing-price { font-size: 32px; font-weight: 700; font-family: var(--font-mono); color: var(--teal); margin: 8px 0; }
+.billing-price span { font-size: 14px; font-weight: 400; color: var(--text-muted); }
+
+/* Usage meter */
+.usage-block { margin-top: 20px; }
+.usage-row { margin-bottom: 14px; }
+.usage-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary); margin-bottom: 5px; }
+.usage-bar { height: 8px; background: var(--bg-elevated); border-radius: 4px; overflow: hidden; }
+.usage-fill { height: 100%; border-radius: 4px; }
+
+/* Integration cards */
+.integration-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 20px 22px; }
+.int-card { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid var(--border-default); border-radius: var(--r-lg); }
+.int-logo { width: 36px; height: 36px; border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.int-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.int-status { font-size: 11px; color: var(--text-muted); }
+.int-actions { margin-left: auto; }
+
+/* Security */
+.security-row { display: flex; align-items: center; gap: 14px; padding: 16px 22px; border-bottom: 1px solid var(--border-subtle); }
+.security-row:last-child { border-bottom: none; }
+.sec-icon { width: 32px; height: 32px; border-radius: var(--r-full); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.sec-body { flex: 1; }
+.sec-label { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+.sec-desc { font-size: 12px; color: var(--text-muted); }
+
+/* Toast */
+#toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+.toast { display: flex; align-items: flex-start; gap: 10px; min-width: 280px; max-width: 380px; padding: 13px 16px; background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: var(--r-lg); box-shadow: var(--shadow-md); pointer-events: all; font-size: 13px; animation: slideUp 220ms ease; position: relative; overflow: hidden; }
+.toast::before { font-size: 14px; flex-shrink: 0; }
+.toast-success::before { content: '✓'; color: var(--teal); }
+.toast-error::before { content: '✕'; color: var(--red); }
+.toast-warning::before { content: '!'; color: var(--amber); }
+.toast-info::before { content: 'i'; color: var(--blue); font-style: italic; font-weight: 700; }
+.toast-msg { flex: 1; color: var(--text-primary); line-height: 1.4; }
+.toast-close { flex-shrink: 0; background: none; border: none; font-size: 16px; color: var(--text-muted); cursor: pointer; padding: 0 2px; line-height: 1; }
+.toast-close:hover { color: var(--text-primary); }
+.toast-progress { position: absolute; bottom: 0; left: 0; height: 2px; animation: shrink linear forwards; transform-origin: left; }
+.toast-success .toast-progress { background: var(--teal); }
+.toast-error .toast-progress { background: var(--red); }
+.toast-warning .toast-progress { background: var(--amber); }
+.toast-info .toast-progress { background: var(--blue); }
+@keyframes slideUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes shrink { from { width: 100%; } to { width: 0%; } }
+</style>
+</head>
+<body>
+<div class="app">
+
+<aside class="sidebar">
+<div class="sidebar-inner">
+  <div class="logo">
+    <span class="logo-text">Panya<span class="logo-dot">.</span></span>
+  </div>
+  <nav class="nav">
+    <a class="nav-item" href="dashboard.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+        <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+      </svg>
+      <span class="nav-label">Dashboard</span>
+    </a>
+    <a class="nav-item" href="plans.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="4" width="18" height="18" rx="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+      <span class="nav-label">Plans</span>
+      <span class="nav-badge">2</span>
+    </a>
+    <a class="nav-item" href="content-tools.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+      </svg>
+      <span class="nav-label">Content Tools</span>
+    </a>
+    <a class="nav-item" href="brand-library.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
+      </svg>
+      <span class="nav-label">Brand Library</span>
+    </a>
+    <a class="nav-item" href="insights.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+      </svg>
+      <span class="nav-label">Insights</span>
+    </a>
+    <a class="nav-item" href="ask-panya.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+      </svg>
+      <span class="nav-label">Ask Panya</span>
+    </a>
+    <div class="nav-divider"></div>
+    <a class="nav-item active" href="admin.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+      <span class="nav-label">Admin</span>
+      <span class="nav-badge red">1</span>
+    </a>
+  </nav>
+  <div class="sidebar-user">
+    <div class="user-row">
+      <div class="u-avatar">P</div>
+      <div style="flex:1;min-width:0">
+        <div class="u-email">por.zax@gmail.com</div>
+        <div class="u-role">Admin</div>
+      </div>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-muted);flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </div>
+</div>
+</aside>
+
+<!-- ── Main ────────────────────────────────────── -->
+<main class="main">
+<div class="inner">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Admin</h1>
+      <p class="page-sub">Workspace settings for Panya · por.zax@gmail.com</p>
+    </div>
+  </div>
+
+  <!-- Alert banner — the "1" red badge -->
+  <div class="alert-banner" id="alert-banner">
+    <div class="alert-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </div>
+    <div class="alert-body">
+      <div class="alert-title">OpenAI API key expires in 3 days</div>
+      <div class="alert-desc">Renew your key before 19 May 2026 to avoid service interruption for Ask Panya and all AI content tools.</div>
+    </div>
+    <button class="btn-sm primary" onclick="renewKey()">Renew Key</button>
+    <button class="btn-sm" onclick="dismissAlert()" style="margin-left:4px">Dismiss</button>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tab-bar">
+    <div class="tab active" onclick="switchTab('overview', this)">Overview</div>
+    <div class="tab" onclick="switchTab('team', this)">Team</div>
+    <div class="tab" onclick="switchTab('billing', this)">Billing</div>
+    <div class="tab" onclick="switchTab('integrations', this)">Integrations</div>
+    <div class="tab" onclick="switchTab('security', this)">Security</div>
+  </div>
+
+  <!-- Overview tab -->
+  <div class="tab-panel active" id="tab-overview">
+
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Team Members</div>
+        <div class="kpi-value">4</div>
+        <div class="kpi-sub">2 admin · 1 editor · 1 viewer</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Active Brands</div>
+        <div class="kpi-value">4</div>
+        <div class="kpi-sub">Bonchon, Haier, Central, MK</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">AI Credits Used</div>
+        <div class="kpi-value">68%</div>
+        <div class="kpi-sub">3,400 / 5,000 this month</div>
+      </div>
+    </div>
+
+    <!-- Recent activity -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-title">Recent Activity</span>
+      </div>
+      <div class="activity-list">
+        <div class="activity-item">
+          <div class="activity-icon" style="background:var(--red-m)">⚠</div>
+          <div class="activity-body">
+            <div class="activity-text"><strong>API key expiry warning</strong> — OpenAI key expires in 3 days. Action required.</div>
+            <div class="activity-time">Just now · System</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon" style="background:var(--teal-m)">✓</div>
+          <div class="activity-body">
+            <div class="activity-text"><strong>Patiphan S.</strong> created plan "Bonchon May 2026" for Bonchon on Facebook.</div>
+            <div class="activity-time">2 hours ago</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon" style="background:var(--blue-m)">→</div>
+          <div class="activity-body">
+            <div class="activity-text"><strong>Nattaya K.</strong> submitted Haier Thailand Jun brief for review.</div>
+            <div class="activity-time">Yesterday, 4:12 PM</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon" style="background:var(--purple-m)">+</div>
+          <div class="activity-body">
+            <div class="activity-text"><strong>Patiphan S.</strong> added MK Restaurant to Brand Library.</div>
+            <div class="activity-time">14 May, 11:30 AM</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon" style="background:var(--green-m)">✓</div>
+          <div class="activity-body">
+            <div class="activity-text"><strong>Central Retail Apr plan</strong> approved by client and marked complete.</div>
+            <div class="activity-time">13 May, 3:00 PM</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon" style="background:var(--amber-m)">!</div>
+          <div class="activity-body">
+            <div class="activity-text"><strong>Somchai P.</strong> joined the workspace as Viewer.</div>
+            <div class="activity-time">12 May, 9:15 AM</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Team tab -->
+  <div class="tab-panel" id="tab-team">
+    <div class="section">
+      <div class="section-head">
+        <span class="section-title">Team Members</span>
+        <button class="btn-sm primary" onclick="window.toast('Invite sent','success',2500)">+ Invite Member</button>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Member</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Last active</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="member-row">
+                <div class="m-avatar" style="background:var(--teal-m);color:var(--teal)">P</div>
+                <div>
+                  <div class="m-name">Patiphan S.</div>
+                  <div class="m-email">por.zax@gmail.com</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="role-badge role-admin">Admin</span></td>
+            <td><span class="status-dot dot-active"></span>Active</td>
+            <td style="color:var(--text-muted);font-size:12px">Now</td>
+            <td style="text-align:right"><span style="font-size:12px;color:var(--text-muted)">You</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="member-row">
+                <div class="m-avatar" style="background:var(--blue-m);color:var(--blue)">N</div>
+                <div>
+                  <div class="m-name">Nattaya K.</div>
+                  <div class="m-email">nattaya@agencyname.co.th</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="role-badge role-editor">Editor</span></td>
+            <td><span class="status-dot dot-active"></span>Active</td>
+            <td style="color:var(--text-muted);font-size:12px">Yesterday</td>
+            <td style="text-align:right">
+              <button class="btn-sm" onclick="window.toast('Edit role — coming soon','info',2000)">Edit</button>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="member-row">
+                <div class="m-avatar" style="background:var(--purple-m);color:var(--purple)">W</div>
+                <div>
+                  <div class="m-name">Wilasinee R.</div>
+                  <div class="m-email">wilasinee@agencyname.co.th</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="role-badge role-admin">Admin</span></td>
+            <td><span class="status-dot dot-active"></span>Active</td>
+            <td style="color:var(--text-muted);font-size:12px">3 days ago</td>
+            <td style="text-align:right">
+              <button class="btn-sm" onclick="window.toast('Edit role — coming soon','info',2000)">Edit</button>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="member-row">
+                <div class="m-avatar" style="background:var(--gray-m);color:var(--gray)">S</div>
+                <div>
+                  <div class="m-name">Somchai P.</div>
+                  <div class="m-email">somchai@client.co.th</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="role-badge role-viewer">Viewer</span></td>
+            <td><span class="status-dot dot-pending"></span>Pending</td>
+            <td style="color:var(--text-muted);font-size:12px">Invited 12 May</td>
+            <td style="text-align:right">
+              <button class="btn-sm" onclick="window.toast('Invite resent to Somchai','success',2500)">Resend</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Billing tab -->
+  <div class="tab-panel" id="tab-billing">
+    <div class="billing-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div class="billing-plan-name">Pro Plan</div>
+          <div style="font-size:13px;color:var(--text-secondary);margin-top:4px">5 members · 4 brands · 5,000 AI credits/month</div>
+          <div class="billing-price">฿2,490<span>/month</span></div>
+          <div style="font-size:12px;color:var(--text-muted)">Next billing: 1 June 2026 · Auto-renew on</div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <button class="btn-sm" onclick="window.toast('Opening plan comparison…','info',2000)">Upgrade</button>
+          <button class="btn-sm" onclick="window.toast('Contact support to cancel','warning',3000)">Cancel Plan</button>
+        </div>
+      </div>
+      <div class="usage-block">
+        <div class="usage-row">
+          <div class="usage-label"><span>AI Credits</span><span style="font-family:var(--font-mono)">3,400 / 5,000</span></div>
+          <div class="usage-bar"><div class="usage-fill" style="width:68%;background:var(--teal)"></div></div>
+        </div>
+        <div class="usage-row">
+          <div class="usage-label"><span>Brands</span><span style="font-family:var(--font-mono)">4 / 10</span></div>
+          <div class="usage-bar"><div class="usage-fill" style="width:40%;background:var(--blue)"></div></div>
+        </div>
+        <div class="usage-row">
+          <div class="usage-label"><span>Team seats</span><span style="font-family:var(--font-mono)">4 / 5</span></div>
+          <div class="usage-bar"><div class="usage-fill" style="width:80%;background:var(--amber)"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><span class="section-title">Billing History</span></div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Date</th><th>Description</th><th>Amount</th><th>Status</th><th></th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:var(--text-muted);font-size:12px;font-family:var(--font-mono)">1 May 2026</td>
+            <td style="font-size:13px">Pro Plan · May 2026</td>
+            <td style="font-family:var(--font-mono);font-size:12px">฿2,490</td>
+            <td><span class="role-badge role-admin">Paid</span></td>
+            <td><button class="btn-sm" onclick="window.toast('Receipt downloaded','success',2000)">Receipt</button></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);font-size:12px;font-family:var(--font-mono)">1 Apr 2026</td>
+            <td style="font-size:13px">Pro Plan · April 2026</td>
+            <td style="font-family:var(--font-mono);font-size:12px">฿2,490</td>
+            <td><span class="role-badge role-admin">Paid</span></td>
+            <td><button class="btn-sm" onclick="window.toast('Receipt downloaded','success',2000)">Receipt</button></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);font-size:12px;font-family:var(--font-mono)">1 Mar 2026</td>
+            <td style="font-size:13px">Pro Plan · March 2026</td>
+            <td style="font-family:var(--font-mono);font-size:12px">฿2,490</td>
+            <td><span class="role-badge role-admin">Paid</span></td>
+            <td><button class="btn-sm" onclick="window.toast('Receipt downloaded','success',2000)">Receipt</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Integrations tab -->
+  <div class="tab-panel" id="tab-integrations">
+    <div class="section">
+      <div class="section-head"><span class="section-title">Connected Services</span></div>
+      <div class="integration-grid">
+
+        <div class="int-card">
+          <div class="int-logo" style="background:#F0FFF4">🤖</div>
+          <div>
+            <div class="int-name">OpenAI GPT-4o</div>
+            <div class="int-status" style="color:var(--red)">⚠ Key expires 19 May</div>
+          </div>
+          <div class="int-actions">
+            <button class="btn-sm danger" onclick="renewKey()">Renew</button>
+          </div>
+        </div>
+
+        <div class="int-card">
+          <div class="int-logo" style="background:#EEF2FF">📘</div>
+          <div>
+            <div class="int-name">Facebook Pages</div>
+            <div class="int-status" style="color:var(--teal)">Connected · 4 pages</div>
+          </div>
+          <div class="int-actions">
+            <button class="btn-sm" onclick="window.toast('Facebook settings opened','info',2000)">Manage</button>
+          </div>
+        </div>
+
+        <div class="int-card">
+          <div class="int-logo" style="background:#FDF2F8">📸</div>
+          <div>
+            <div class="int-name">Instagram Business</div>
+            <div class="int-status" style="color:var(--teal)">Connected · 3 accounts</div>
+          </div>
+          <div class="int-actions">
+            <button class="btn-sm" onclick="window.toast('Instagram settings opened','info',2000)">Manage</button>
+          </div>
+        </div>
+
+        <div class="int-card">
+          <div class="int-logo" style="background:#F0FDF4">🎵</div>
+          <div>
+            <div class="int-name">TikTok for Business</div>
+            <div class="int-status" style="color:var(--teal)">Connected · 2 accounts</div>
+          </div>
+          <div class="int-actions">
+            <button class="btn-sm" onclick="window.toast('TikTok settings opened','info',2000)">Manage</button>
+          </div>
+        </div>
+
+        <div class="int-card">
+          <div class="int-logo" style="background:#F0FDF4">💬</div>
+          <div>
+            <div class="int-name">LINE Official</div>
+            <div class="int-status" style="color:var(--gray)">Not connected</div>
+          </div>
+          <div class="int-actions">
+            <button class="btn-sm primary" onclick="window.toast('Connecting LINE…','info',2000)">Connect</button>
+          </div>
+        </div>
+
+        <div class="int-card">
+          <div class="int-logo" style="background:#FEF3C7">📊</div>
+          <div>
+            <div class="int-name">Google Analytics</div>
+            <div class="int-status" style="color:var(--gray)">Not connected</div>
+          </div>
+          <div class="int-actions">
+            <button class="btn-sm primary" onclick="window.toast('Connecting Google Analytics…','info',2000)">Connect</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Security tab -->
+  <div class="tab-panel" id="tab-security">
+    <div class="section">
+      <div class="section-head"><span class="section-title">Security Settings</span></div>
+
+      <div class="security-row">
+        <div class="sec-icon" style="background:var(--green-m)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="sec-body">
+          <div class="sec-label">Two-Factor Authentication</div>
+          <div class="sec-desc">Enabled for your account via authenticator app</div>
+        </div>
+        <button class="btn-sm" onclick="window.toast('2FA settings opened','info',2000)">Manage</button>
+      </div>
+
+      <div class="security-row">
+        <div class="sec-icon" style="background:var(--amber-m)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="sec-body">
+          <div class="sec-label">Password</div>
+          <div class="sec-desc">Last changed 90 days ago — consider updating</div>
+        </div>
+        <button class="btn-sm" onclick="window.toast('Password reset email sent','success',2500)">Change Password</button>
+      </div>
+
+      <div class="security-row">
+        <div class="sec-icon" style="background:var(--teal-m)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <div class="sec-body">
+          <div class="sec-label">Active Sessions</div>
+          <div class="sec-desc">2 active sessions — MacBook Pro (now) · iPhone 15 (1 hour ago)</div>
+        </div>
+        <button class="btn-sm" onclick="window.toast('Other sessions signed out','success',2500)">Sign out others</button>
+      </div>
+
+      <div class="security-row">
+        <div class="sec-icon" style="background:var(--red-m)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+        </div>
+        <div class="sec-body">
+          <div class="sec-label">Delete Workspace</div>
+          <div class="sec-desc">Permanently delete all data — this action cannot be undone</div>
+        </div>
+        <button class="btn-sm" style="border-color:var(--red-m);color:var(--red)" onclick="window.toast('Contact support to delete workspace','warning',3000)">Delete</button>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</main>
+
+</div>
+
+<div id="toast-container"></div>
+<script src="toast.js"></script>
+<script>
+function switchTab(name, el) {
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+  el.classList.add('active');
+  var panel = document.getElementById('tab-' + name);
+  if (panel) panel.classList.add('active');
+}
+
+function dismissAlert() {
+  var banner = document.getElementById('alert-banner');
+  if (banner) {
+    banner.style.transition = 'opacity 200ms';
+    banner.style.opacity = '0';
+    setTimeout(function() { banner.style.display = 'none'; }, 220);
+  }
+}
+
+function renewKey() {
+  window.toast('Opening API key settings…', 'info', 2000);
+  setTimeout(function() { switchTab('integrations', document.querySelectorAll('.tab')[3]); }, 800);
+}
+</script>
+</body>
+</html>

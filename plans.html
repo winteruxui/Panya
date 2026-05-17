@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panya — Plans</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+/* ── Page-specific ───────────────────────────────── */
+.table-wrap { background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: var(--r-lg); overflow: hidden; }
+table { width: 100%; border-collapse: collapse; }
+thead th {
+  padding: 11px 16px; text-align: left;
+  font-size: 11px; font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  background: var(--bg-elevated); border-bottom: 1px solid var(--border-default);
+  white-space: nowrap;
+}
+thead th:last-child { text-align: right; }
+tbody tr { border-bottom: 1px solid var(--border-subtle); transition: background 100ms; cursor: pointer; }
+tbody tr:last-child  { border-bottom: none; }
+tbody tr:hover       { background: var(--bg-elevated); }
+tbody td { padding: 14px 16px; font-size: 13px; color: var(--text-primary); vertical-align: middle; }
+tbody td:last-child  { text-align: right; }
+
+/* Status cell — larger, more scannable badge */
+tbody td .badge {
+  font-size: 12px;
+  padding: 4px 10px 4px 8px;
+}
+tbody td .bdot {
+  width: 7px; height: 7px;
+}
+
+.td-brand  { font-weight: 600; font-size: 14px; }
+.td-meta   { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+.td-score  { font-family: var(--font-mono); font-weight: 700; }
+.td-muted  { color: var(--text-secondary); }
+.td-actions { display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
+
+/* Pagination */
+.pagination {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px; border-top: 1px solid var(--border-subtle);
+  font-size: 13px; color: var(--text-secondary);
+}
+.page-btns { display: flex; gap: 4px; }
+.page-btn {
+  width: 30px; height: 30px; border-radius: var(--r-md);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  border: 1px solid var(--border-default); background: var(--bg-surface);
+  color: var(--text-secondary); transition: all 100ms;
+}
+.page-btn:hover  { background: var(--bg-elevated); color: var(--text-primary); }
+.page-btn.active { background: var(--teal); border-color: var(--teal); color: #fff; }
+
+/* empty state */
+.empty-row td { text-align: center; padding: 48px 16px; color: var(--text-muted); }
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ── Sidebar ──────────────────────────────────────── -->
+<aside class="sidebar">
+<div class="sidebar-inner">
+  <div class="logo">
+    <a href="dashboard.html" class="logo-link">
+      <span class="logo-text">Panya<span class="logo-dot">.</span></span>
+    </a>
+  </div>
+  <nav class="nav">
+    <a class="nav-item" href="dashboard.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      <span class="nav-label">Dashboard</span>
+    </a>
+    <a class="nav-item active" href="plans.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span class="nav-label">Plans</span>
+      <span class="nav-badge">2</span>
+    </a>
+    <a class="nav-item" href="content-tools.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <span class="nav-label">Content Tools</span>
+    </a>
+    <a class="nav-item" href="brand-library.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+      <span class="nav-label">Brand Library</span>
+    </a>
+    <a class="nav-item" href="insights.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span class="nav-label">Insights</span>
+    </a>
+    <a class="nav-item" href="ask-panya.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      <span class="nav-label">Ask Panya</span>
+    </a>
+    <div class="nav-divider"></div>
+    <a class="nav-item" href="admin.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span class="nav-label">Admin</span>
+      <span class="nav-badge red">1</span>
+    </a>
+  </nav>
+  <div class="sidebar-user">
+    <div class="user-row">
+      <div class="u-avatar">P</div>
+      <div style="flex:1;min-width:0">
+        <div class="u-email">por.zax@gmail.com</div>
+        <div class="u-role">Admin</div>
+      </div>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-muted);flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </div>
+</div>
+</aside>
+
+<!-- ── Main ──────────────────────────────────────────── -->
+<main class="main">
+<div class="inner">
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Plans</h1>
+      <p class="page-subtitle">6 plans · 2 need attention</p>
+    </div>
+    <a class="btn btn-primary" href="plans-new.html">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      New Plan
+    </a>
+  </div>
+
+  <!-- Filter bar -->
+  <div class="filter-bar">
+    <div class="search-wrap">
+      <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="filter-search" type="text" placeholder="Search brand or month…">
+    </div>
+    <select class="filter-select">
+      <option>All Brands</option>
+      <option>Bonchon</option>
+      <option>Haier Thailand</option>
+      <option>Central Retail</option>
+      <option>MK Restaurant</option>
+    </select>
+    <select class="filter-select">
+      <option>All Platforms</option>
+      <option>Facebook</option>
+      <option>Instagram</option>
+      <option>TikTok</option>
+    </select>
+    <select class="filter-select">
+      <option>All Statuses</option>
+      <option>Brief Ready</option>
+      <option>Drafting</option>
+      <option>Scored</option>
+      <option>Proposed</option>
+      <option>Feedback Pending</option>
+      <option>Complete</option>
+    </select>
+    <div class="filter-spacer"></div>
+    <select class="filter-select">
+      <option>Sort: Last Updated</option>
+      <option>Sort: Status</option>
+      <option>Sort: Month (newest)</option>
+      <option>Sort: AVG Score</option>
+      <option>Sort: Brand A–Z</option>
+    </select>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Brand · Platform</th>
+          <th>Month</th>
+          <th>Status</th>
+          <th>Ideas</th>
+          <th>AVG Score</th>
+          <th>Last Updated</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- FEEDBACK PENDING — orange left border -->
+        <tr class="row-fb" onclick="window.location='plans-detail.html'">
+          <td>
+            <div class="td-brand">Bonchon</div>
+            <div class="td-meta"><span class="chip">Instagram</span></div>
+          </td>
+          <td class="td-muted">May 2026</td>
+          <td><span class="badge b-fb"><span class="bdot"></span>Feedback Pending</span></td>
+          <td>6</td>
+          <td><span class="td-score sc-av">–</span></td>
+          <td class="td-muted">3 days ago</td>
+          <td>
+            <div class="td-actions">
+              <a class="btn btn-sm btn-primary" href="plans-detail.html" onclick="event.stopPropagation()">Log Feedback</a>
+              <a class="btn btn-sm btn-ghost" href="plans-detail.html" onclick="event.stopPropagation()">Open Plan</a>
+            </div>
+          </td>
+        </tr>
+
+        <!-- BRIEF READY — amber left border -->
+        <tr class="row-brief" onclick="window.location='plans-detail.html'">
+          <td>
+            <div class="td-brand">Haier Thailand</div>
+            <div class="td-meta"><span class="chip">Facebook</span></div>
+          </td>
+          <td class="td-muted">May 2026</td>
+          <td><span class="badge b-brief"><span class="bdot"></span>Brief Ready</span></td>
+          <td>0</td>
+          <td class="td-muted">–</td>
+          <td class="td-muted">4 days ago</td>
+          <td>
+            <div class="td-actions">
+              <a class="btn btn-sm btn-primary" href="plans-detail.html" onclick="event.stopPropagation()">Open Plan</a>
+            </div>
+          </td>
+        </tr>
+
+        <!-- DRAFTING -->
+        <tr class="row-draft" onclick="window.location='plans-detail.html'">
+          <td>
+            <div class="td-brand">MK Restaurant</div>
+            <div class="td-meta"><span class="chip">Instagram</span></div>
+          </td>
+          <td class="td-muted">May 2026</td>
+          <td><span class="badge b-draft"><span class="bdot"></span>Drafting</span></td>
+          <td>5 / 8</td>
+          <td class="td-muted">–</td>
+          <td class="td-muted">2 hours ago</td>
+          <td>
+            <div class="td-actions">
+              <a class="btn btn-sm btn-primary" href="plans-detail.html" onclick="event.stopPropagation()">Open Plan</a>
+            </div>
+          </td>
+        </tr>
+
+        <!-- PROPOSED -->
+        <tr class="row-prop" onclick="window.location='plans-detail.html'">
+          <td>
+            <div class="td-brand">Central Retail</div>
+            <div class="td-meta"><span class="chip">TikTok</span></div>
+          </td>
+          <td class="td-muted">May 2026</td>
+          <td><span class="badge b-prop"><span class="bdot"></span>Proposed</span></td>
+          <td>10</td>
+          <td><span class="td-score sc sc-st">72</span></td>
+          <td class="td-muted">6 days ago</td>
+          <td>
+            <div class="td-actions">
+              <a class="btn btn-sm btn-primary" href="plans-detail.html" onclick="event.stopPropagation()">Log Feedback</a>
+              <a class="btn btn-sm btn-ghost" href="plans-detail.html" onclick="event.stopPropagation()">Open Plan</a>
+            </div>
+          </td>
+        </tr>
+
+        <!-- SCORED -->
+        <tr class="row-scored" onclick="window.location='plans-detail.html'">
+          <td>
+            <div class="td-brand">Bonchon</div>
+            <div class="td-meta"><span class="chip">Facebook</span></div>
+          </td>
+          <td class="td-muted">April 2026</td>
+          <td><span class="badge b-scored"><span class="bdot"></span>Scored</span></td>
+          <td>8</td>
+          <td><span class="td-score sc sc-ex">84</span></td>
+          <td class="td-muted">Yesterday</td>
+          <td>
+            <div class="td-actions">
+              <a class="btn btn-sm btn-primary" href="plans-detail.html" onclick="event.stopPropagation()">Open Plan</a>
+            </div>
+          </td>
+        </tr>
+
+        <!-- COMPLETE -->
+        <tr class="row-done" style="opacity:.55" onclick="window.location='plans-detail.html'">
+          <td>
+            <div class="td-brand">Haier Thailand</div>
+            <div class="td-meta"><span class="chip">Instagram</span></div>
+          </td>
+          <td class="td-muted">April 2026</td>
+          <td><span class="badge b-done"><span class="bdot"></span>Complete</span></td>
+          <td>12</td>
+          <td><span class="td-score sc sc-ex">81</span></td>
+          <td class="td-muted">May 2</td>
+          <td>
+            <div class="td-actions">
+              <a class="btn btn-sm btn-secondary" href="plans-detail.html" onclick="event.stopPropagation()">Open Plan</a>
+            </div>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <span>Showing 6 of 6 plans</span>
+      <div class="page-btns">
+        <div class="page-btn active">1</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</main>
+</div>
+</body>
+</html>

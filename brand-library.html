@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brand Library — Panya</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+/* ── Two-panel layout ───────────────────────────── */
+.library-shell {
+  display: flex;
+  height: calc(100vh - 108px);
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+  border-radius: var(--r-lg);
+  background: var(--bg-surface);
+}
+
+/* Left — brand list */
+.brand-list-panel {
+  width: 248px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border-default);
+  display: flex;
+  flex-direction: column;
+}
+.brand-list-search {
+  padding: 14px 12px 10px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.brand-list-search input {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--r-md);
+  font-size: 13px;
+  font-family: var(--font-ui);
+  color: var(--text-primary);
+  background: var(--bg-base);
+  outline: none;
+  box-sizing: border-box;
+}
+.brand-list-search input:focus { border-color: var(--teal); }
+.brand-list-scroll { flex: 1; overflow-y: auto; padding: 8px; }
+.brand-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: var(--r-md);
+  cursor: pointer;
+  transition: background 100ms;
+}
+.brand-item:hover { background: var(--bg-elevated); }
+.brand-item.active { background: var(--teal-m); }
+.brand-item.active .brand-item-name { color: var(--teal); font-weight: 600; }
+.brand-logo-sm {
+  width: 32px; height: 32px;
+  border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; color: #fff;
+  flex-shrink: 0;
+}
+.brand-item-info { flex: 1; min-width: 0; }
+.brand-item-name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+.brand-item-sub  { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+/* Right — brand detail */
+.brand-detail-panel {
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px 28px 40px;
+  background: var(--bg-base);
+  display: none;
+}
+.brand-detail-panel.active { display: block; }
+
+/* Header */
+.brand-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.brand-logo-lg {
+  width: 52px; height: 52px;
+  border-radius: var(--r-lg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; font-weight: 900; color: #fff;
+  flex-shrink: 0;
+}
+.brand-header-text h2 {
+  font-size: 20px; font-weight: 700; color: var(--text-primary);
+  letter-spacing: -0.02em; margin: 0;
+}
+.brand-header-text p { font-size: 13px; color: var(--text-secondary); margin: 3px 0 0; }
+.brand-header-actions { margin-left: auto; display: flex; gap: 8px; }
+
+/* Stat strip */
+.stat-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border-default);
+  border: 1px solid var(--border-default);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.stat-cell {
+  background: var(--bg-surface);
+  padding: 14px 16px;
+  text-align: center;
+}
+.stat-val  { font-size: 20px; font-weight: 700; color: var(--text-primary); font-family: var(--font-mono); }
+.stat-lbl  { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+/* Sections */
+.brand-section { margin-bottom: 22px; }
+.brand-section-title {
+  font-size: 11px; font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  margin-bottom: 10px;
+}
+.brand-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--r-lg);
+  padding: 16px 18px;
+}
+
+/* Tone grid */
+.tone-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.tone-card {
+  background: var(--bg-base);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-md);
+  padding: 12px 10px;
+  text-align: center;
+}
+.tone-emoji { font-size: 20px; margin-bottom: 5px; }
+.tone-label { font-size: 12px; font-weight: 600; color: var(--text-primary); }
+.tone-desc  { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+/* Color swatches */
+.color-row { display: flex; gap: 14px; flex-wrap: wrap; }
+.color-swatch { display: flex; flex-direction: column; align-items: center; gap: 7px; }
+.swatch-box   { width: 52px; height: 52px; border-radius: var(--r-md); }
+.swatch-label { font-size: 11px; color: var(--text-secondary); text-align: center; }
+.swatch-hex   { font-size: 10px; font-family: var(--font-mono); color: var(--text-muted); }
+
+/* Typography */
+.type-row { display: flex; gap: 12px; }
+.type-card {
+  flex: 1;
+  background: var(--bg-base);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-md);
+  padding: 14px 16px;
+}
+.type-specimen { font-size: 22px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+.type-meta { font-size: 11px; color: var(--text-muted); }
+
+/* Hashtags */
+.hashtag-section { display: flex; flex-wrap: wrap; gap: 7px; }
+.htag-pill {
+  padding: 5px 12px;
+  border-radius: var(--r-full);
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  font-size: 12px; font-weight: 500;
+  cursor: default;
+  border: 1px solid transparent;
+  transition: all 100ms;
+}
+.htag-pill:hover { background: var(--teal-m); color: var(--teal); border-color: var(--teal); }
+
+/* Do / Don't */
+.do-dont-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.dd-col { background: var(--bg-base); border-radius: var(--r-md); padding: 14px 16px; }
+.dd-col.do-col   { border: 1px solid rgba(0,199,168,0.3); }
+.dd-col.dont-col { border: 1px solid rgba(239,68,68,0.25); }
+.dd-header { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+.dd-header.do   { color: var(--teal); }
+.dd-header.dont { color: var(--red); }
+.dd-item { display: flex; gap: 8px; align-items: flex-start; font-size: 12px; color: var(--text-secondary); margin-bottom: 7px; line-height: 1.5; }
+.dd-item:last-child { margin-bottom: 0; }
+.dd-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+.do-col .dd-dot   { background: var(--teal); }
+.dont-col .dd-dot { background: var(--red); }
+
+/* Sample captions */
+.caption-sample {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--r-md);
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  font-size: 13px; color: var(--text-primary); line-height: 1.6;
+}
+.caption-sample:last-child { margin-bottom: 0; }
+.caption-meta { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; align-items: center; }
+.score-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: var(--r-sm);
+  font-size: 12px; font-weight: 700; font-family: var(--font-mono);
+}
+.score-pill.ex { background: var(--teal-m); color: var(--teal); }
+.score-pill.st { background: var(--purple-m); color: var(--purple); }
+.score-pill.av { background: var(--bg-elevated); color: var(--text-secondary); }
+
+/* ══ Brand Drawer ═══════════════════════════════ */
+.brand-drawer-overlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 200;
+}
+.brand-drawer-overlay.open { display: flex; }
+.drawer-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.35); backdrop-filter: blur(2px);
+}
+.drawer-panel {
+  position: absolute; right: 0; top: 0; bottom: 0; width: 520px;
+  background: var(--bg-surface);
+  display: flex; flex-direction: column;
+  box-shadow: -8px 0 32px rgba(0,0,0,0.12);
+  transform: translateX(100%);
+  transition: transform 240ms cubic-bezier(0.25,0.46,0.45,0.94);
+}
+.brand-drawer-overlay.open .drawer-panel { transform: translateX(0); }
+
+.drawer-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 20px 24px; border-bottom: 1px solid var(--border-default); flex-shrink: 0;
+}
+.drawer-header h3 {
+  font-size: 16px; font-weight: 700; color: var(--text-primary);
+  letter-spacing: -0.01em; margin: 0; flex: 1;
+}
+.drawer-close {
+  width: 28px; height: 28px; border-radius: var(--r-md);
+  display: flex; align-items: center; justify-content: center;
+  border: none; background: none; cursor: pointer;
+  font-size: 18px; color: var(--text-muted); transition: background 100ms;
+}
+.drawer-close:hover { background: var(--bg-elevated); color: var(--text-primary); }
+
+.drawer-steps-bar {
+  display: flex; align-items: center;
+  padding: 14px 24px 12px; border-bottom: 1px solid var(--border-subtle); flex-shrink: 0;
+}
+.drawer-step-dot {
+  width: 24px; height: 24px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700;
+  background: var(--bg-elevated); color: var(--text-muted);
+  flex-shrink: 0; transition: all 150ms;
+}
+.drawer-step-dot.active { background: var(--teal); color: #fff; }
+.drawer-step-dot.done   { background: var(--teal-m); color: var(--teal); }
+.drawer-step-line { flex: 1; height: 2px; background: var(--border-default); margin: 0 8px; }
+.drawer-step-line.done { background: var(--teal); }
+.drawer-steps-label {
+  font-size: 12px; color: var(--text-muted); margin-left: 16px;
+}
+.drawer-steps-label strong { color: var(--text-primary); }
+
+.drawer-content { flex: 1; overflow-y: auto; padding: 24px; }
+.drawer-step-panel { display: none; }
+.drawer-step-panel.active { display: block; }
+
+.drawer-field { margin-bottom: 18px; }
+.drawer-label {
+  display: block; font-size: 11px; font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px;
+}
+.drawer-input, .drawer-select, .drawer-textarea {
+  width: 100%; padding: 9px 12px;
+  border: 1px solid var(--border-default); border-radius: var(--r-md);
+  font-family: var(--font-ui); font-size: 13px;
+  color: var(--text-primary); background: var(--bg-base);
+  outline: none; box-sizing: border-box; transition: border-color 150ms;
+}
+.drawer-input:focus, .drawer-select:focus, .drawer-textarea:focus {
+  border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-m);
+}
+.drawer-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+.drawer-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.color-picker-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.logo-color-swatch {
+  width: 34px; height: 34px; border-radius: var(--r-sm);
+  cursor: pointer; border: 2px solid transparent; transition: all 100ms; flex-shrink: 0;
+}
+.logo-color-swatch.selected { border-color: var(--teal); box-shadow: 0 0 0 2px var(--teal-m); }
+
+.platform-check-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.platform-check {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 12px; border-radius: var(--r-md);
+  border: 1px solid var(--border-default);
+  cursor: pointer; font-size: 12px; font-weight: 500; color: var(--text-secondary);
+  transition: all 100ms; user-select: none;
+}
+.platform-check.on { background: var(--teal-m); border-color: var(--teal); color: var(--teal); }
+
+.tone-picker-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.tone-pick-card {
+  padding: 10px 8px; border-radius: var(--r-md);
+  border: 1px solid var(--border-default); background: var(--bg-base);
+  text-align: center; cursor: pointer; transition: all 100ms; user-select: none;
+}
+.tone-pick-card:hover { border-color: var(--teal); }
+.tone-pick-card.selected { background: var(--teal-m); border-color: var(--teal); }
+.tone-pick-card .pick-emoji { font-size: 18px; margin-bottom: 4px; }
+.tone-pick-card .pick-label { font-size: 11px; font-weight: 600; color: var(--text-secondary); }
+.tone-pick-card.selected .pick-label { color: var(--teal); }
+
+.color-field-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
+.color-field-preview {
+  width: 36px; height: 36px; border-radius: var(--r-sm);
+  border: 1px solid var(--border-default); flex-shrink: 0;
+}
+.color-field-inputs { display: flex; gap: 8px; flex: 1; }
+
+.drawer-footer {
+  display: flex; align-items: center; gap: 10px;
+  padding: 16px 24px; border-top: 1px solid var(--border-default);
+  flex-shrink: 0; background: var(--bg-surface);
+}
+.drawer-footer-info { flex: 1; font-size: 12px; color: var(--text-muted); }
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ── Sidebar ──────────────────────────────────────── -->
+<aside class="sidebar">
+<div class="sidebar-inner">
+  <div class="logo">
+    <a href="dashboard.html" class="logo-link">
+      <span class="logo-text">Panya<span class="logo-dot">.</span></span>
+    </a>
+  </div>
+  <nav class="nav">
+    <a class="nav-item" href="dashboard.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      <span class="nav-label">Dashboard</span>
+    </a>
+    <a class="nav-item" href="plans.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span class="nav-label">Plans</span>
+      <span class="nav-badge">2</span>
+    </a>
+    <a class="nav-item" href="content-tools.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <span class="nav-label">Content Tools</span>
+    </a>
+    <a class="nav-item active" href="brand-library.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+      <span class="nav-label">Brand Library</span>
+    </a>
+    <a class="nav-item" href="insights.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span class="nav-label">Insights</span>
+    </a>
+    <a class="nav-item" href="ask-panya.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      <span class="nav-label">Ask Panya</span>
+    </a>
+    <div class="nav-divider"></div>
+    <a class="nav-item" href="admin.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span class="nav-label">Admin</span>
+      <span class="nav-badge red">1</span>
+    </a>
+  </nav>
+  <div class="sidebar-user">
+    <div class="user-row">
+      <div class="u-avatar">P</div>
+      <div style="flex:1;min-width:0">
+        <div class="u-email">por.zax@gmail.com</div>
+        <div class="u-role">Admin</div>
+      </div>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-muted);flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </div>
+</div>
+</aside>
+
+<!-- ── Main ──────────────────────────────────────────── -->
+<main class="main">
+<div class="inner">
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Brand Library</h1>
+      <p class="page-subtitle">4 brands · Voice, colors, and content rules in one place</p>
+    </div>
+    <button class="btn btn-primary" onclick="openDrawer('add')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Brand
+    </button>
+  </div>
+
+  <!-- Two-panel shell -->
+  <div class="library-shell">
+
+    <!-- ── Brand list (left) ──────────────────────── -->
+    <div class="brand-list-panel">
+      <div class="brand-list-search">
+        <input type="text" placeholder="Search brands…" oninput="filterBrands(this.value)">
+      </div>
+      <div class="brand-list-scroll">
+
+        <div class="brand-item active" onclick="selectBrand('bonchon', this)">
+          <div class="brand-logo-sm" style="background:#E8342A;">B</div>
+          <div class="brand-item-info">
+            <div class="brand-item-name">Bonchon</div>
+            <div class="brand-item-sub">Instagram · Facebook</div>
+          </div>
+        </div>
+
+        <div class="brand-item" onclick="selectBrand('haier', this)">
+          <div class="brand-logo-sm" style="background:#005BAC;">H</div>
+          <div class="brand-item-info">
+            <div class="brand-item-name">Haier Thailand</div>
+            <div class="brand-item-sub">Facebook</div>
+          </div>
+        </div>
+
+        <div class="brand-item" onclick="selectBrand('central', this)">
+          <div class="brand-logo-sm" style="background:#1A1A1A;">C</div>
+          <div class="brand-item-info">
+            <div class="brand-item-name">Central Retail</div>
+            <div class="brand-item-sub">TikTok · Instagram</div>
+          </div>
+        </div>
+
+        <div class="brand-item" onclick="selectBrand('mk', this)">
+          <div class="brand-logo-sm" style="background:#C8102E;">M</div>
+          <div class="brand-item-info">
+            <div class="brand-item-name">MK Restaurant</div>
+            <div class="brand-item-sub">Instagram · Facebook</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         BRAND DETAIL PANELS — one per brand
+    ══════════════════════════════════════════════════ -->
+
+    <!-- ── BONCHON ───────────────────────────────── -->
+    <div class="brand-detail-panel active" id="panel-bonchon">
+
+      <div class="brand-detail-header">
+        <div class="brand-logo-lg" style="background:#E8342A;">B</div>
+        <div class="brand-header-text">
+          <h2>Bonchon</h2>
+          <p>Korean Fried Chicken · QSR &nbsp;·&nbsp; <span class="chip">Instagram</span> <span class="chip">Facebook</span></p>
+        </div>
+        <div class="brand-header-actions">
+          <button class="btn btn-secondary" onclick="toast('Brand profile exported.', 'success')">Export</button>
+          <button class="btn btn-primary" onclick="openDrawer('edit')">Edit Brand</button>
+        </div>
+      </div>
+
+      <div class="stat-strip">
+        <div class="stat-cell"><div class="stat-val">8</div><div class="stat-lbl">Plans</div></div>
+        <div class="stat-cell"><div class="stat-val">81</div><div class="stat-lbl">AVG Score</div></div>
+        <div class="stat-cell"><div class="stat-val">156</div><div class="stat-lbl">Posts Tracked</div></div>
+        <div class="stat-cell"><div class="stat-val">42</div><div class="stat-lbl">Hashtags</div></div>
+      </div>
+
+      <div class="brand-section">
+        <div class="brand-section-title">Brand Voice</div>
+        <div class="brand-card">
+          <div class="tone-grid">
+            <div class="tone-card"><div class="tone-emoji">🔥</div><div class="tone-label">Bold</div><div class="tone-desc">Confident, punchy</div></div>
+            <div class="tone-card"><div class="tone-emoji">😄</div><div class="tone-label">Playful</div><div class="tone-desc">Fun, relatable</div></div>
+            <div class="tone-card"><div class="tone-emoji">🇹🇭</div><div class="tone-label">Local</div><div class="tone-desc">Thai-first language</div></div>
+            <div class="tone-card"><div class="tone-emoji">⚡</div><div class="tone-label">Energetic</div><div class="tone-desc">High momentum</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-section">
+        <div class="brand-section-title">Brand Colors</div>
+        <div class="brand-card">
+          <div class="color-row">
+            <div class="color-swatch"><div class="swatch-box" style="background:#E8342A;"></div><div class="swatch-label">Bonchon Red</div><div class="swatch-hex">#E8342A</div></div>
+            <div class="color-swatch"><div class="swatch-box" style="background:#FFFFFF;border:1px solid var(--border-default);"></div><div class="swatch-label">White</div><div class="swatch-hex">#FFFFFF</div></div>
+            <div class="color-swatch"><div class="swatch-box" style="background:#1A1A1A;"></div><div class="swatch-label">Charcoal</div><div class="swatch-hex">#1A1A1A</div></div>
+            <div class="color-swatch"><div class="swatch-box" style="background:#FFC72C;"></div><div class="swatch-label">Gold Accent</div><div class="swatch-hex">#FFC72C</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-section">
+        <div class="brand-section-title">Typography</div>
+        <div class="brand-card">
+          <div class="type-row">
+            <div class="type-card"><div class="type-specimen">กรอบ เด้ง อร่อย</div><div class="type-meta">Prompt — Headlines (Thai)</div></div>
+            <div class="type-card"><div class="type-specimen">Bonchon Crispy</div><div class="type-meta">Kanit — Body copy</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-section">
+        <div class="brand-section-title">Hashtag Bank</div>
+        <div class="brand-card">
+          <div class="hashtag-section">
+            <span class="htag-pill">#Bonchon</span>
+            <span class="htag-pill">#BonchonThailand</span>
+            <span class="htag-pill">#KFCvsBonchon</span>
+            <span class="htag-pill">#CrispyWings</span>
+            <span class="htag-pill">#ThaiFood</span>
+            <span class="htag-pill">#กินดีอยู่ดี</span>
+            <span class="htag-pill">#ของอร่อยกรุงเทพ</span>
+            <span class="htag-pill">#ChickenLovers</span>
+            <span class="htag-pill">#WeekendVibes</span>
+            <span class="htag-pill">#FoodPorn</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-section">
+        <div class="brand-section-title">Content Rules</div>
+        <div class="brand-card">
+          <div class="do-dont-grid">
+            <div class="dd-col do-col">
+              <div class="dd-header do">✓ Do</div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Lead with the crunch — texture first, taste second</span></div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Use Thai slang that Gen Z actually says</span></div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Include a clear, low-friction CTA</span></div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Reference a moment (lunch, late night, BFF hangout)</span></div>
+            </div>
+            <div class="dd-col dont-col">
+              <div class="dd-header dont">✕ Don't</div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Don't use formal Thai — too stiff for the brand</span></div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Avoid generic phrases like "อร่อยมาก"</span></div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Don't overload with hashtags (keep under 8)</span></div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Never post without at least one emoji</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-section">
+        <div class="brand-section-title">Sample Captions</div>
+        <div class="caption-sample">
+          กรอบทุกคำ อย่อยทุกกัด 🍗🔥 Bonchon Wings วันนี้ที่สาขาใกล้บ้านคุณ — มาลองสั่งตัวเองไปดิโจ๊ะ #Bonchon #CrispyWings
+          <div class="caption-meta"><span class="chip">Instagram</span><span class="score-pill ex">87</span></div>
+        </div>
+        <div class="caption-sample">
+          พิสูจน์ความกรอบแบบนี้อยู่ไงวะ? 🤔🍗 Bonchon Crispy Wings — ทุกคำ=ความสุข Tag คนที่ต้องกินด้วยกัน! #BonchonThailand #กินดีอยู่ดี
+          <div class="caption-meta"><span class="chip">Facebook</span><span class="score-pill st">79</span></div>
+        </div>
+      </div>
+
+    </div><!-- /panel-bonchon -->
+
+    <!-- ── HAIER ──────────────────────────────────── -->
+    <div class="brand-detail-panel" id="panel-haier">
+
+      <div class="brand-detail-header">
+        <div class="brand-logo-lg" style="background:#005BAC;">H</div>
+        <div class="brand-header-text">
+          <h2>Haier Thailand</h2>
+          <p>Home Appliances · Electronics &nbsp;·&nbsp; <span class="chip">Facebook</span></p>
+        </div>
+        <div class="brand-header-actions">
+          <button class="btn btn-secondary" onclick="toast('Brand profile exported.', 'success')">Export</button>
+          <button class="btn btn-primary" onclick="openDrawer('edit')">Edit Brand</button>
+        </div>
+      </div>
+
+      <div class="stat-strip">
+        <div class="stat-cell"><div class="stat-val">5</div><div class="stat-lbl">Plans</div></div>
+        <div class="stat-cell"><div class="stat-val">74</div><div class="stat-lbl">AVG Score</div></div>
+        <div class="stat-cell"><div class="stat-val">88</div><div class="stat-lbl">Posts Tracked</div></div>
+        <div class="stat-cell"><div class="stat-val">28</div><div class="stat-lbl">Hashtags</div></div>
+      </div>
+
+      <div class="brand-section">
+        <div class="brand-section-title">Brand Voice</div>
+        <div class="brand-card">
+          <div class="tone-grid">
+            <div class="tone-card"><div class="tone-emoji">🏠</div><div class="tone-label">Homely</div><div class="tone-desc">Warm, family-focused</div></div>
+            <div class="tone-card"><div class="tone-emoji">🔬</div><div class="tone-label">Trusted</div><div class="tone-desc">Quality, reliability</div></div>
+            <div class="tone-card"><div class="tone-emoji">💡</div><div class="tone-label">Helpful</div><div class="tone-desc">Practical advice</div></div>
+            <div class="tone-card"><div class="tone-emoji">🤝</div><div class="tone-label">Caring</div><div class="tone-desc">Customer-first</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-section">
+        <div class="brand-section-title">Brand Colors</div>
+        <div class="brand-card">
+          <div class="color-row">
+            <div class="color-swatch"><div class="swatch-box" style="background:#005BAC;"></div><div class="swatch-label">Haier Blue</div><div class="swatch-hex">#005BAC</div></div>
+            <div class="color-swatch"><div class="swatch-box" style="background:#FFFFFF;border:1px solid var(--border-default);"></div><div class="swatch-label">White</div><div class="swatch-hex">#FFFFFF</div></div>
+            <div class="color-swatch"><div class="swatch-box" style="background:#F5F5F5;border:1px solid var(--border-default);"></div><div class="swatch-label">Light Grey</div><div class="swatch-hex">#F5F5F5</div></div>
+            <div class="color-swatch"><div class="swatch-box" style="background:#00AEEF;"></div><div class="swatch-label">Sky Blue</div><div class="swatch-hex">#00AEEF</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-section">
+        <div class="brand-section-title">Typography</div>
+        <div class="brand-card">
+          <div class="type-row">
+            <div class="type-card"><div class="type-specimen">คุณภาพที่วางใจได้</div><div class="type-meta">Noto Sans Thai — All copy</div></div>
+            <div class="type-card"><div class="type-specimen">Haier Inverter</div><div class="type-meta">Roboto — English specs</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-section">
+        <div class="brand-section-title">Hashtag Bank</div>
+        <div class="brand-card">
+          <div class="hashtag-section">
+            <span class="htag-pill">#Haier</span>
+            <span class="htag-pill">#HaierThailand</span>
+            <span class="htag-pill">#เครื่องใช้ไฟฟ้า</span>
+            <span class="htag-pill">#ประหยัดไฟ</span>
+            <span class="htag-pill">#แอร์อินเวอร์เตอร์</span>
+            <span class="htag-pill">#SmartHome</span>
+            <span class="htag-pill">#Inverter</span>
+            <span class="htag-pill">#เครื่องซักผ้า</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-section">
+        <div class="brand-section-title">Content Rules</div>
+        <div class="brand-card">
+          <div class="do-dont-grid">
+            <div class="dd-col do-col">
+              <div class="dd-header do">✓ Do</div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Lead with the family benefit, not the spec</span></div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Use simple, clear Thai — all age groups read this</span></div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Show real home contexts (kitchen, living room)</span></div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Highlight energy savings and cost benefits</span></div>
+            </div>
+            <div class="dd-col dont-col">
+              <div class="dd-header dont">✕ Don't</div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Don't use Gen Z slang — not on-brand for Haier</span></div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Avoid jargon-heavy tech specs in the caption</span></div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Don't skip a soft CTA (แวะดูได้ที่…)</span></div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Never ignore comment replies — trust is built there</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-section">
+        <div class="brand-section-title">Sample Captions</div>
+        <div class="caption-sample">
+          บ้านเย็นสบาย ค่าไฟไม่หนักใจ ❄️ แอร์อินเวอร์เตอร์ Haier ประหยัดไฟสูงสุด 60% เหมาะกับทุกครอบครัว ดูรายละเอียดได้ที่ลิงก์ #HaierThailand #ประหยัดไฟ
+          <div class="caption-meta"><span class="chip">Facebook</span><span class="score-pill st">76</span></div>
+        </div>
+        <div class="caption-sample">
+          🏠 บ้านสะอาด ชีวิตดี เครื่องซักผ้า Haier Front Load ซักสะอาด ดูแลผ้าได้ยาวนานขึ้น สนใจทักมาสอบถามได้เลยนะคะ #Haier #เครื่องซักผ้า
+          <div class="caption-meta"><span class="chip">Facebook</span><span class="score-pill st">71</span></div>
+        </div>
+      </div>
+
+    </div><!-- /panel-haier -->
+
+    <!-- ── CENTRAL ──────────────────────────────── -->
+    <div class="brand-detail-panel" id="panel-central">
+
+      <div class="brand-detail-header">
+        <div class="brand-logo-lg" style="background:#1A1A1A;">C</div>
+        <div class="brand-header-text">
+          <h2>Central Retail</h2>
+          <p>Retail · Lifestyle &nbsp;·&nbsp; <span class="chip">TikTok</span> <span class="chip">Instagram</span></p>
+        </div>
+        <div class="brand-header-actions">
+          <button class="btn btn-secondary" onclick="toast('Brand profile exported.', 'success')">Export</button>
+          <button class="btn btn-primary" onclick="openDrawer('edit')">Edit Brand</button>
+        </div>
+      </div>
+
+      <div class="stat-strip">
+        <div class="stat-cell"><div class="stat-val">6</div><div class="stat-lbl">Plans</div></div>
+        <div class="stat-cell"><div class="stat-val">72</div><div class="stat-lbl">AVG Score</div></div>
+        <div class="stat-cell"><div class="stat-val">204</div><div class="stat-lbl">Posts Tracked</div></div>
+        <div class="stat-cell"><div class="stat-val">55</div><div class="stat-lbl">Hashtags</div></div>
+      </div>
+
+      <div class="brand-section">
+        <div class="brand-section-title">Brand Voice</div>
+        <div class="brand-card">
+          <div class="tone-grid">
+            <div class="tone-card"><div class="tone-emoji">✨</div><div class="tone-label">Aspirational</div><div class="tone-desc">Lifestyle, elevation</div></div>
+            <div class="tone-card"><div class="tone-emoji">🛍️</div><div class="tone-label">Exciting</div><div class="tone-desc">Shopping joy</div></div>
+            <div class="tone-card"><div class="tone-emoji">🌟</div><div class="tone-label">Premium</div><div class="tone-desc">Quality curation</div></div>
+            <div class="tone-card"><div class="tone-emoji">💬</div><div class="tone-label">Social</div><div class="tone-desc">Community-driven</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-section">
+        <div class="brand-section-title">Brand Colors</div>
+        <div class="brand-card">
+          <div class="color-row">
+            <div class="color-swatch"><div class="swatch-box" style="background:#1A1A1A;"></div><div class="swatch-label">Jet Black</div><div class="swatch-hex">#1A1A1A</div></div>
+            <div class="color-swatch"><div class="swatch-box" style="background:#C8A96E;"></div><div class="swatch-label">Central Gold</div><div class="swatch-hex">#C8A96E</div></div>
+            <div class="color-swatch"><div class="swatch-box" style="background:#FFFFFF;border:1px solid var(--border-default);"></div><div class="swatch-label">White</div><div class="swatch-hex">#FFFFFF</div></div>
+            <div class="color-swatch"><div class="swatch-box" style="background:#F8F4EE;border:1px solid var(--border-default);"></div><div class="swatch-label">Warm Cream</div><div class="swatch-hex">#F8F4EE</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-section">
+        <div class="brand-section-title">Typography</div>
+        <div class="brand-card">
+          <div class="type-row">
+            <div class="type-card"><div class="type-specimen">Life Elevated</div><div class="type-meta">Playfair Display — Hero</div></div>
+            <div class="type-card"><div class="type-specimen">สไตล์ที่ใช่</div><div class="type-meta">Sarabun — Thai body copy</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-section">
+        <div class="brand-section-title">Hashtag Bank</div>
+        <div class="brand-card">
+          <div class="hashtag-section">
+            <span class="htag-pill">#CentralRetail</span>
+            <span class="htag-pill">#Central</span>
+            <span class="htag-pill">#ShoppingThailand</span>
+            <span class="htag-pill">#LifestyleThailand</span>
+            <span class="htag-pill">#TikTokShop</span>
+            <span class="htag-pill">#สายช้อป</span>
+            <span class="htag-pill">#แฟชั่นไทย</span>
+            <span class="htag-pill">#ของดีราคาดี</span>
+            <span class="htag-pill">#CentralWorld</span>
+            <span class="htag-pill">#SaleSeason</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-section">
+        <div class="brand-section-title">Content Rules</div>
+        <div class="brand-card">
+          <div class="do-dont-grid">
+            <div class="dd-col do-col">
+              <div class="dd-header do">✓ Do</div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Open with a hook that creates FOMO</span></div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Mix Thai and English naturally — code-switching is cool here</span></div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Show product in lifestyle context, not on white background</span></div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Use trending TikTok audio for video content</span></div>
+            </div>
+            <div class="dd-col dont-col">
+              <div class="dd-header dont">✕ Don't</div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Don't use formal language — Central speaks to aspirational shoppers</span></div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Don't lead with discount — lifestyle first, price follows</span></div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Don't post static images on TikTok — always video or carousel</span></div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Never use stock photography — authenticity matters</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-section">
+        <div class="brand-section-title">Sample Captions</div>
+        <div class="caption-sample">
+          สไตล์ที่ใช่ ราคาที่โอเค ✨ New arrivals ที่ Central ทุกสัปดาห์ — ช้อปออนไลน์ได้เลยที่ลิงก์ใน bio 🛍️ #CentralRetail #สายช้อป #NewArrival
+          <div class="caption-meta"><span class="chip">Instagram</span><span class="score-pill st">74</span></div>
+        </div>
+        <div class="caption-sample">
+          POV: คุณเดินเข้า Central แล้วออกมาพร้อมทุกอย่างที่ใจอยาก 😂🛒 ไม่มีใครเข้าไปแล้วออกมามือเปล่า #Central #TikTokThailand #สายช้อป
+          <div class="caption-meta"><span class="chip">TikTok</span><span class="score-pill st">68</span></div>
+        </div>
+      </div>
+
+    </div><!-- /panel-central -->
+
+    <!-- ── MK RESTAURANT ──────────────────────────── -->
+    <div class="brand-detail-panel" id="panel-mk">
+
+      <div class="brand-detail-header">
+        <div class="brand-logo-lg" style="background:#C8102E;">M</div>
+        <div class="brand-header-text">
+          <h2>MK Restaurant</h2>
+          <p>Shabu / Hot Pot · Casual Dining &nbsp;·&nbsp; <span class="chip">Instagram</span> <span class="chip">Facebook</span></p>
+        </div>
+        <div class="brand-header-actions">
+          <button class="btn btn-secondary" onclick="toast('Brand profile exported.', 'success')">Export</button>
+          <button class="btn btn-primary" onclick="openDrawer('edit')">Edit Brand</button>
+        </div>
+      </div>
+
+      <div class="stat-strip">
+        <div class="stat-cell"><div class="stat-val">4</div><div class="stat-lbl">Plans</div></div>
+        <div class="stat-cell"><div class="stat-val">69</div><div class="stat-lbl">AVG Score</div></div>
+        <div class="stat-cell"><div class="stat-val">72</div><div class="stat-lbl">Posts Tracked</div></div>
+        <div class="stat-cell"><div class="stat-val">31</div><div class="stat-lbl">Hashtags</div></div>
+      </div>
+
+      <div class="brand-section">
+        <div class="brand-section-title">Brand Voice</div>
+        <div class="brand-card">
+          <div class="tone-grid">
+            <div class="tone-card"><div class="tone-emoji">👨‍👩‍👧</div><div class="tone-label">Family</div><div class="tone-desc">Togetherness, warmth</div></div>
+            <div class="tone-card"><div class="tone-emoji">😋</div><div class="tone-label">Satisfying</div><div class="tone-desc">Comfort food feeling</div></div>
+            <div class="tone-card"><div class="tone-emoji">🎉</div><div class="tone-label">Celebratory</div><div class="tone-desc">Special occasions</div></div>
+            <div class="tone-card"><div class="tone-emoji">❤️</div><div class="tone-label">Heartfelt</div><div class="tone-desc">Emotional connection</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-section">
+        <div class="brand-section-title">Brand Colors</div>
+        <div class="brand-card">
+          <div class="color-row">
+            <div class="color-swatch"><div class="swatch-box" style="background:#C8102E;"></div><div class="swatch-label">MK Red</div><div class="swatch-hex">#C8102E</div></div>
+            <div class="color-swatch"><div class="swatch-box" style="background:#F5A623;"></div><div class="swatch-label">Warm Orange</div><div class="swatch-hex">#F5A623</div></div>
+            <div class="color-swatch"><div class="swatch-box" style="background:#FFFFFF;border:1px solid var(--border-default);"></div><div class="swatch-label">White</div><div class="swatch-hex">#FFFFFF</div></div>
+            <div class="color-swatch"><div class="swatch-box" style="background:#3D2B1F;"></div><div class="swatch-label">Deep Brown</div><div class="swatch-hex">#3D2B1F</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-section">
+        <div class="brand-section-title">Typography</div>
+        <div class="brand-card">
+          <div class="type-row">
+            <div class="type-card"><div class="type-specimen">อร่อยทุกวัน ทุกมื้อ</div><div class="type-meta">Prompt — Thai headlines</div></div>
+            <div class="type-card"><div class="type-specimen">MK Restaurant</div><div class="type-meta">Open Sans — English / UI</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-section">
+        <div class="brand-section-title">Hashtag Bank</div>
+        <div class="brand-card">
+          <div class="hashtag-section">
+            <span class="htag-pill">#MKRestaurant</span>
+            <span class="htag-pill">#MKสุกี้</span>
+            <span class="htag-pill">#สุกี้</span>
+            <span class="htag-pill">#ชาบู</span>
+            <span class="htag-pill">#HotPot</span>
+            <span class="htag-pill">#ครอบครัว</span>
+            <span class="htag-pill">#กินข้าวด้วยกัน</span>
+            <span class="htag-pill">#อาหารไทย</span>
+            <span class="htag-pill">#WeekendFamily</span>
+            <span class="htag-pill">#DateNight</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-section">
+        <div class="brand-section-title">Content Rules</div>
+        <div class="brand-card">
+          <div class="do-dont-grid">
+            <div class="dd-col do-col">
+              <div class="dd-header do">✓ Do</div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Lead with the "together" moment — food is secondary</span></div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Reference mealtimes and family gatherings explicitly</span></div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Include warmth language: อบอุ่น, ประทับใจ, ครอบครัว</span></div>
+              <div class="dd-item"><div class="dd-dot"></div><span>CTA should invite action: จองโต๊ะเลย, มาพร้อมกัน</span></div>
+            </div>
+            <div class="dd-col dont-col">
+              <div class="dd-header dont">✕ Don't</div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Don't focus on individual portions — MK is a sharing experience</span></div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Avoid overly trendy language — MK's audience spans all ages</span></div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Don't ignore older demographics in caption tone</span></div>
+              <div class="dd-item"><div class="dd-dot"></div><span>Never skip a family or gathering context</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-section">
+        <div class="brand-section-title">Sample Captions</div>
+        <div class="caption-sample">
+          มื้อนี้ทานพร้อมกันนะ 🍲❤️ MK สุกี้ — อร่อยทุกคำ อบอุ่นทุกมื้อ จองโต๊ะได้เลยที่ลิงก์ด้านล่าง #MKRestaurant #สุกี้ #ครอบครัว
+          <div class="caption-meta"><span class="chip">Instagram</span><span class="score-pill st">72</span></div>
+        </div>
+        <div class="caption-sample">
+          วันหยุดนี้ชวนครอบครัวมากิน MK กันนะ 👨‍👩‍👧‍👦 สุกี้กำลังดี อิ่มอร่อย อบอุ่นทุกมื้อ #MKสุกี้ #กินข้าวด้วยกัน #WeekendFamily
+          <div class="caption-meta"><span class="chip">Facebook</span><span class="score-pill av">66</span></div>
+        </div>
+      </div>
+
+    </div><!-- /panel-mk -->
+
+  </div><!-- /library-shell -->
+
+</div>
+</main>
+</div>
+
+<!-- ══ Brand Drawer ═══════════════════════════════════ -->
+<div class="brand-drawer-overlay" id="brand-drawer">
+  <div class="drawer-backdrop" onclick="closeDrawer()"></div>
+  <div class="drawer-panel">
+
+    <!-- Header -->
+    <div class="drawer-header">
+      <h3 id="drawer-title">Add New Brand</h3>
+      <button class="drawer-close" onclick="closeDrawer()">×</button>
+    </div>
+
+    <!-- Step progress -->
+    <div class="drawer-steps-bar">
+      <div class="drawer-step-dot active" id="sdot-1">1</div>
+      <div class="drawer-step-line" id="sline-1"></div>
+      <div class="drawer-step-dot" id="sdot-2">2</div>
+      <div class="drawer-step-line" id="sline-2"></div>
+      <div class="drawer-step-dot" id="sdot-3">3</div>
+      <div class="drawer-steps-label" id="step-label"><strong>Brand Basics</strong> — Name, industry, platforms</div>
+    </div>
+
+    <!-- Content -->
+    <div class="drawer-content">
+
+      <!-- ── Step 1: Brand Basics ──────────────────── -->
+      <div class="drawer-step-panel active" id="dstep-1">
+
+        <div class="drawer-row">
+          <div class="drawer-field">
+            <label class="drawer-label">Brand Name</label>
+            <input class="drawer-input" type="text" id="d-name" placeholder="e.g. Bonchon Thailand">
+          </div>
+          <div class="drawer-field">
+            <label class="drawer-label">Industry / Category</label>
+            <select class="drawer-select" id="d-industry">
+              <option value="">Select…</option>
+              <option>QSR / Food &amp; Beverage</option>
+              <option>Electronics &amp; Appliances</option>
+              <option>Retail &amp; Fashion</option>
+              <option>Healthcare &amp; Beauty</option>
+              <option>Finance &amp; Banking</option>
+              <option>Automotive</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="drawer-field">
+          <label class="drawer-label">Managed Platforms</label>
+          <div class="platform-check-row">
+            <div class="platform-check" onclick="togglePlatform(this)">Facebook</div>
+            <div class="platform-check" onclick="togglePlatform(this)">Instagram</div>
+            <div class="platform-check" onclick="togglePlatform(this)">TikTok</div>
+            <div class="platform-check" onclick="togglePlatform(this)">Twitter / X</div>
+            <div class="platform-check" onclick="togglePlatform(this)">YouTube</div>
+            <div class="platform-check" onclick="togglePlatform(this)">LINE OA</div>
+          </div>
+        </div>
+
+        <div class="drawer-row">
+          <div class="drawer-field">
+            <label class="drawer-label">Logo Initial (1 character)</label>
+            <input class="drawer-input" type="text" id="d-initial" maxlength="1" placeholder="B" style="text-align:center;font-size:20px;font-weight:800;height:52px">
+          </div>
+          <div class="drawer-field">
+            <label class="drawer-label">Logo Color</label>
+            <div class="color-picker-row" id="logo-color-picker">
+              <div class="logo-color-swatch" style="background:#E8342A;" onclick="pickLogoColor(this,'#E8342A')"></div>
+              <div class="logo-color-swatch" style="background:#005BAC;" onclick="pickLogoColor(this,'#005BAC')"></div>
+              <div class="logo-color-swatch" style="background:#C8102E;" onclick="pickLogoColor(this,'#C8102E')"></div>
+              <div class="logo-color-swatch" style="background:#1A1A1A;" onclick="pickLogoColor(this,'#1A1A1A')"></div>
+              <div class="logo-color-swatch" style="background:#7B2D8B;" onclick="pickLogoColor(this,'#7B2D8B')"></div>
+              <div class="logo-color-swatch" style="background:#00C7A8;" onclick="pickLogoColor(this,'#00C7A8')"></div>
+              <div class="logo-color-swatch" style="background:#F5A623;" onclick="pickLogoColor(this,'#F5A623')"></div>
+              <div class="logo-color-swatch" style="background:#2563EB;" onclick="pickLogoColor(this,'#2563EB')"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="drawer-field">
+          <label class="drawer-label">Brief Description</label>
+          <textarea class="drawer-textarea" id="d-desc" rows="2" placeholder="e.g. Korean fried chicken chain — casual dining, youth-focused, high energy"></textarea>
+        </div>
+
+      </div><!-- /dstep-1 -->
+
+      <!-- ── Step 2: Voice & Colors ─────────────────── -->
+      <div class="drawer-step-panel" id="dstep-2">
+
+        <div class="drawer-field">
+          <label class="drawer-label">Brand Voice — Select up to 4 tones</label>
+          <div class="tone-picker-grid">
+            <div class="tone-pick-card" onclick="toggleTone(this)"><div class="pick-emoji">🔥</div><div class="pick-label">Bold</div></div>
+            <div class="tone-pick-card" onclick="toggleTone(this)"><div class="pick-emoji">😄</div><div class="pick-label">Playful</div></div>
+            <div class="tone-pick-card" onclick="toggleTone(this)"><div class="pick-emoji">🇹🇭</div><div class="pick-label">Local</div></div>
+            <div class="tone-pick-card" onclick="toggleTone(this)"><div class="pick-emoji">⚡</div><div class="pick-label">Energetic</div></div>
+            <div class="tone-pick-card" onclick="toggleTone(this)"><div class="pick-emoji">🏠</div><div class="pick-label">Homely</div></div>
+            <div class="tone-pick-card" onclick="toggleTone(this)"><div class="pick-emoji">✨</div><div class="pick-label">Aspirational</div></div>
+            <div class="tone-pick-card" onclick="toggleTone(this)"><div class="pick-emoji">🎉</div><div class="pick-label">Celebratory</div></div>
+            <div class="tone-pick-card" onclick="toggleTone(this)"><div class="pick-emoji">❤️</div><div class="pick-label">Heartfelt</div></div>
+            <div class="tone-pick-card" onclick="toggleTone(this)"><div class="pick-emoji">🔬</div><div class="pick-label">Trusted</div></div>
+            <div class="tone-pick-card" onclick="toggleTone(this)"><div class="pick-emoji">💡</div><div class="pick-label">Helpful</div></div>
+            <div class="tone-pick-card" onclick="toggleTone(this)"><div class="pick-emoji">🌟</div><div class="pick-label">Premium</div></div>
+            <div class="tone-pick-card" onclick="toggleTone(this)"><div class="pick-emoji">💬</div><div class="pick-label">Social</div></div>
+          </div>
+        </div>
+
+        <div class="drawer-field" style="margin-top:20px">
+          <label class="drawer-label">Brand Colors — up to 4</label>
+          <div id="color-fields">
+            <div class="color-field-row">
+              <div class="color-field-preview" id="cprev-0" style="background:#E8342A;"></div>
+              <div class="color-field-inputs">
+                <input class="drawer-input" type="text" placeholder="#HEX" value="#E8342A" style="flex:1;font-family:var(--font-mono);font-size:12px" oninput="updateColorPreview(this,0)">
+                <input class="drawer-input" type="text" placeholder="Color name" value="Brand Red" style="flex:2">
+              </div>
+            </div>
+            <div class="color-field-row">
+              <div class="color-field-preview" id="cprev-1" style="background:#FFFFFF;border:1px solid var(--border-default);"></div>
+              <div class="color-field-inputs">
+                <input class="drawer-input" type="text" placeholder="#HEX" value="#FFFFFF" style="flex:1;font-family:var(--font-mono);font-size:12px" oninput="updateColorPreview(this,1)">
+                <input class="drawer-input" type="text" placeholder="Color name" value="White" style="flex:2">
+              </div>
+            </div>
+            <div class="color-field-row">
+              <div class="color-field-preview" id="cprev-2" style="background:#1A1A1A;"></div>
+              <div class="color-field-inputs">
+                <input class="drawer-input" type="text" placeholder="#HEX" style="flex:1;font-family:var(--font-mono);font-size:12px" oninput="updateColorPreview(this,2)">
+                <input class="drawer-input" type="text" placeholder="Color name" style="flex:2">
+              </div>
+            </div>
+            <div class="color-field-row">
+              <div class="color-field-preview" id="cprev-3" style="background:var(--bg-elevated);"></div>
+              <div class="color-field-inputs">
+                <input class="drawer-input" type="text" placeholder="#HEX" style="flex:1;font-family:var(--font-mono);font-size:12px" oninput="updateColorPreview(this,3)">
+                <input class="drawer-input" type="text" placeholder="Color name" style="flex:2">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="drawer-row">
+          <div class="drawer-field">
+            <label class="drawer-label">Headline Font (Thai)</label>
+            <select class="drawer-select">
+              <option>Prompt</option>
+              <option>Noto Sans Thai</option>
+              <option>Sarabun</option>
+              <option>Kanit</option>
+              <option>Mitr</option>
+            </select>
+          </div>
+          <div class="drawer-field">
+            <label class="drawer-label">Body / English Font</label>
+            <select class="drawer-select">
+              <option>Kanit</option>
+              <option>Open Sans</option>
+              <option>Roboto</option>
+              <option>Noto Sans</option>
+              <option>Inter</option>
+            </select>
+          </div>
+        </div>
+
+      </div><!-- /dstep-2 -->
+
+      <!-- ── Step 3: Hashtags & Rules ──────────────── -->
+      <div class="drawer-step-panel" id="dstep-3">
+
+        <div class="drawer-field">
+          <label class="drawer-label">Hashtag Bank</label>
+          <textarea class="drawer-textarea" rows="4" placeholder="#BrandName, #CampaignTag, #ThaiHashtag, #EnglishTag…" style="min-height:88px"></textarea>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:5px">Separate tags with commas or spaces. Include brand, product, and audience hashtags.</div>
+        </div>
+
+        <div class="drawer-field">
+          <label class="drawer-label">Content Do's</label>
+          <textarea class="drawer-textarea" rows="4" placeholder="— Lead with a strong hook&#10;— Use Thai slang that resonates&#10;— Include a clear CTA&#10;— Reference real moments and occasions" style="min-height:100px"></textarea>
+        </div>
+
+        <div class="drawer-field">
+          <label class="drawer-label">Content Don'ts</label>
+          <textarea class="drawer-textarea" rows="4" placeholder="— Don't use overly formal language&#10;— Avoid unverified superlative claims&#10;— Don't skip hashtags&#10;— Never post without at least one emoji" style="min-height:100px"></textarea>
+        </div>
+
+        <div class="drawer-field" style="background:var(--teal-m);border-radius:var(--r-md);padding:14px 16px">
+          <div style="font-size:13px;font-weight:600;color:var(--teal);margin-bottom:4px">Ready to save</div>
+          <div style="font-size:12px;color:var(--text-secondary);line-height:1.5">Brand profile will appear in the library. You can edit any section at any time from the brand detail view.</div>
+        </div>
+
+      </div><!-- /dstep-3 -->
+
+    </div><!-- /drawer-content -->
+
+    <!-- Footer -->
+    <div class="drawer-footer">
+      <div class="drawer-footer-info" id="drawer-step-info">Step 1 of 3</div>
+      <button class="btn btn-secondary" id="drawer-back-btn" onclick="drawerBack()" style="display:none">Back</button>
+      <button class="btn btn-primary" id="drawer-next-btn" onclick="drawerNext()">Continue</button>
+    </div>
+
+  </div><!-- /drawer-panel -->
+</div><!-- /brand-drawer -->
+
+<script src="toast.js"></script>
+<script>
+function selectBrand(id, el) {
+  document.querySelectorAll('.brand-item').forEach(function(item) {
+    item.classList.remove('active');
+  });
+  el.classList.add('active');
+
+  document.querySelectorAll('.brand-detail-panel').forEach(function(panel) {
+    panel.classList.remove('active');
+  });
+  var target = document.getElementById('panel-' + id);
+  if (target) { target.classList.add('active'); }
+}
+
+function filterBrands(query) {
+  var q = query.toLowerCase();
+  document.querySelectorAll('.brand-item').forEach(function(item) {
+    var name = item.querySelector('.brand-item-name').textContent.toLowerCase();
+    item.style.display = name.includes(q) ? '' : 'none';
+  });
+}
+
+/* ── Drawer ─────────────────────────────────────── */
+var drawerStep = 1;
+var drawerMode = 'add';
+
+var STEP_LABELS = [
+  '',
+  'Brand Basics — Name, industry, platforms',
+  'Voice & Colors — Tones, palette, typography',
+  'Hashtags & Rules — Tags, Do\'s and Don\'ts'
+];
+
+var BONCHON_EDIT = {
+  name: 'Bonchon',
+  industry: 'QSR / Food & Beverage',
+  initial: 'B',
+  desc: 'Korean fried chicken chain — casual dining, youth-focused, high energy'
+};
+
+function openDrawer(mode) {
+  drawerMode = mode;
+  drawerStep = 1;
+
+  var titleEl = document.getElementById('drawer-title');
+  titleEl.textContent = mode === 'add' ? 'Add New Brand' : 'Edit Brand — Bonchon';
+
+  // Pre-fill edit mode
+  var nameEl = document.getElementById('d-name');
+  var initialEl = document.getElementById('d-initial');
+  var descEl = document.getElementById('d-desc');
+
+  if (mode === 'edit') {
+    nameEl.value = BONCHON_EDIT.name;
+    initialEl.value = BONCHON_EDIT.initial;
+    descEl.value = BONCHON_EDIT.desc;
+    // Pre-select Facebook + Instagram platforms
+    var checks = document.querySelectorAll('.platform-check');
+    checks.forEach(function(c) { c.classList.remove('on'); });
+    checks[0].classList.add('on'); // Facebook
+    checks[1].classList.add('on'); // Instagram
+    // Pre-select logo color
+    document.querySelectorAll('.logo-color-swatch')[0].classList.add('selected');
+    // Pre-select tones
+    document.querySelectorAll('.tone-pick-card').forEach(function(c) { c.classList.remove('selected'); });
+    var toneCards = document.querySelectorAll('.tone-pick-card');
+    toneCards[0].classList.add('selected'); // Bold
+    toneCards[1].classList.add('selected'); // Playful
+    toneCards[2].classList.add('selected'); // Local
+    toneCards[3].classList.add('selected'); // Energetic
+  } else {
+    nameEl.value = '';
+    initialEl.value = '';
+    descEl.value = '';
+    document.querySelectorAll('.platform-check').forEach(function(c) { c.classList.remove('on'); });
+    document.querySelectorAll('.logo-color-swatch').forEach(function(c) { c.classList.remove('selected'); });
+    document.querySelectorAll('.tone-pick-card').forEach(function(c) { c.classList.remove('selected'); });
+  }
+
+  updateDrawerUI();
+  document.getElementById('brand-drawer').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDrawer() {
+  document.getElementById('brand-drawer').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function updateDrawerUI() {
+  // Step panels
+  document.querySelectorAll('.drawer-step-panel').forEach(function(p, i) {
+    p.classList.toggle('active', i + 1 === drawerStep);
+  });
+  // Step dots
+  for (var i = 1; i <= 3; i++) {
+    var dot = document.getElementById('sdot-' + i);
+    dot.classList.remove('active', 'done');
+    if (i === drawerStep) { dot.classList.add('active'); }
+    else if (i < drawerStep) {
+      dot.classList.add('done');
+      dot.textContent = '✓';
+    } else {
+      dot.textContent = String(i);
+    }
+    var line = document.getElementById('sline-' + i);
+    if (line) { line.classList.toggle('done', i < drawerStep); }
+  }
+  // Labels
+  document.getElementById('step-label').textContent = 'Step ' + drawerStep + ' of 3 — ' + STEP_LABELS[drawerStep].split(' — ')[1];
+  document.getElementById('drawer-step-info').textContent = 'Step ' + drawerStep + ' of 3';
+  // Buttons
+  var backBtn = document.getElementById('drawer-back-btn');
+  var nextBtn = document.getElementById('drawer-next-btn');
+  backBtn.style.display = drawerStep > 1 ? '' : 'none';
+  nextBtn.textContent = drawerStep === 3
+    ? (drawerMode === 'add' ? 'Save Brand' : 'Save Changes')
+    : 'Continue';
+}
+
+function drawerNext() {
+  if (drawerStep < 3) {
+    drawerStep++;
+    updateDrawerUI();
+  } else {
+    closeDrawer();
+    var msg = drawerMode === 'add'
+      ? 'New brand added to your library.'
+      : 'Bonchon brand profile updated.';
+    toast(msg, 'success');
+  }
+}
+
+function drawerBack() {
+  if (drawerStep > 1) {
+    drawerStep--;
+    updateDrawerUI();
+  }
+}
+
+function togglePlatform(el) {
+  el.classList.toggle('on');
+}
+
+function pickLogoColor(el, hex) {
+  document.querySelectorAll('.logo-color-swatch').forEach(function(s) { s.classList.remove('selected'); });
+  el.classList.add('selected');
+}
+
+function toggleTone(el) {
+  var selected = document.querySelectorAll('.tone-pick-card.selected').length;
+  if (el.classList.contains('selected')) {
+    el.classList.remove('selected');
+  } else if (selected < 4) {
+    el.classList.add('selected');
+  } else {
+    toast('Max 4 tone attributes per brand.', 'warning', 2500);
+  }
+}
+
+function updateColorPreview(input, idx) {
+  var prev = document.getElementById('cprev-' + idx);
+  if (prev && /^#[0-9A-Fa-f]{6}$/.test(input.value)) {
+    prev.style.background = input.value;
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Content Tools — Panya</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+
+/* ── Tool shell ──────────────────────────────────── */
+.tools-shell {
+  display: flex; flex: 1; overflow: hidden;
+}
+
+/* ── Tool sidebar ────────────────────────────────── */
+.tool-sidebar {
+  width: 232px; min-width: 232px;
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border-default);
+  display: flex; flex-direction: column;
+  overflow-y: auto; padding: 20px 0;
+}
+.tool-sidebar-head {
+  padding: 0 16px 14px;
+  font-size: 11px; font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.tool-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 16px; cursor: pointer;
+  font-size: 13px; font-weight: 500; color: var(--text-secondary);
+  border-left: 3px solid transparent;
+  transition: all 100ms; user-select: none;
+}
+.tool-item:hover { color: var(--text-primary); background: var(--bg-elevated); }
+.tool-item.active {
+  color: var(--teal); font-weight: 600;
+  border-left-color: var(--teal);
+  background: rgba(0,199,168,0.05);
+}
+.tool-icon {
+  width: 28px; height: 28px; border-radius: var(--r-md);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+  background: var(--bg-elevated);
+}
+.tool-item.active .tool-icon { background: rgba(0,199,168,0.12); }
+.tool-badge {
+  margin-left: auto; font-size: 10px; font-weight: 700;
+  padding: 1px 6px; border-radius: var(--r-full);
+  background: var(--teal-m); color: var(--teal);
+}
+.tool-divider {
+  height: 1px; background: var(--border-subtle);
+  margin: 12px 16px;
+}
+.tool-section-label {
+  padding: 10px 16px 6px;
+  font-size: 10px; font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.07em;
+}
+
+/* ── Workspace ───────────────────────────────────── */
+.workspace {
+  flex: 1; overflow-y: auto;
+  display: flex; flex-direction: column;
+}
+.tool-panel { display: none; flex: 1; }
+.tool-panel.active { display: flex; flex-direction: column; }
+
+.workspace-head {
+  padding: 22px 36px 0;
+  border-bottom: 1px solid var(--border-default);
+  background: var(--bg-surface);
+  flex-shrink: 0;
+}
+.workspace-title {
+  font-size: 18px; font-weight: 700; color: var(--text-primary);
+  display: flex; align-items: center; gap: 8px; margin-bottom: 3px;
+}
+.workspace-sub { font-size: 13px; color: var(--text-secondary); margin-bottom: 14px; }
+.ai-badge {
+  font-size: 10px; font-weight: 700; padding: 2px 7px;
+  border-radius: var(--r-full);
+  background: linear-gradient(135deg, rgba(0,199,168,0.15), rgba(167,139,250,0.15));
+  color: var(--teal); border: 1px solid rgba(0,199,168,0.25);
+}
+
+/* ── Sub-tabs ────────────────────────────────────── */
+.subtab-bar {
+  display: flex; gap: 0;
+  background: var(--bg-surface);
+  padding: 0 36px;
+}
+.subtab {
+  padding: 11px 16px;
+  font-size: 13px; font-weight: 500; color: var(--text-secondary);
+  border: none; border-bottom: 2px solid transparent;
+  background: none; cursor: pointer;
+  font-family: var(--font-ui); transition: all 100ms;
+  margin-bottom: -1px;
+}
+.subtab:hover { color: var(--text-primary); }
+.subtab.active { color: var(--teal); font-weight: 600; border-bottom-color: var(--teal); }
+
+.subpanel { display: none; }
+.subpanel.active { display: block; }
+
+/* ── Workspace body ──────────────────────────────── */
+.workspace-body {
+  flex: 1; padding: 28px 36px;
+  display: flex; flex-direction: column; gap: 20px;
+}
+
+/* ── Inputs ──────────────────────────────────────── */
+.input-grid {
+  display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 10px; margin-bottom: 4px;
+}
+.field-label {
+  font-size: 11px; font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  margin-bottom: 5px;
+}
+select.tool-select, textarea.tool-textarea, input.tool-input {
+  width: 100%; padding: 9px 12px;
+  border: 1px solid var(--border-default); border-radius: var(--r-md);
+  font-family: var(--font-ui); font-size: 13px;
+  color: var(--text-primary); background: var(--bg-base);
+  outline: none; transition: border-color 150ms;
+}
+select.tool-select:focus,
+textarea.tool-textarea:focus,
+input.tool-input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-m); }
+textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+.generate-row { display: flex; align-items: center; gap: 10px; }
+.generate-row textarea { flex: 1; min-height: 72px; }
+.btn-generate {
+  padding: 12px 24px; border-radius: var(--r-md);
+  background: var(--teal); color: #fff;
+  font-family: var(--font-ui); font-size: 13px; font-weight: 700;
+  border: none; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  transition: opacity 120ms; white-space: nowrap; align-self: flex-end;
+}
+.btn-generate:hover { opacity: 0.88; }
+.btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-generate .spark { font-size: 18px; }
+
+/* ── Output cards ────────────────────────────────── */
+.output-section-label {
+  font-size: 12px; font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+}
+.output-section-label::after { content: ''; flex: 1; height: 1px; background: var(--border-subtle); }
+.output-cards { display: flex; flex-direction: column; gap: 12px; }
+.output-card {
+  background: var(--bg-surface); border: 1px solid var(--border-default);
+  border-radius: var(--r-lg); overflow: hidden; transition: border-color 150ms;
+}
+.output-card:hover { border-color: var(--border-strong); }
+.output-card-head {
+  padding: 10px 14px; background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex; align-items: center; gap: 8px; font-size: 12px;
+}
+.option-label { font-weight: 700; color: var(--text-muted); min-width: 56px; }
+.output-card-body { padding: 14px 16px; font-size: 14px; line-height: 1.7; color: var(--text-primary); }
+.output-card-foot {
+  padding: 10px 14px; border-top: 1px solid var(--border-subtle);
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.breakdown-chips { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
+.bchip {
+  font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: var(--r-full);
+  background: var(--bg-elevated); color: var(--text-secondary);
+}
+.bchip.good { background: rgba(0,199,168,0.10); color: var(--teal); }
+.bchip.warn { background: rgba(245,158,11,0.10); color: var(--amber); }
+.bchip.fail { background: rgba(239,68,68,0.10); color: var(--red); }
+
+/* ── Rewrite goal toggles ────────────────────────── */
+.goal-group { display: flex; gap: 8px; flex-wrap: wrap; }
+.goal-btn {
+  padding: 6px 14px; border-radius: var(--r-full);
+  border: 1px solid var(--border-default);
+  background: var(--bg-surface); color: var(--text-secondary);
+  font-size: 12px; font-weight: 500; font-family: var(--font-ui);
+  cursor: pointer; transition: all 100ms;
+}
+.goal-btn:hover { border-color: var(--teal); color: var(--teal); }
+.goal-btn.active { background: var(--teal-m); border-color: var(--teal); color: var(--teal); font-weight: 600; }
+
+/* ── Hook scorer ─────────────────────────────────── */
+.score-result {
+  background: var(--bg-surface); border: 1px solid var(--border-default);
+  border-radius: var(--r-lg); overflow: hidden;
+}
+.score-hero {
+  padding: 28px; display: flex; align-items: center; gap: 28px;
+  border-bottom: 1px solid var(--border-default);
+}
+.score-ring {
+  width: 80px; height: 80px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; flex-direction: column;
+  border: 4px solid var(--teal);
+}
+.score-ring-num { font-family: var(--font-mono); font-size: 24px; font-weight: 700; line-height: 1; }
+.score-ring-label { font-size: 9px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em; }
+.score-breakdown { display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.score-row { display: flex; align-items: center; gap: 10px; }
+.score-row-label { font-size: 12px; color: var(--text-secondary); width: 130px; flex-shrink: 0; }
+.score-bar-wrap { flex: 1; height: 6px; background: var(--bg-elevated); border-radius: var(--r-full); overflow: hidden; }
+.score-bar { height: 100%; border-radius: var(--r-full); }
+.score-row-val { font-family: var(--font-mono); font-size: 12px; font-weight: 700; min-width: 28px; text-align: right; }
+.score-feedback { padding: 18px 24px; display: flex; flex-direction: column; gap: 8px; }
+.fb-point { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+.fb-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+
+/* ── Policy Check ────────────────────────────────── */
+.policy-result {
+  background: var(--bg-surface); border: 1px solid var(--border-default);
+  border-radius: var(--r-lg); overflow: hidden;
+}
+.policy-summary {
+  padding: 18px 24px;
+  display: flex; align-items: center; gap: 16px;
+  border-bottom: 1px solid var(--border-default);
+  background: rgba(0,199,168,0.04);
+}
+.policy-summary-icon {
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.policy-summary-icon.pass   { background: rgba(0,199,168,0.12); }
+.policy-summary-icon.warn   { background: rgba(245,158,11,0.12); }
+.policy-summary-meta { flex: 1; }
+.policy-summary-title { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+.policy-summary-sub   { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+.policy-checks { padding: 8px 0; }
+.policy-check-row {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 14px 24px; border-bottom: 1px solid var(--border-subtle);
+}
+.policy-check-row:last-child { border-bottom: none; }
+.policy-check-icon {
+  width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800; flex-shrink: 0; margin-top: 1px;
+}
+.policy-check-icon.pass { background: rgba(0,199,168,0.12); color: var(--teal); }
+.policy-check-icon.warn { background: rgba(245,158,11,0.12); color: var(--amber); }
+.policy-check-icon.fail { background: rgba(239,68,68,0.10); color: var(--red); }
+.policy-check-body { flex: 1; }
+.policy-check-title { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+.policy-check-desc  { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+.policy-check-fix   { font-size: 12px; color: var(--amber); margin-top: 4px; }
+
+/* ── Hashtag builder ─────────────────────────────── */
+.hashtag-output {
+  background: var(--bg-surface); border: 1px solid var(--border-default);
+  border-radius: var(--r-lg); overflow: hidden;
+}
+.hashtag-set { padding: 16px 20px; border-bottom: 1px solid var(--border-subtle); }
+.hashtag-set:last-child { border-bottom: none; }
+.hashtag-set-title {
+  font-size: 11px; font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px;
+}
+.hashtag-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.htag {
+  font-size: 12px; font-weight: 500; padding: 3px 10px; border-radius: var(--r-full);
+  background: var(--bg-elevated); color: var(--text-primary);
+  cursor: pointer; transition: all 120ms; border: 1px solid transparent; user-select: none;
+}
+.htag:hover { background: var(--teal-m); color: var(--teal); border-color: rgba(0,199,168,0.3); }
+.htag.selected { background: var(--teal-m); color: var(--teal); border-color: rgba(0,199,168,0.3); font-weight: 600; }
+.hashtag-footer {
+  padding: 12px 20px; background: var(--bg-elevated);
+  border-top: 1px solid var(--border-default);
+  display: flex; align-items: center; gap: 10px; font-size: 12px;
+}
+
+/* ── Idea spark ──────────────────────────────────── */
+.idea-spark-cards { display: flex; flex-direction: column; gap: 10px; }
+.spark-card {
+  background: var(--bg-surface); border: 1px solid var(--border-default);
+  border-radius: var(--r-lg); padding: 14px 16px;
+  display: flex; gap: 14px; align-items: flex-start;
+  cursor: pointer; transition: border-color 120ms;
+}
+.spark-card:hover { border-color: var(--teal); }
+.spark-num { font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--text-muted); min-width: 18px; margin-top: 2px; }
+.spark-body { flex: 1; }
+.spark-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+.spark-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+.spark-chips { display: flex; gap: 6px; margin-top: 8px; }
+
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ── Sidebar ──────────────────────────────────────── -->
+<aside class="sidebar">
+<div class="sidebar-inner">
+  <div class="logo">
+    <a href="dashboard.html" class="logo-link">
+      <span class="logo-text">Panya<span class="logo-dot">.</span></span>
+    </a>
+  </div>
+  <nav class="nav">
+    <a class="nav-item" href="dashboard.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      <span class="nav-label">Dashboard</span>
+    </a>
+    <a class="nav-item" href="plans.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span class="nav-label">Plans</span>
+      <span class="nav-badge">2</span>
+    </a>
+    <a class="nav-item active" href="content-tools.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <span class="nav-label">Content Tools</span>
+    </a>
+    <a class="nav-item" href="brand-library.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+      <span class="nav-label">Brand Library</span>
+    </a>
+    <a class="nav-item" href="insights.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span class="nav-label">Insights</span>
+    </a>
+    <a class="nav-item" href="ask-panya.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      <span class="nav-label">Ask Panya</span>
+    </a>
+    <div class="nav-divider"></div>
+    <a class="nav-item" href="admin.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span class="nav-label">Admin</span>
+      <span class="nav-badge red">1</span>
+    </a>
+  </nav>
+  <div class="sidebar-user">
+    <div class="user-row">
+      <div class="u-avatar">P</div>
+      <div style="flex:1;min-width:0">
+        <div class="u-email">por.zax@gmail.com</div>
+        <div class="u-role">Admin</div>
+      </div>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-muted);flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </div>
+</div>
+</aside>
+
+<!-- ── Content Tools Shell ───────────────────────── -->
+<div class="tools-shell">
+
+  <!-- Tool list sidebar -->
+  <div class="tool-sidebar">
+    <div class="tool-sidebar-head">AI Tools</div>
+
+    <div class="tool-item active" onclick="switchTool('caption')">
+      <div class="tool-icon">✦</div>
+      Caption Studio
+      <span class="tool-badge">New</span>
+    </div>
+    <div class="tool-item" onclick="switchTool('checker')">
+      <div class="tool-icon">◎</div>
+      Content Checker
+    </div>
+    <div class="tool-item" onclick="switchTool('hashtag')">
+      <div class="tool-icon">#</div>
+      Hashtag Builder
+    </div>
+    <div class="tool-item" onclick="switchTool('spark')">
+      <div class="tool-icon">⚡</div>
+      Idea Spark
+    </div>
+
+    <div class="tool-divider"></div>
+    <div class="tool-section-label">Refine</div>
+
+    <div class="tool-item" onclick="switchTool('text')">
+      <div class="tool-icon">✎</div>
+      Text Tools
+    </div>
+
+    <div class="tool-divider"></div>
+    <div class="tool-section-label">History</div>
+    <div style="padding:6px 16px;font-size:12px;color:var(--text-muted);line-height:1.6">
+      Bonchon IG caption<br>
+      <span style="color:var(--border-strong)">Today · 3 uses</span>
+    </div>
+    <div style="padding:4px 16px 0;font-size:12px;color:var(--text-muted);line-height:1.6">
+      Policy check · Haier<br>
+      <span style="color:var(--border-strong)">Yesterday · 1 use</span>
+    </div>
+  </div>
+
+  <!-- Workspace -->
+  <div class="workspace">
+
+    <!-- ══ CAPTION STUDIO ══════════════════════════ -->
+    <div class="tool-panel active" id="tool-caption">
+      <div class="workspace-head">
+        <div class="workspace-title">
+          Caption Studio
+          <span class="ai-badge">✦ AI</span>
+        </div>
+        <div class="workspace-sub">Generate new captions from scratch, or rewrite an existing one — Thai, English, or Thanglish.</div>
+        <div class="subtab-bar">
+          <button class="subtab active" onclick="switchSubtab('caption','generate',this)">Generate</button>
+          <button class="subtab" onclick="switchSubtab('caption','rewrite',this)">Rewrite</button>
+        </div>
+      </div>
+      <div class="workspace-body">
+
+        <!-- ── Generate sub-panel ─────────────────── -->
+        <div class="subpanel active" id="sub-caption-generate">
+          <div>
+            <div class="input-grid">
+              <div>
+                <div class="field-label">Brand</div>
+                <select class="tool-select">
+                  <option>Bonchon</option><option>Haier Thailand</option>
+                  <option>Central Retail</option><option>MK Restaurant</option>
+                </select>
+              </div>
+              <div>
+                <div class="field-label">Platform</div>
+                <select class="tool-select">
+                  <option>Instagram</option><option>Facebook</option><option>TikTok</option>
+                </select>
+              </div>
+              <div>
+                <div class="field-label">Pillar</div>
+                <select class="tool-select">
+                  <option>Product Highlight</option><option>Lifestyle / Mood</option>
+                  <option>UGC / Social Proof</option><option>Offer / Promotion</option>
+                  <option>Behind the Scenes</option>
+                </select>
+              </div>
+              <div>
+                <div class="field-label">Tone</div>
+                <select class="tool-select">
+                  <option>Fun &amp; Relatable</option><option>Aspirational</option>
+                  <option>Urgent / Promo</option><option>Heartfelt</option><option>Informative</option>
+                </select>
+              </div>
+            </div>
+            <div style="margin-top:10px">
+              <div class="field-label">Describe the content idea</div>
+              <div class="generate-row">
+                <textarea class="tool-textarea" id="caption-input">Close-up reel of Bonchon crispy wings being bitten into, ASMR audio, no voiceover. Target: Thai urban lunch crowd 18–28. Summer mood.</textarea>
+                <button class="btn-generate" id="gen-btn" onclick="runGenerate()">
+                  <span class="spark" id="gen-spark">✦</span>
+                  <span id="gen-label">Generate</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="output-section-label">Generated Captions</div>
+            <div class="output-cards">
+
+              <div class="output-card">
+                <div class="output-card-head">
+                  <span class="option-label">Option A</span>
+                  <span style="font-family:var(--font-mono);font-size:12px;font-weight:700;padding:2px 8px;border-radius:var(--r-full);background:rgba(0,199,168,0.10);color:var(--teal)">87</span>
+                  <span style="font-size:11px;color:var(--teal);font-weight:600">Strong</span>
+                  <div style="flex:1"></div>
+                  <button class="btn btn-sm btn-ghost" onclick="copyCaption(this)">Copy</button>
+                  <button class="btn btn-sm btn-secondary" style="font-size:11px" onclick="useInPlan()">Use in Plan</button>
+                </div>
+                <div class="output-card-body">
+                  ฟังเสียงความกรอบแบบนี้แล้วยังจะทน? 🍗
+                  Bonchon Crispy Wings — ทุกคำคือความสุข
+                  <span style="color:var(--text-secondary)">#BonchonThailand #CrispyWings #ฤดูร้อนนี้ต้องกิน</span>
+                </div>
+                <div class="output-card-foot">
+                  <div class="breakdown-chips">
+                    <span class="bchip good">Hook: Strong</span>
+                    <span class="bchip good">Tone: On-brand</span>
+                    <span class="bchip good">Thai-English mix</span>
+                    <span class="bchip">Emoji: Moderate</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="output-card">
+                <div class="output-card-head">
+                  <span class="option-label">Option B</span>
+                  <span style="font-family:var(--font-mono);font-size:12px;font-weight:700;padding:2px 8px;border-radius:var(--r-full);background:rgba(245,158,11,0.10);color:var(--amber)">79</span>
+                  <span style="font-size:11px;color:var(--amber);font-weight:600">Good</span>
+                  <div style="flex:1"></div>
+                  <button class="btn btn-sm btn-ghost" onclick="copyCaption(this)">Copy</button>
+                  <button class="btn btn-sm btn-secondary" style="font-size:11px" onclick="useInPlan()">Use in Plan</button>
+                </div>
+                <div class="output-card-body">
+                  อากาศแบบนี้ต้องกินแบบนี้ 🤤☀️
+                  Bonchon Crispy Wings + summer vibes = the only equation that matters
+                  <span style="color:var(--text-secondary)">Tag your lunch gang 👇 #BonchonTH #SummerCrunch</span>
+                </div>
+                <div class="output-card-foot">
+                  <div class="breakdown-chips">
+                    <span class="bchip good">Hook: Relatable</span>
+                    <span class="bchip good">CTA included</span>
+                    <span class="bchip warn">Caption: Slightly long</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="output-card">
+                <div class="output-card-head">
+                  <span class="option-label">Option C</span>
+                  <span style="font-family:var(--font-mono);font-size:12px;font-weight:700;padding:2px 8px;border-radius:var(--r-full);background:var(--bg-elevated);color:var(--text-secondary)">71</span>
+                  <span style="font-size:11px;color:var(--text-muted);font-weight:600">Average</span>
+                  <div style="flex:1"></div>
+                  <button class="btn btn-sm btn-ghost" onclick="copyCaption(this)">Copy</button>
+                  <button class="btn btn-sm btn-secondary" style="font-size:11px" onclick="useInPlan()">Use in Plan</button>
+                </div>
+                <div class="output-card-body">
+                  กรอบทุกคำ อร่อยทุกไซส์ 🍗
+                  Bonchon Wings วันนี้ที่สาขาใกล้บ้านคุณ — มาลองแล้วจะติดใจ
+                  <span style="color:var(--text-secondary)">#Bonchon #CrispyChicken #อาหารไทย</span>
+                </div>
+                <div class="output-card-foot">
+                  <div class="breakdown-chips">
+                    <span class="bchip warn">Hook: Generic</span>
+                    <span class="bchip warn">No CTA</span>
+                    <span class="bchip warn">Hashtags: Broad</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div><!-- /sub-caption-generate -->
+
+        <!-- ── Rewrite sub-panel ───────────────────── -->
+        <div class="subpanel" id="sub-caption-rewrite">
+          <div>
+            <div class="input-grid" style="grid-template-columns:1fr 1fr">
+              <div>
+                <div class="field-label">Brand</div>
+                <select class="tool-select">
+                  <option>Bonchon</option><option>Haier Thailand</option>
+                  <option>Central Retail</option><option>MK Restaurant</option>
+                </select>
+              </div>
+              <div>
+                <div class="field-label">Target Platform</div>
+                <select class="tool-select">
+                  <option>Instagram</option><option>Facebook</option><option>TikTok</option>
+                </select>
+              </div>
+            </div>
+            <div style="margin-top:12px">
+              <div class="field-label" style="margin-bottom:6px">Rewrite Goal</div>
+              <div class="goal-group">
+                <button class="goal-btn active" onclick="selectGoal(this)">Adapt for Platform</button>
+                <button class="goal-btn" onclick="selectGoal(this)">Change Tone</button>
+                <button class="goal-btn" onclick="selectGoal(this)">Add Strong CTA</button>
+                <button class="goal-btn" onclick="selectGoal(this)">Make Shorter</button>
+                <button class="goal-btn" onclick="selectGoal(this)">Improve Hook</button>
+              </div>
+            </div>
+            <div style="margin-top:12px">
+              <div class="field-label" style="margin-bottom:6px">Paste existing caption</div>
+              <div class="generate-row">
+                <textarea class="tool-textarea" style="min-height:90px">กรอบทุกคำ อร่อยทุกไซส์ 🍗 Bonchon Wings วันนี้ที่สาขาใกล้บ้านคุณ — มาลองแล้วจะติดใจ #Bonchon #CrispyChicken #อาหารไทย</textarea>
+                <button class="btn-generate" onclick="runRewrite()">
+                  <span class="spark">↺</span>
+                  <span>Rewrite</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="output-section-label">Rewrite Result</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+              <div class="output-card">
+                <div class="output-card-head" style="background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15)">
+                  <span style="font-size:12px;font-weight:700;color:var(--red)">Original · Score 71</span>
+                </div>
+                <div class="output-card-body" style="color:var(--text-secondary)">
+                  กรอบทุกคำ อร่อยทุกไซส์ 🍗 Bonchon Wings วันนี้ที่สาขาใกล้บ้านคุณ — มาลองแล้วจะติดใจ
+                  <span style="color:var(--text-muted)">#Bonchon #CrispyChicken #อาหารไทย</span>
+                </div>
+                <div class="output-card-foot">
+                  <div class="breakdown-chips">
+                    <span class="bchip warn">Hook: Generic</span>
+                    <span class="bchip warn">No CTA</span>
+                    <span class="bchip warn">Hashtags: Broad</span>
+                  </div>
+                </div>
+              </div>
+              <div class="output-card" style="border-color:rgba(0,199,168,0.30)">
+                <div class="output-card-head" style="background:rgba(0,199,168,0.05);border-color:rgba(0,199,168,0.20)">
+                  <span style="font-size:12px;font-weight:700;color:var(--teal)">Rewritten · Score 87</span>
+                  <div style="flex:1"></div>
+                  <button class="btn btn-sm btn-ghost" onclick="copyCaption(this)">Copy</button>
+                  <button class="btn btn-sm btn-secondary" style="font-size:11px" onclick="useInPlan()">Use in Plan</button>
+                </div>
+                <div class="output-card-body">
+                  ฟังเสียงความกรอบแบบนี้แล้วยังจะทน? 🍗
+                  Bonchon Wings — กรอบทุกคำ อร่อยทุกกัด
+                  <span style="color:var(--text-secondary)">ลองสั่งเลยที่สาขาใกล้บ้าน 👇 #BonchonThailand #CrispyWings #ไก่กรอบ</span>
+                </div>
+                <div class="output-card-foot">
+                  <div class="breakdown-chips">
+                    <span class="bchip good">Hook: Curiosity gap</span>
+                    <span class="bchip good">CTA added</span>
+                    <span class="bchip good">Hashtags: Niche</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div><!-- /sub-caption-rewrite -->
+
+      </div>
+    </div><!-- /tool-caption -->
+
+    <!-- ══ CONTENT CHECKER ══════════════════════════ -->
+    <div class="tool-panel" id="tool-checker">
+      <div class="workspace-head">
+        <div class="workspace-title">Content Checker <span class="ai-badge">✦ AI</span></div>
+        <div class="workspace-sub">Score your caption's hook and CTA, or run a full policy and brand-safety check before publishing.</div>
+        <div class="subtab-bar">
+          <button class="subtab active" onclick="switchSubtab('checker','hook',this)">Hook Score</button>
+          <button class="subtab" onclick="switchSubtab('checker','policy',this)">Policy Check</button>
+        </div>
+      </div>
+      <div class="workspace-body">
+
+        <!-- ── Hook Score sub-panel ───────────────── -->
+        <div class="subpanel active" id="sub-checker-hook">
+          <div>
+            <div class="field-label" style="margin-bottom:6px">Paste your caption or hook</div>
+            <div class="generate-row">
+              <textarea class="tool-textarea" style="min-height:90px">ฟังเสียงความกรอบแบบนี้แล้วยังจะทน? 🍗 Bonchon Crispy Wings — ทุกคำคือความสุข #BonchonThailand #CrispyWings</textarea>
+              <button class="btn-generate" onclick="runScore()">
+                <span class="spark">◎</span>
+                <span>Score It</span>
+              </button>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:10px">
+              <div style="flex:1">
+                <div class="field-label">Brand Context</div>
+                <select class="tool-select"><option>Bonchon — Fun, Crunchy, Relatable</option><option>Haier Thailand — Reliable, Modern</option></select>
+              </div>
+              <div style="flex:1">
+                <div class="field-label">Platform</div>
+                <select class="tool-select"><option>Instagram</option><option>Facebook</option><option>TikTok</option></select>
+              </div>
+            </div>
+          </div>
+
+          <div class="score-result">
+            <div class="score-hero">
+              <div class="score-ring">
+                <div class="score-ring-num">87</div>
+                <div class="score-ring-label">Score</div>
+              </div>
+              <div class="score-breakdown">
+                <div class="score-row">
+                  <span class="score-row-label">Hook Strength</span>
+                  <div class="score-bar-wrap"><div class="score-bar" style="width:92%;background:var(--teal)"></div></div>
+                  <span class="score-row-val" style="color:var(--teal)">92</span>
+                </div>
+                <div class="score-row">
+                  <span class="score-row-label">Brand Alignment</span>
+                  <div class="score-bar-wrap"><div class="score-bar" style="width:88%;background:var(--teal)"></div></div>
+                  <span class="score-row-val" style="color:var(--teal)">88</span>
+                </div>
+                <div class="score-row">
+                  <span class="score-row-label">Tone Match</span>
+                  <div class="score-bar-wrap"><div class="score-bar" style="width:85%;background:var(--teal)"></div></div>
+                  <span class="score-row-val" style="color:var(--teal)">85</span>
+                </div>
+                <div class="score-row">
+                  <span class="score-row-label">Hashtag Quality</span>
+                  <div class="score-bar-wrap"><div class="score-bar" style="width:74%;background:var(--amber)"></div></div>
+                  <span class="score-row-val" style="color:var(--amber)">74</span>
+                </div>
+                <div class="score-row">
+                  <span class="score-row-label">CTA Clarity</span>
+                  <div class="score-bar-wrap"><div class="score-bar" style="width:68%;background:var(--amber)"></div></div>
+                  <span class="score-row-val" style="color:var(--amber)">68</span>
+                </div>
+              </div>
+            </div>
+            <div class="score-feedback">
+              <div class="fb-point"><div class="fb-dot" style="background:var(--teal)"></div><span>Opening question is strong — Thai-language hooks perform 23% better with this audience than English-first openers.</span></div>
+              <div class="fb-point"><div class="fb-dot" style="background:var(--teal)"></div><span>Brand name appears naturally mid-caption — avoids feeling like an ad.</span></div>
+              <div class="fb-point"><div class="fb-dot" style="background:var(--amber)"></div><span>Hashtags are slightly generic — consider adding niche tags like #ASMRfood #ไก่ทอด to reach food-curious micro-audiences.</span></div>
+              <div class="fb-point"><div class="fb-dot" style="background:var(--amber)"></div><span>No clear CTA — adding "ลองได้เลย สาขาใกล้บ้าน" or a save/share prompt could lift engagement rate by ~12%.</span></div>
+            </div>
+          </div>
+        </div><!-- /sub-checker-hook -->
+
+        <!-- ── Policy Check sub-panel ─────────────── -->
+        <div class="subpanel" id="sub-checker-policy">
+          <div>
+            <div class="field-label" style="margin-bottom:6px">Paste caption to check</div>
+            <div class="generate-row">
+              <textarea class="tool-textarea" style="min-height:90px">กรอบทุกคำ อร่อยทุกกัด 🍗 Bonchon Wings — ดีที่สุดในไทย! มาลองสั่งตัวเองไปดิ สาขาใกล้บ้านคุณ #Bonchon #BestChickenThailand #อร่อยที่สุด</textarea>
+              <button class="btn-generate" onclick="runPolicy()">
+                <span class="spark">🛡</span>
+                <span>Check</span>
+              </button>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:10px">
+              <div style="flex:1">
+                <div class="field-label">Brand</div>
+                <select class="tool-select"><option>Bonchon</option><option>Haier Thailand</option><option>Central Retail</option><option>MK Restaurant</option></select>
+              </div>
+              <div style="flex:1">
+                <div class="field-label">Platform</div>
+                <select class="tool-select"><option>Instagram</option><option>Facebook</option><option>TikTok</option></select>
+              </div>
+            </div>
+          </div>
+
+          <div class="policy-result">
+            <div class="policy-summary">
+              <div class="policy-summary-icon warn">⚠</div>
+              <div class="policy-summary-meta">
+                <div class="policy-summary-title">1 Warning — Review before publishing</div>
+                <div class="policy-summary-sub">3 of 4 checks passed · 1 needs attention</div>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="toast('Policy report copied to clipboard.', 'info')">Export Report</button>
+            </div>
+            <div class="policy-checks">
+
+              <div class="policy-check-row">
+                <div class="policy-check-icon pass">✓</div>
+                <div class="policy-check-body">
+                  <div class="policy-check-title">Platform Guidelines (Instagram TOS)</div>
+                  <div class="policy-check-desc">No prohibited content detected. Caption does not violate Instagram's community standards on misleading promotions, inappropriate content, or spam.</div>
+                </div>
+              </div>
+
+              <div class="policy-check-row">
+                <div class="policy-check-icon warn">!</div>
+                <div class="policy-check-body">
+                  <div class="policy-check-title">Claims &amp; Accuracy</div>
+                  <div class="policy-check-desc">"ดีที่สุดในไทย" (Best in Thailand) is an unsubstantiated superlative claim. Thai Consumer Protection Act B.E. 2522 requires claims to be verifiable.</div>
+                  <div class="policy-check-fix">→ Suggested fix: replace with "ที่ทุกคนบอกต่อ" or "ที่ใครๆ ก็ชอบ" — preference-based language avoids the superlative issue.</div>
+                </div>
+              </div>
+
+              <div class="policy-check-row">
+                <div class="policy-check-icon pass">✓</div>
+                <div class="policy-check-body">
+                  <div class="policy-check-title">Brand Safety</div>
+                  <div class="policy-check-desc">No competitor mentions, no sensitive topics, no prohibited categories (alcohol, gambling, political). Caption is brand-safe.</div>
+                </div>
+              </div>
+
+              <div class="policy-check-row">
+                <div class="policy-check-icon pass">✓</div>
+                <div class="policy-check-body">
+                  <div class="policy-check-title">Brand Voice Compliance (Bonchon)</div>
+                  <div class="policy-check-desc">Tone matches Bonchon's defined voice: fun, punchy, Thanglish-friendly. Caption aligns with brand Do's and does not violate any Don'ts from the brand profile.</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div><!-- /sub-checker-policy -->
+
+      </div>
+    </div><!-- /tool-checker -->
+
+    <!-- ══ HASHTAG BUILDER ══════════════════════════ -->
+    <div class="tool-panel" id="tool-hashtag">
+      <div class="workspace-head">
+        <div class="workspace-title">Hashtag Builder <span class="ai-badge">✦ AI</span></div>
+        <div class="workspace-sub">Build optimised hashtag sets by brand, pillar, and audience. Click to select, then copy.</div>
+      </div>
+      <div class="workspace-body">
+        <div class="input-grid" style="grid-template-columns:1fr 1fr 1fr">
+          <div>
+            <div class="field-label">Brand</div>
+            <select class="tool-select"><option>Bonchon</option><option>Haier Thailand</option></select>
+          </div>
+          <div>
+            <div class="field-label">Content Theme</div>
+            <select class="tool-select"><option>Crispy Chicken / Wings</option><option>Summer Promotion</option><option>Lifestyle / Mood</option></select>
+          </div>
+          <div style="display:flex;align-items:flex-end">
+            <button class="btn btn-primary" style="width:100%" onclick="runHashtag()">✦ Build Set</button>
+          </div>
+        </div>
+
+        <div class="hashtag-output">
+          <div class="hashtag-set">
+            <div class="hashtag-set-title">Brand Core (always use)</div>
+            <div class="hashtag-pills">
+              <span class="htag selected">#BonchonThailand</span>
+              <span class="htag selected">#Bonchon</span>
+              <span class="htag selected">#BonchonTH</span>
+              <span class="htag selected">#ไก่ทอดบอนชอน</span>
+            </div>
+          </div>
+          <div class="hashtag-set">
+            <div class="hashtag-set-title">Product — Crispy Wings</div>
+            <div class="hashtag-pills">
+              <span class="htag selected">#CrispyWings</span>
+              <span class="htag selected">#ไก่ทอด</span>
+              <span class="htag">#FriedChicken</span>
+              <span class="htag selected">#ไก่กรอบ</span>
+              <span class="htag">#ChickenWings</span>
+              <span class="htag">#WingLovers</span>
+            </div>
+          </div>
+          <div class="hashtag-set">
+            <div class="hashtag-set-title">Audience — Thai Food Lovers</div>
+            <div class="hashtag-pills">
+              <span class="htag selected">#อาหารไทย</span>
+              <span class="htag selected">#กินอะไรดี</span>
+              <span class="htag">#ร้านอาหาร</span>
+              <span class="htag selected">#foodiethailand</span>
+              <span class="htag">#bangkokfood</span>
+              <span class="htag">#thaifoodies</span>
+              <span class="htag">#กินดีอยู่ดี</span>
+            </div>
+          </div>
+          <div class="hashtag-set">
+            <div class="hashtag-set-title">Trend — ASMR &amp; Reel Boosters</div>
+            <div class="hashtag-pills">
+              <span class="htag">#ASMRfood</span>
+              <span class="htag selected">#foodasmr</span>
+              <span class="htag">#crunchysounds</span>
+              <span class="htag selected">#reelsfood</span>
+              <span class="htag">#foodreel</span>
+            </div>
+          </div>
+          <div class="hashtag-footer">
+            <span id="htag-count" style="color:var(--text-secondary)">12 selected · Recommended: 10–15</span>
+            <div style="flex:1"></div>
+            <button class="btn btn-secondary btn-sm" onclick="selectAllTags()">Select All</button>
+            <button class="btn btn-primary btn-sm" onclick="copyHashtags()">Copy Selected</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ IDEA SPARK ═══════════════════════════════ -->
+    <div class="tool-panel" id="tool-spark">
+      <div class="workspace-head">
+        <div class="workspace-title">Idea Spark <span class="ai-badge">✦ AI</span></div>
+        <div class="workspace-sub">Describe a brief or theme — get 5 content ideas with formats and hooks, ready to drop into a plan.</div>
+      </div>
+      <div class="workspace-body">
+        <div>
+          <div class="input-grid" style="grid-template-columns:1fr 1fr">
+            <div><div class="field-label">Brand</div><select class="tool-select"><option>Bonchon</option><option>Haier Thailand</option></select></div>
+            <div><div class="field-label">Platform</div><select class="tool-select"><option>Instagram</option><option>Facebook</option><option>TikTok</option></select></div>
+          </div>
+          <div style="margin-top:10px">
+            <div class="field-label">Theme or brief excerpt</div>
+            <div class="generate-row">
+              <textarea class="tool-textarea">Summer campaign for Bonchon — want content that drives lunchtime visits from office workers, urban 18–28. Crispy Wings hero product. Tone: fun, Thanglish.</textarea>
+              <button class="btn-generate" onclick="runSpark()">
+                <span class="spark">⚡</span>
+                <span>Spark</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="output-section-label">5 Content Ideas</div>
+          <div class="idea-spark-cards">
+            <div class="spark-card">
+              <span class="spark-num">#1</span>
+              <div class="spark-body">
+                <div class="spark-title">The ASMR Wing Drop — satisfying crunch close-up</div>
+                <div class="spark-desc">Close-up slow-mo of a crispy wing being bitten. No voiceover, just sound. Trending ASMR format drives high watch-time on Reels.</div>
+                <div class="spark-chips"><span class="chip">Reel</span><span class="chip">Product Highlight</span><span class="chip">Score est. 87</span></div>
+              </div>
+              <button class="btn btn-sm btn-secondary" style="align-self:center;flex-shrink:0" onclick="useInPlan()">Add to Plan</button>
+            </div>
+            <div class="spark-card">
+              <span class="spark-num">#2</span>
+              <div class="spark-body">
+                <div class="spark-title">Lunch Break Series — "What are you eating?" POV</div>
+                <div class="spark-desc">Short Reel from the POV of someone unwrapping a Bonchon box at their desk. Relatable lunchtime moment. Ends with LINE OA CTA.</div>
+                <div class="spark-chips"><span class="chip">Reel</span><span class="chip">Lifestyle</span><span class="chip">Score est. 81</span></div>
+              </div>
+              <button class="btn btn-sm btn-secondary" style="align-self:center;flex-shrink:0" onclick="useInPlan()">Add to Plan</button>
+            </div>
+            <div class="spark-card">
+              <span class="spark-num">#3</span>
+              <div class="spark-body">
+                <div class="spark-title">Flavour Face-off — Soy Garlic vs Original</div>
+                <div class="spark-desc">Carousel inviting followers to pick their side. Last slide: poll sticker. High saves + shares potential.</div>
+                <div class="spark-chips"><span class="chip">Carousel</span><span class="chip">Engagement</span><span class="chip">Score est. 78</span></div>
+              </div>
+              <button class="btn btn-sm btn-secondary" style="align-self:center;flex-shrink:0" onclick="useInPlan()">Add to Plan</button>
+            </div>
+            <div class="spark-card">
+              <span class="spark-num">#4</span>
+              <div class="spark-body">
+                <div class="spark-title">11am Flash Story — Lunchtime deal countdown</div>
+                <div class="spark-desc">Story series live at 10:50am Mon–Fri. Countdown sticker to 11am deal. Creates urgency + daily habit loop. Boost recommended.</div>
+                <div class="spark-chips"><span class="chip">Story</span><span class="chip">Promotion</span><span class="chip">Score est. 74</span></div>
+              </div>
+              <button class="btn btn-sm btn-secondary" style="align-self:center;flex-shrink:0" onclick="useInPlan()">Add to Plan</button>
+            </div>
+            <div class="spark-card">
+              <span class="spark-num">#5</span>
+              <div class="spark-body">
+                <div class="spark-title">Customer Crunch Compilation — UGC reel</div>
+                <div class="spark-desc">Stitch 5–6 customer reaction videos from tagged posts. Quick cuts, upbeat audio. Builds social proof.</div>
+                <div class="spark-chips"><span class="chip">Reel</span><span class="chip">UGC</span><span class="chip">Score est. 72</span></div>
+              </div>
+              <button class="btn btn-sm btn-secondary" style="align-self:center;flex-shrink:0" onclick="useInPlan()">Add to Plan</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TEXT TOOLS ══════════════════════════════ -->
+    <div class="tool-panel" id="tool-text">
+      <div class="workspace-head">
+        <div class="workspace-title">Text Tools <span class="ai-badge">✦ AI</span></div>
+        <div class="workspace-sub">Polish Thai-English captions for natural Thanglish tone, or compress a full client brief into a shareable summary.</div>
+        <div class="subtab-bar">
+          <button class="subtab active" onclick="switchSubtab('text','polish',this)">Thai-English Polish</button>
+          <button class="subtab" onclick="switchSubtab('text','brief',this)">Brief Summarizer</button>
+        </div>
+      </div>
+      <div class="workspace-body">
+
+        <!-- ── Polish sub-panel ──────────────────── -->
+        <div class="subpanel active" id="sub-text-polish">
+          <div class="generate-row" style="align-items:flex-start">
+            <div style="flex:1">
+              <div class="field-label" style="margin-bottom:6px">Original Caption</div>
+              <textarea class="tool-textarea" style="min-height:100px">ไก่ทอดของ Bonchon กรอบมากๆ อร่อยมากๆ ทุกคนต้องลองกิน มาที่สาขาใกล้บ้านคุณได้เลย</textarea>
+            </div>
+            <button class="btn-generate" style="margin-top:22px" onclick="runPolish()">
+              <span class="spark">✎</span>
+              <span>Polish</span>
+            </button>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div class="output-card">
+              <div class="output-card-head" style="background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15)">
+                <span style="font-size:12px;font-weight:700;color:var(--red)">Before</span>
+              </div>
+              <div class="output-card-body" style="color:var(--text-secondary)">
+                ไก่ทอดของ Bonchon กรอบมากๆ อร่อยมากๆ ทุกคนต้องลองกิน มาที่สาขาใกล้บ้านคุณได้เลย
+              </div>
+              <div class="output-card-foot">
+                <div class="breakdown-chips">
+                  <span class="bchip warn">Repetitive มากๆ</span>
+                  <span class="bchip warn">No hook</span>
+                  <span class="bchip warn">Generic CTA</span>
+                </div>
+              </div>
+            </div>
+            <div class="output-card" style="border-color:rgba(0,199,168,0.30)">
+              <div class="output-card-head" style="background:rgba(0,199,168,0.05);border-color:rgba(0,199,168,0.20)">
+                <span style="font-size:12px;font-weight:700;color:var(--teal)">After — Polished</span>
+                <div style="flex:1"></div>
+                <button class="btn btn-sm btn-ghost" onclick="copyCaption(this)">Copy</button>
+              </div>
+              <div class="output-card-body">
+                กรอบแบบนี้… คิดไม่ออกว่าจะทนได้ยังไง 🍗
+                Bonchon Crispy Wings — ลองแล้วจะเข้าใจเอง
+                <span style="color:var(--text-secondary)">สาขาใกล้บ้านคุณ · Link in bio</span>
+              </div>
+              <div class="output-card-foot">
+                <div class="breakdown-chips">
+                  <span class="bchip good">Hook: Curiosity gap</span>
+                  <span class="bchip good">Thanglish natural</span>
+                  <span class="bchip good">CTA clear</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div><!-- /sub-text-polish -->
+
+        <!-- ── Brief Summarizer sub-panel ───────── -->
+        <div class="subpanel" id="sub-text-brief">
+          <div>
+            <div class="field-label" style="margin-bottom:6px">Paste full brief</div>
+            <div class="generate-row">
+              <textarea class="tool-textarea" style="min-height:120px">Bonchon Thailand is launching a summer campaign called "Summer Crunch — ฤดูร้อนนี้ต้องกรอบ". Hero products: Crispy Wings and Mango Bingsoo. Target: urban Thai 18–28. Goal: drive lunchtime in-store visits 11am–2pm. Tone: fun, Thanglish. Budget: ฿19,000 across 3 boosted posts. No heavy promo language. Mother's Day May 11 optional. No political/religious refs.</textarea>
+              <button class="btn-generate" onclick="runBrief()">
+                <span class="spark">≡</span>
+                <span>Summarise</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="output-card">
+            <div class="output-card-head">
+              <span style="font-size:13px;font-weight:700">Brief Summary · Bonchon Summer Campaign</span>
+              <div style="flex:1"></div>
+              <button class="btn btn-sm btn-ghost">Copy</button>
+              <button class="btn btn-sm btn-secondary">Save to Library</button>
+            </div>
+            <div style="padding:16px 20px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
+              <div style="display:flex;flex-direction:column;gap:4px">
+                <span style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">Campaign</span>
+                <span style="font-size:13px;font-weight:600">Summer Crunch — ฤดูร้อนนี้ต้องกรอบ</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:4px">
+                <span style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">Hero Products</span>
+                <span style="font-size:13px;font-weight:500">Crispy Wings · Mango Bingsoo (limited)</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:4px">
+                <span style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">Audience</span>
+                <span style="font-size:13px;font-weight:500">Urban Thai 18–28 · Korean culture affinity</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:4px">
+                <span style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">Primary Goal</span>
+                <span style="font-size:13px;font-weight:500">Drive in-store visits · Lunchtime 11am–2pm</span>
+              </div>
+              <div style="grid-column:1/-1;display:flex;flex-direction:column;gap:4px">
+                <span style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">Tone &amp; Guardrails</span>
+                <span style="font-size:13px;font-weight:500">Fun · Thanglish · No heavy promo · No political/religious refs · Mother's Day May 11 optional</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:4px">
+                <span style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">Boost Budget</span>
+                <span style="font-size:13px;font-weight:600;color:var(--teal)">฿19,000 · 3 posts</span>
+              </div>
+            </div>
+          </div>
+        </div><!-- /sub-text-brief -->
+
+      </div>
+    </div><!-- /tool-text -->
+
+  </div><!-- /workspace -->
+</div><!-- /tools-shell -->
+</div><!-- /app -->
+
+<script src="toast.js"></script>
+<script>
+var TOOL_NAMES = ['caption','checker','hashtag','spark','text'];
+
+function useInPlan() {
+  window.toast('Content saved to plan — redirecting…', 'success', 2500);
+  setTimeout(function() { window.location = 'plans.html'; }, 1500);
+}
+
+function switchTool(name) {
+  document.querySelectorAll('.tool-item').forEach(function(el, i) {
+    el.classList.toggle('active', TOOL_NAMES[i] === name);
+  });
+  document.querySelectorAll('.tool-panel').forEach(function(p) {
+    p.classList.toggle('active', p.id === 'tool-' + name);
+  });
+}
+
+function switchSubtab(tool, sub, btn) {
+  var panel = document.getElementById('tool-' + tool);
+  panel.querySelectorAll('.subtab').forEach(function(t) { t.classList.remove('active'); });
+  btn.classList.add('active');
+  panel.querySelectorAll('.subpanel').forEach(function(p) { p.classList.remove('active'); });
+  var target = panel.querySelector('#sub-' + tool + '-' + sub);
+  if (target) { target.classList.add('active'); }
+}
+
+function selectGoal(btn) {
+  btn.closest('.goal-group').querySelectorAll('.goal-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+}
+
+function runGenerate() {
+  var spark = document.getElementById('gen-spark');
+  var label = document.getElementById('gen-label');
+  var btn   = document.getElementById('gen-btn');
+  spark.textContent = '…';
+  label.textContent = 'Generating';
+  btn.disabled = true;
+  setTimeout(function() {
+    spark.textContent = '✦';
+    label.textContent = 'Generate';
+    btn.disabled = false;
+    toast('3 captions generated for Bonchon Instagram.', 'success');
+  }, 1200);
+}
+
+function runRewrite()  { toast('Caption rewritten — score improved 71 → 87.', 'success'); }
+function runScore()    { toast('Caption scored — Panya Score: 87 (Strong).', 'success'); }
+function runPolicy()   { toast('Policy check complete — 1 warning found.', 'warning'); }
+function runHashtag()  { toast('Hashtag set built for Bonchon · Crispy Wings.', 'success'); }
+function runSpark()    { toast('5 ideas sparked for Bonchon Instagram.', 'success'); }
+function runPolish()   { toast('Caption polished — Thanglish applied.', 'success'); }
+function runBrief()    { toast('Brief summarised and ready to save.', 'success'); }
+
+function copyCaption(btn) {
+  var body = btn.closest('.output-card').querySelector('.output-card-body');
+  navigator.clipboard.writeText(body.innerText).catch(function(){});
+  btn.textContent = 'Copied!';
+  setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
+  toast('Caption copied to clipboard.', 'info', 2500);
+}
+
+function copyHashtags() {
+  var tags = [];
+  document.querySelectorAll('.htag.selected').forEach(function(el) {
+    tags.push(el.textContent.trim());
+  });
+  navigator.clipboard.writeText(tags.join(' ')).catch(function(){});
+  toast(tags.length + ' hashtags copied to clipboard.', 'success', 2500);
+}
+
+function selectAllTags() {
+  document.querySelectorAll('.htag').forEach(function(el) { el.classList.add('selected'); });
+  var total = document.querySelectorAll('.htag').length;
+  document.getElementById('htag-count').textContent = total + ' selected · Recommended: 10–15';
+}
+
+document.querySelectorAll('.htag').forEach(function(el) {
+  el.addEventListener('click', function() {
+    this.classList.toggle('selected');
+    var count = document.querySelectorAll('.htag.selected').length;
+    document.getElementById('htag-count').textContent = count + ' selected · Recommended: 10–15';
+  });
+});
+</script>
+</body>
+</html>

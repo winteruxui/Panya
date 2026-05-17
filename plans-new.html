@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panya — New Plan</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+.wizard-shell { display:flex; flex-direction:column; height:100%; overflow:hidden; flex:1; }
+
+/* Step bar */
+.step-bar {
+  background:var(--bg-surface); border-bottom:1px solid var(--border-default);
+  padding:0 48px; display:flex; align-items:center; flex-shrink:0;
+}
+.step-item { display:flex; align-items:center; gap:10px; padding:18px 0; }
+.step-item:not(:last-child)::after { content:''; display:block; width:56px; height:1px; background:var(--border-default); margin:0 12px; }
+.step-circle {
+  width:26px; height:26px; border-radius:var(--r-full);
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:700; flex-shrink:0;
+  border:2px solid var(--border-default); color:var(--text-muted);
+  background:var(--bg-surface); transition:all 200ms;
+}
+.step-label { font-size:13px; font-weight:500; color:var(--text-muted); white-space:nowrap; }
+.step-item.done   .step-circle { background:var(--teal-m); border-color:var(--teal); color:var(--teal); }
+.step-item.done   .step-label  { color:var(--text-secondary); }
+.step-item.done::after          { background:var(--teal); opacity:.4; }
+.step-item.active .step-circle { background:var(--teal); border-color:var(--teal); color:#fff; }
+.step-item.active .step-label  { color:var(--teal); font-weight:600; }
+
+/* Body */
+.wizard-body { flex:1; overflow-y:auto; padding:48px; display:flex; justify-content:center; }
+.wizard-content { width:100%; max-width:680px; }
+.step-panel { display:none; }
+.step-panel.active { display:block; }
+.step-heading { font-size:20px; font-weight:700; color:var(--text-primary); letter-spacing:-0.01em; margin-bottom:6px; }
+.step-sub { font-size:14px; color:var(--text-secondary); margin-bottom:32px; }
+
+/* Forms */
+.form-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+.form-group  { margin-bottom:16px; }
+
+.inline-note {
+  display:flex; align-items:flex-start; gap:10px;
+  padding:12px 16px; border-radius:var(--r-md); font-size:13px; margin-top:12px;
+}
+.inline-note.amber { background:var(--amber-m); color:#92400e; border:1px solid rgba(245,158,11,.3); }
+.inline-note.blue  { background:var(--blue-m);  color:#1e40af; border:1px solid rgba(96,165,250,.3); }
+.inline-note a { color:inherit; font-weight:600; }
+
+/* Context chips (read-only) */
+.ctx-chips { display:flex; gap:8px; margin-bottom:24px; flex-wrap:wrap; align-items:center; }
+.ctx-chip {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:5px 12px; border-radius:var(--r-full);
+  background:var(--bg-elevated); border:1px solid var(--border-default);
+  font-size:13px; color:var(--text-primary); font-weight:500;
+}
+
+/* Pillars */
+.pillar-list  { display:flex; flex-direction:column; gap:8px; margin-bottom:12px; }
+.pillar-row {
+  display:flex; align-items:center; gap:10px; padding:10px 14px;
+  background:var(--bg-elevated); border-radius:var(--r-md); border:1px solid var(--border-default);
+}
+.pillar-name { flex:1; border:none; background:transparent; font-family:var(--font-ui); font-size:14px; outline:none; color:var(--text-primary); }
+.pillar-count { width:64px; border:1px solid var(--border-default); background:var(--bg-surface); border-radius:var(--r-sm); padding:4px 8px; font-family:var(--font-ui); font-size:13px; text-align:center; outline:none; }
+.pillar-count:focus { border-color:var(--teal); }
+.pillar-remove { color:var(--text-muted); cursor:pointer; font-size:18px; line-height:1; padding:2px 4px; border-radius:var(--r-sm); }
+.pillar-remove:hover { color:var(--red); }
+.pillar-total { font-size:13px; color:var(--text-secondary); font-weight:500; margin-bottom:16px; }
+.pillar-total span { font-family:var(--font-mono); font-weight:700; color:var(--teal); }
+.pillar-suggestions { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px; }
+.psugg { padding:4px 10px; border-radius:var(--r-full); border:1px dashed var(--border-strong); font-size:12px; color:var(--text-secondary); cursor:pointer; transition:all 100ms; }
+.psugg:hover { border-color:var(--teal); color:var(--teal); background:var(--teal-m); }
+
+/* Step 3 two-col */
+.step3-grid { display:grid; grid-template-columns:minmax(0,1fr) 260px; gap:20px; align-items:start; }
+.idea-card { background:var(--bg-surface); border:1px solid var(--border-default); border-radius:var(--r-lg); padding:20px; margin-bottom:14px; }
+.idea-card-head { display:flex; align-items:center; gap:8px; margin-bottom:16px; }
+.idea-num { font-size:11px; font-weight:700; color:var(--text-muted); letter-spacing:.06em; flex:1; }
+.score-badge-not { background:var(--bg-elevated); color:var(--text-muted); font-size:11px; font-weight:600; padding:3px 8px; border-radius:var(--r-sm); }
+.idea-row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
+.idea-save { font-size:11px; color:var(--text-muted); text-align:right; margin-top:8px; }
+.suggest-bar {
+  background:var(--bg-elevated); border-radius:var(--r-md); padding:12px 16px; margin-bottom:16px;
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+}
+.suggest-bar-label { font-size:13px; color:var(--text-secondary); font-weight:500; white-space:nowrap; }
+
+/* Context panel */
+.ctx-panel { background:var(--bg-surface); border:1px solid var(--border-default); border-radius:var(--r-lg); padding:20px; position:sticky; top:0; }
+.panel-sec { margin-bottom:20px; }
+.panel-sec:last-child { margin-bottom:0; }
+.panel-ttl { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:12px; }
+.brief-loaded-pill { display:inline-flex; align-items:center; gap:5px; padding:3px 8px; border-radius:var(--r-sm); background:var(--teal-m); color:var(--teal); font-size:11px; font-weight:700; margin-bottom:12px; }
+.brief-row { font-size:13px; color:var(--text-secondary); margin-bottom:5px; }
+.brief-row strong { color:var(--text-primary); }
+.pp-row { margin-bottom:10px; }
+.pp-lbl { display:flex; justify-content:space-between; font-size:12px; color:var(--text-secondary); margin-bottom:4px; }
+.pp-bar { height:4px; background:var(--bg-elevated); border-radius:var(--r-full); overflow:hidden; }
+.pp-fill { height:100%; border-radius:var(--r-full); background:var(--border-default); }
+.pp-fill.teal { background:var(--teal); }
+.pp-fill.amber { background:var(--amber); }
+.ai-sugg { padding:8px 10px; border-radius:var(--r-md); border:1px solid var(--border-subtle); font-size:12px; color:var(--text-secondary); cursor:pointer; margin-bottom:6px; transition:all 100ms; }
+.ai-sugg:hover { border-color:var(--teal); color:var(--text-primary); background:var(--teal-m); }
+
+/* Step 4 media */
+.media-wrap { border:1px solid var(--border-default); border-radius:var(--r-lg); overflow:hidden; margin-bottom:16px; }
+.media-table { width:100%; border-collapse:collapse; }
+.media-table thead th { padding:10px 14px; text-align:left; font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.06em; background:var(--bg-elevated); border-bottom:1px solid var(--border-default); }
+.media-table tbody tr { border-bottom:1px solid var(--border-subtle); }
+.media-table tbody tr:last-child { border-bottom:none; }
+.media-table tbody td { padding:12px 14px; font-size:13px; vertical-align:middle; }
+.caption-preview { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; font-size:13px; color:var(--text-primary); }
+.caption-meta { font-size:11px; color:var(--text-muted); margin-top:2px; }
+.toggle-sw { position:relative; display:inline-block; width:36px; height:20px; }
+.toggle-sw input { opacity:0; width:0; height:0; position:absolute; }
+.toggle-slider { position:absolute; cursor:pointer; inset:0; background:var(--border-default); border-radius:var(--r-full); transition:200ms; }
+.toggle-slider::before { content:''; position:absolute; width:14px; height:14px; left:3px; bottom:3px; background:white; border-radius:50%; transition:200ms; }
+.toggle-sw input:checked + .toggle-slider { background:var(--teal); }
+.toggle-sw input:checked + .toggle-slider::before { transform:translateX(16px); }
+.minput { width:90px; padding:5px 8px; border:1px solid var(--border-default); border-radius:var(--r-sm); font-family:var(--font-ui); font-size:13px; outline:none; }
+.minput:focus { border-color:var(--teal); }
+.minput:disabled { opacity:.4; cursor:not-allowed; background:var(--bg-elevated); }
+.footer-sum { background:var(--bg-elevated); border:1px solid var(--border-default); border-radius:var(--r-md); padding:12px 16px; display:flex; gap:24px; font-size:13px; color:var(--text-secondary); margin-bottom:16px; }
+.footer-sum strong { color:var(--text-primary); font-family:var(--font-mono); }
+
+/* Step 5 */
+.stats-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:24px; }
+.sum-table-wrap { border:1px solid var(--border-default); border-radius:var(--r-lg); overflow:hidden; margin-bottom:24px; }
+.cal-grid { border:1px solid var(--border-default); border-radius:var(--r-lg); overflow:hidden; margin-bottom:16px; }
+.cal-head { display:grid; grid-template-columns:repeat(7,1fr); background:var(--bg-elevated); border-bottom:1px solid var(--border-default); }
+.cal-head span { padding:8px; text-align:center; font-size:11px; font-weight:700; color:var(--text-muted); letter-spacing:.06em; }
+.cal-body { display:grid; grid-template-columns:repeat(7,1fr); }
+.cal-day { min-height:74px; padding:6px 8px; border-right:1px solid var(--border-subtle); border-bottom:1px solid var(--border-subtle); font-size:11px; color:var(--text-muted); }
+.cal-day:nth-child(7n) { border-right:none; }
+.cal-day.empty { background:var(--bg-elevated); opacity:.5; }
+.cal-day.today .day-num { color:var(--teal); font-weight:700; }
+.day-num { margin-bottom:4px; }
+.cal-post { padding:2px 5px; border-radius:var(--r-sm); font-size:10px; font-weight:600; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.cal-post.blue   { background:var(--blue-m);   color:var(--blue); }
+.cal-post.purple { background:var(--purple-m); color:var(--purple); }
+.confirm-row { display:flex; align-items:center; justify-content:flex-end; gap:10px; padding:16px 0; }
+
+/* Wizard footer */
+.wizard-footer { background:var(--bg-surface); border-top:1px solid var(--border-default); padding:16px 48px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+.back-btn { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--text-secondary); cursor:pointer; background:none; border:none; font-family:var(--font-ui); transition:color 150ms; }
+.back-btn:hover { color:var(--text-primary); }
+.footer-right { display:flex; align-items:center; gap:10px; }
+.step-of { font-size:12px; color:var(--text-muted); }
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ── Sidebar ─────────────────────────────────────── -->
+<aside class="sidebar">
+<div class="sidebar-inner">
+  <div class="logo"><a href="dashboard.html" class="logo-link"><span class="logo-text">Panya<span class="logo-dot">.</span></span></a></div>
+  <nav class="nav">
+    <a class="nav-item" href="dashboard.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span class="nav-label">Dashboard</span></a>
+    <a class="nav-item active" href="plans.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span class="nav-label">Plans</span><span class="nav-badge">2</span></a>
+    <a class="nav-item" href="content-tools.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><span class="nav-label">Content Tools</span></a>
+    <a class="nav-item" href="brand-library.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg><span class="nav-label">Brand Library</span></a>
+    <a class="nav-item" href="insights.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span class="nav-label">Insights</span></a>
+    <a class="nav-item" href="ask-panya.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span class="nav-label">Ask Panya</span></a>
+    <div class="nav-divider"></div>
+    <a class="nav-item" href="admin.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span class="nav-label">Admin</span><span class="nav-badge red">1</span></a>
+  </nav>
+  <div class="sidebar-user">
+    <div class="user-row">
+      <div class="u-avatar">P</div>
+      <div style="flex:1;min-width:0"><div class="u-email">por.zax@gmail.com</div><div class="u-role">Admin</div></div>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-muted);flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </div>
+</div>
+</aside>
+
+<!-- ── Wizard ───────────────────────────────────────── -->
+<div class="wizard-shell">
+
+  <!-- Step bar -->
+  <div class="step-bar" style="justify-content:space-between;">
+    <button class="back-btn" id="back-btn-bar" onclick="prevStep()" style="visibility:hidden">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Back
+    </button>
+    <div style="display:flex;align-items:center">
+      <div class="step-item active" id="si-1"><div class="step-circle" id="sc-1">1</div><span class="step-label">Context</span></div>
+      <div class="step-item"        id="si-2"><div class="step-circle" id="sc-2">2</div><span class="step-label">Brief</span></div>
+      <div class="step-item"        id="si-3"><div class="step-circle" id="sc-3">3</div><span class="step-label">Content</span></div>
+      <div class="step-item"        id="si-4"><div class="step-circle" id="sc-4">4</div><span class="step-label">Media</span></div>
+      <div class="step-item"        id="si-5"><div class="step-circle" id="sc-5">5</div><span class="step-label">Summary</span></div>
+    </div>
+    <div style="width:80px"></div>
+  </div>
+
+  <!-- Body -->
+  <div class="wizard-body">
+  <div class="wizard-content" id="wc">
+
+    <!-- STEP 1 -->
+    <div class="step-panel active" id="step-1">
+      <div class="step-heading">Set the context</div>
+      <p class="step-sub">Choose which brand, platform, and month this plan is for.</p>
+      <div class="form-grid-2">
+        <div><label class="label">Brand <span style="color:var(--red)">*</span></label>
+          <select class="input select"><option value="">Select brand…</option><option selected>Bonchon</option><option>Haier Thailand</option><option>Central Retail</option><option>MK Restaurant</option></select>
+        </div>
+        <div><label class="label">Platform <span style="color:var(--red)">*</span></label>
+          <select class="input select"><option>Facebook</option><option selected>Instagram</option><option>TikTok</option><option>Twitter / X</option><option>YouTube</option><option>LINE</option></select>
+        </div>
+      </div>
+      <div class="form-grid-2">
+        <div><label class="label">Month <span style="color:var(--red)">*</span></label>
+          <select class="input select"><option>January</option><option>February</option><option>March</option><option>April</option><option selected>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select>
+        </div>
+        <div><label class="label">Year <span style="color:var(--red)">*</span></label><input class="input" type="number" value="2026"></div>
+      </div>
+      <div class="inline-note amber">
+        <span>⚠️</span>
+        <span>A plan for <strong>Bonchon / Instagram / May 2026</strong> already exists. <a href="plans-detail.html">Open it →</a> or continue creating a new one.</span>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step-panel" id="step-2">
+      <div class="step-heading">Monthly brief</div>
+      <p class="step-sub">Define the campaign direction and content pillars for this plan.</p>
+      <div class="ctx-chips">
+        <span class="ctx-chip"><strong>Bonchon</strong></span>
+        <span class="ctx-chip">Instagram</span>
+        <span class="ctx-chip">May 2026</span>
+        <a href="#" style="font-size:13px;color:var(--teal);text-decoration:none;margin-left:4px" onclick="goTo(1);return false">← Change</a>
+      </div>
+      <div class="form-group"><label class="label">Hero Campaign Name</label><input class="input" type="text" value="Summer Crunch Season" placeholder="e.g. Songkran Refresh 2026"></div>
+      <div class="form-group"><label class="label">Product or Service Focus</label><textarea class="textarea">Signature fried chicken buckets, new dipping sauces, family meal deals</textarea></div>
+      <label class="label">Pillar Mix <span style="color:var(--red)">*</span></label>
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">Name each pillar and set a target post count.</p>
+      <div class="pillar-list" id="pillar-list">
+        <div class="pillar-row"><input class="pillar-name" type="text" value="Engagement"><input class="pillar-count" type="number" value="5" min="0" max="99"><span class="pillar-remove" onclick="removePillar(this)">×</span></div>
+        <div class="pillar-row"><input class="pillar-name" type="text" value="Promotion"><input class="pillar-count" type="number" value="2" min="0" max="99"><span class="pillar-remove" onclick="removePillar(this)">×</span></div>
+        <div class="pillar-row"><input class="pillar-name" type="text" value="Education"><input class="pillar-count" type="number" value="1" min="0" max="99"><span class="pillar-remove" onclick="removePillar(this)">×</span></div>
+      </div>
+      <div class="pillar-total">Total posts: <span id="pillar-total">8</span></div>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Suggested from past plans:</p>
+      <div class="pillar-suggestions">
+        <span class="psugg">+ Lifestyle</span><span class="psugg">+ Brand Story</span><span class="psugg">+ UGC</span><span class="psugg">+ Product Launch</span>
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="addPillar()" style="margin-bottom:24px">+ Add Pillar</button>
+      <div class="form-group"><label class="label">Notes</label><textarea class="textarea" placeholder="Launch dates, seasonal context, approval guardrails…" style="min-height:72px"></textarea></div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step-panel" id="step-3">
+      <div class="step-heading">Content ideas</div>
+      <p class="step-sub">Draft your ideas and score them with AI before moving to media planning.</p>
+      <div class="step3-grid">
+        <div>
+          <div class="suggest-bar">
+            <span class="suggest-bar-label">Suggest objective</span>
+            <div class="toggle-chips" style="flex-wrap:nowrap;gap:6px">
+              <span class="tchip active" style="font-size:12px;padding:4px 10px">General</span>
+              <span class="tchip" style="font-size:12px;padding:4px 10px" onclick="singleChip(this)">Max Comments</span>
+              <span class="tchip" style="font-size:12px;padding:4px 10px" onclick="singleChip(this)">Max Reach</span>
+            </div>
+            <button class="btn btn-sm btn-secondary" style="margin-left:auto;flex-shrink:0">✦ Suggest Ideas</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:10px 14px;background:var(--bg-elevated);border-radius:var(--r-md)">
+            <span style="font-size:13px;color:var(--text-secondary)">Ideas: <strong id="idea-total">2</strong> &nbsp;·&nbsp; Scored: <span id="scored-count" style="font-family:var(--font-mono);font-weight:700;color:var(--teal)">1</span></span>
+            <div style="flex:1"></div>
+            <span style="font-size:12px;color:var(--text-muted)">Score ideas individually or all at once</span>
+            <button class="btn btn-sm btn-primary" onclick="scoreAll()">✦ Score All</button>
+          </div>
+
+          <!-- Idea 1 — unscored -->
+          <div class="idea-card">
+            <div class="idea-card-head">
+              <span class="idea-num">IDEA 1</span>
+              <span class="score-badge-not">Not Scored</span>
+              <button class="btn btn-sm btn-secondary" onclick="scoreIdea(this)">Score</button>
+              <button class="btn btn-sm btn-ghost" style="color:var(--text-muted);padding:0 8px">×</button>
+            </div>
+            <div class="idea-row2">
+              <div><label class="label" style="font-size:12px">Post Type</label><select class="input select" style="font-size:13px;padding:8px 12px"><option>Reel</option><option>Carousel</option><option>Static</option><option>Story</option></select></div>
+              <div><label class="label" style="font-size:12px">Pillar</label><select class="input select" style="font-size:13px;padding:8px 12px"><option>Engagement</option><option>Promotion</option><option>Education</option></select></div>
+            </div>
+            <label class="label" style="font-size:12px">Caption Draft</label>
+            <textarea class="textarea" style="font-size:13px;margin-top:6px" placeholder="Draft the post idea or caption here…">สิ่งที่ทุกวันศุกร์ต้องมี ✓ ไก่ทอด Bonchon กรุบๆ หนังบางกรอบ — เสิร์ฟร้อนๆ พร้อม double dip ซอสซิกเนเจอร์ 🍗🔥 มาแล้วที่ไหน? tag เพื่อนมากินด้วยกัน!</textarea>
+            <div class="idea-save">Draft not saved yet</div>
+          </div>
+
+          <!-- Idea 2 — scored -->
+          <div class="idea-card" style="border-color:var(--purple)">
+            <div class="idea-card-head">
+              <span class="idea-num">IDEA 2</span>
+              <span class="badge b-scored" style="font-size:11px"><span class="bdot"></span>Scored · <span class="sc sc-ex" style="font-size:13px">78</span></span>
+              <button class="btn btn-sm btn-secondary" onclick="scoreIdea(this)">Re-score</button>
+              <button class="btn btn-sm btn-ghost" style="color:var(--text-muted);padding:0 8px">×</button>
+            </div>
+            <div class="idea-row2">
+              <div><label class="label" style="font-size:12px">Post Type</label><select class="input select" style="font-size:13px;padding:8px 12px"><option>Carousel</option></select></div>
+              <div><label class="label" style="font-size:12px">Pillar</label><select class="input select" style="font-size:13px;padding:8px 12px"><option>Promotion</option></select></div>
+            </div>
+            <label class="label" style="font-size:12px">Caption Draft</label>
+            <textarea class="textarea" style="font-size:13px;margin-top:6px;border-color:var(--purple)">🎉 BIG DEAL ALERT — Family Bucket เริ่มต้นแค่ ฿299! เปลี่ยนทุกมื้อค่ำของครอบครัวให้อร่อยยิ่งขึ้น 🍗 เดลิเวอรี่ 30 นาที — Link in bio</textarea>
+            <div style="background:var(--purple-m);border-radius:var(--r-md);padding:10px 12px;margin-top:10px;font-size:12px;color:var(--purple)">
+              💡 Hook could be stronger — try leading with the saving amount instead of "BIG DEAL ALERT"
+            </div>
+            <div class="idea-save" style="color:var(--teal)">Saved 2 min ago</div>
+          </div>
+
+          <button class="btn btn-secondary" id="add-idea-btn" style="width:100%;justify-content:center" onclick="addIdeaCard()">+ Add idea card</button>
+        </div>
+
+        <!-- Context panel -->
+        <div class="ctx-panel">
+          <div class="panel-sec">
+            <div class="panel-ttl">Brief</div>
+            <div class="brief-loaded-pill">● Brief Loaded</div>
+            <div class="brief-row"><strong>Bonchon</strong> · Instagram · May 2026</div>
+            <div class="brief-row">Campaign: <strong>Summer Crunch Season</strong></div>
+            <div class="brief-row" style="margin-top:6px">8 posts total</div>
+          </div>
+          <div class="panel-sec">
+            <div class="panel-ttl">Pillar Progress</div>
+            <div class="pp-row"><div class="pp-lbl"><span>Engagement</span><span>1/5</span></div><div class="pp-bar"><div class="pp-fill amber" style="width:20%"></div></div></div>
+            <div class="pp-row"><div class="pp-lbl"><span>Promotion</span><span>1/2</span></div><div class="pp-bar"><div class="pp-fill amber" style="width:50%"></div></div></div>
+            <div class="pp-row"><div class="pp-lbl"><span>Education</span><span>0/1</span></div><div class="pp-bar"><div class="pp-fill" style="width:0%"></div></div></div>
+          </div>
+          <div class="panel-sec">
+            <div class="panel-ttl">✦ AI Suggestions</div>
+            <p style="font-size:11px;color:var(--text-muted);margin-bottom:8px">Click to pre-fill current card</p>
+            <div class="ai-sugg">Behind-the-scenes: how Bonchon marinates chicken for 12 hours 🍗</div>
+            <div class="ai-sugg">Poll: Original vs. Sweet &amp; Spicy — which team are you?</div>
+            <div class="ai-sugg">Customer UGC repost: "changed my Friday nights forever"</div>
+            <div class="ai-sugg">Limited-time Family Bucket countdown</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="step-panel" id="step-4">
+      <div class="step-heading">Media plan</div>
+      <p class="step-sub">Set which posts will be boosted with paid media.</p>
+      <div class="ctx-chips" style="margin-bottom:24px">
+        <span class="ctx-chip"><strong>Bonchon</strong></span><span class="ctx-chip">Instagram</span><span class="ctx-chip">May 2026</span>
+      </div>
+      <div class="media-wrap">
+        <table class="media-table">
+          <thead><tr><th style="width:38%">Post</th><th>Boost</th><th>Objective</th><th>Budget (฿)</th><th>Duration (d)</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><div class="caption-preview">สิ่งที่ทุกวันศุกร์ต้องมี ✓ ไก่ทอด Bonchon กรุบๆ หนังบางกรอบ...</div><div class="caption-meta">Reel · Engagement</div></td>
+              <td><label class="toggle-sw"><input type="checkbox" onchange="boostToggle(this)"><span class="toggle-slider"></span></label></td>
+              <td><select class="minput" disabled style="width:108px"><option>—</option><option>Reach</option><option>Engagement</option><option>Traffic</option></select></td>
+              <td><input class="minput" type="number" value="0" disabled></td>
+              <td><input class="minput" type="number" value="" disabled placeholder="—"></td>
+            </tr>
+            <tr>
+              <td><div class="caption-preview">🎉 BIG DEAL ALERT — Family Bucket เริ่มต้นแค่ ฿299!</div><div class="caption-meta">Carousel · Promotion</div></td>
+              <td><label class="toggle-sw"><input type="checkbox" checked onchange="boostToggle(this)"><span class="toggle-slider"></span></label></td>
+              <td><select class="minput" style="width:108px"><option>Reach</option><option>Engagement</option><option>Traffic</option><option>Conversions</option></select></td>
+              <td><input class="minput" type="number" value="3000"></td>
+              <td><input class="minput" type="number" value="7"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="footer-sum">
+        <span>Total budget: <strong>฿3,000</strong></span>
+        <span>Boosted: <strong>1 post</strong></span>
+        <span>Objectives: Reach <strong>1</strong></span>
+      </div>
+    </div>
+
+    <!-- STEP 5 -->
+    <div class="step-panel" id="step-5">
+      <div class="step-heading">Content Plan Summary</div>
+      <p class="step-sub">Bonchon · Instagram · May 2026 — Review before sending to client.</p>
+      <div class="ctx-chips" style="margin-bottom:24px">
+        <span class="ctx-chip"><strong>Bonchon</strong></span><span class="ctx-chip">Instagram</span><span class="ctx-chip">May 2026</span><span class="ctx-chip">Summer Crunch Season</span><span class="ctx-chip">8 posts planned</span>
+      </div>
+      <div class="stats-3">
+        <div class="stat-card"><div class="stat-label">Total Ideas</div><div class="stat-value" style="font-size:32px">2</div><div class="stat-sub">6 more to draft</div></div>
+        <div class="stat-card"><div class="stat-label">Average Score</div><div class="stat-value sc sc-st" style="font-size:32px">78</div><div class="stat-sub">1 of 2 ideas scored</div></div>
+        <div class="stat-card"><div class="stat-label">Media Budget</div><div class="stat-value" style="font-size:32px">฿3K</div><div class="stat-sub">1 boosted · 7 days</div></div>
+      </div>
+      <div class="sum-table-wrap">
+        <table>
+          <thead><tr><th style="width:28px">#</th><th>Idea</th><th>Type</th><th>Pillar</th><th>Score</th><th>Boost</th><th>Post Date</th></tr></thead>
+          <tbody>
+            <tr>
+              <td style="color:var(--text-muted)">1</td>
+              <td style="font-size:13px">สิ่งที่ทุกวันศุกร์ต้องมี ✓ ไก่ทอด Bonchon…</td>
+              <td><span class="chip">Reel</span></td><td><span class="chip">Engagement</span></td>
+              <td style="color:var(--text-muted);font-size:12px">–</td>
+              <td style="color:var(--text-muted)">–</td>
+              <td style="color:var(--text-muted);font-size:13px">Not scheduled</td>
+            </tr>
+            <tr>
+              <td style="color:var(--text-muted)">2</td>
+              <td style="font-size:13px">🎉 BIG DEAL ALERT — Family Bucket ฿299…</td>
+              <td><span class="chip">Carousel</span></td><td><span class="chip">Promotion</span></td>
+              <td><span class="sc sc-ex" style="font-family:var(--font-mono);font-weight:700">78</span></td>
+              <td><span style="color:var(--teal);font-size:12px;font-weight:600">฿3,000</span></td>
+              <td style="color:var(--text-muted);font-size:13px">May 16</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div style="font-size:13px;font-weight:600;color:var(--text-primary)">May 2026</div>
+        <button class="btn btn-sm btn-primary" onclick="aiSuggestSchedule()">✦ AI Suggest Schedule</button>
+      </div>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Click any day to schedule an idea · Drag to rearrange</p>
+      <div class="cal-grid">
+        <div class="cal-head"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+        <div class="cal-body">
+          <div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div>
+          <div class="cal-day"><div class="day-num">1</div></div>
+          <div class="cal-day"><div class="day-num">2</div></div><div class="cal-day"><div class="day-num">3</div></div><div class="cal-day"><div class="day-num">4</div></div><div class="cal-day"><div class="day-num">5</div></div><div class="cal-day"><div class="day-num">6</div></div><div class="cal-day"><div class="day-num">7</div></div><div class="cal-day"><div class="day-num">8</div></div>
+          <div class="cal-day"><div class="day-num">9</div><div class="cal-post blue">Reel · Engagement</div></div>
+          <div class="cal-day"><div class="day-num">10</div></div><div class="cal-day"><div class="day-num">11</div></div><div class="cal-day"><div class="day-num">12</div></div><div class="cal-day"><div class="day-num">13</div></div><div class="cal-day"><div class="day-num">14</div></div><div class="cal-day"><div class="day-num">15</div></div>
+          <div class="cal-day today"><div class="day-num">16</div><div class="cal-post purple">Carousel · Promo 🚀</div></div>
+          <div class="cal-day"><div class="day-num">17</div></div><div class="cal-day"><div class="day-num">18</div></div><div class="cal-day"><div class="day-num">19</div></div><div class="cal-day"><div class="day-num">20</div></div><div class="cal-day"><div class="day-num">21</div></div><div class="cal-day"><div class="day-num">22</div></div><div class="cal-day"><div class="day-num">23</div></div><div class="cal-day"><div class="day-num">24</div></div><div class="cal-day"><div class="day-num">25</div></div><div class="cal-day"><div class="day-num">26</div></div><div class="cal-day"><div class="day-num">27</div></div><div class="cal-day"><div class="day-num">28</div></div><div class="cal-day"><div class="day-num">29</div></div><div class="cal-day"><div class="day-num">30</div></div><div class="cal-day"><div class="day-num">31</div></div>
+        </div>
+      </div>
+      <p style="font-size:13px;color:var(--amber);margin-bottom:20px">⚠ 6 ideas not yet scheduled</p>
+      <div class="confirm-row">
+        <button class="btn btn-secondary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PNG
+        </button>
+        <button class="btn btn-secondary">Export PPTX</button>
+        <button class="btn btn-primary" onclick="confirmPlan()">Confirm Plan →</button>
+      </div>
+    </div>
+
+  </div><!-- /wizard-content -->
+  </div><!-- /wizard-body -->
+
+  <!-- Footer nav -->
+  <div class="wizard-footer">
+    <button class="back-btn" onclick="prevStep()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Back
+    </button>
+    <div class="footer-right">
+      <span class="step-of" id="step-of">Step 1 of 5</span>
+      <button class="btn btn-primary" id="next-btn" onclick="nextStep()">Set Brief →</button>
+    </div>
+  </div>
+
+  <!-- Day picker popover -->
+  <div id="day-picker" style="display:none;position:fixed;background:var(--bg-surface);border:1px solid var(--border-default);border-radius:var(--r-lg);box-shadow:var(--shadow-md);padding:14px;z-index:200;min-width:220px">
+    <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">Schedule on this day</div>
+    <div id="day-picker-list"></div>
+    <button onclick="closePicker()" style="font-size:12px;color:var(--text-muted);margin-top:8px;background:none;border:none;cursor:pointer;font-family:var(--font-ui)">✕ Cancel</button>
+  </div>
+</div><!-- /wizard-shell -->
+</div><!-- /app -->
+
+<script src="toast.js"></script>
+<script>
+let cur = 1;
+let ideaCount = 2;
+const nextLabels = {1:'Set Brief →', 2:'Save Brief →', 3:'Save Ideas →', 4:'Save Media →', 5:'Confirm Plan →'};
+
+function goTo(n) {
+  document.getElementById('step-' + cur).classList.remove('active');
+  for (let i = 1; i <= 5; i++) {
+    const si = document.getElementById('si-' + i);
+    const sc = document.getElementById('sc-' + i);
+    si.className = 'step-item';
+    if (i < n)      { si.classList.add('done');   sc.textContent = '✓'; }
+    else if (i===n) { si.classList.add('active');  sc.textContent = i; }
+    else            { sc.textContent = i; }
+  }
+  cur = n;
+  document.getElementById('step-' + cur).classList.add('active');
+  document.getElementById('step-of').textContent = 'Step ' + cur + ' of 5';
+  document.getElementById('next-btn').textContent = nextLabels[cur];
+  document.getElementById('wc').style.maxWidth = cur === 3 ? '100%' : '680px';
+  var backBar = document.getElementById('back-btn-bar');
+  if (backBar) backBar.style.visibility = cur === 1 ? 'hidden' : 'visible';
+  if (n === 5) initCalendar();
+}
+
+function nextStep() {
+  if (cur < 5) { goTo(cur + 1); }
+  else { confirmPlan(); }
+}
+
+function confirmPlan() {
+  toast('Plan saved — Bonchon · Instagram · May 2026 is ready to send.', 'success', 3000);
+  setTimeout(function() { window.location = 'plan-success.html'; }, 1400);
+}
+function prevStep() {
+  if (cur <= 1) { window.location = 'plans.html'; return; }
+  goTo(cur - 1);
+}
+
+/* ── Pillars ── */
+function addPillar() {
+  const list = document.getElementById('pillar-list');
+  const row = document.createElement('div');
+  row.className = 'pillar-row';
+  const nameInput = document.createElement('input');
+  nameInput.className = 'pillar-name'; nameInput.type = 'text'; nameInput.placeholder = 'Pillar name…';
+  const countInput = document.createElement('input');
+  countInput.className = 'pillar-count'; countInput.type = 'number'; countInput.value = '0'; countInput.min = '0'; countInput.max = '99';
+  const removeBtn = document.createElement('span');
+  removeBtn.className = 'pillar-remove'; removeBtn.textContent = '×';
+  removeBtn.addEventListener('click', function() { row.remove(); });
+  row.appendChild(nameInput); row.appendChild(countInput); row.appendChild(removeBtn);
+  list.appendChild(row);
+}
+function removePillar(el) { el.parentElement.remove(); }
+
+function singleChip(el) {
+  el.closest('.toggle-chips').querySelectorAll('.tchip').forEach(function(c) { c.classList.remove('active'); });
+  el.classList.add('active');
+}
+
+function boostToggle(cb) {
+  const row = cb.closest('tr');
+  row.querySelectorAll('select, input[type="number"]').forEach(function(el) { el.disabled = !cb.checked; });
+}
+
+/* ── Scoring ── */
+var mockScores = [72, 74, 78, 81, 84, 87, 89];
+function scoreIdea(btn) {
+  var card = btn.closest('.idea-card');
+  var score = mockScores[Math.floor(Math.random() * mockScores.length)];
+  var scoreClass = score >= 80 ? 'sc-ex' : score >= 70 ? 'sc-st' : 'sc-av';
+  card.style.borderColor = 'var(--purple)';
+
+  var badgeNot = card.querySelector('.score-badge-not');
+  if (badgeNot) {
+    badgeNot.className = 'badge b-scored';
+    badgeNot.style.fontSize = '11px';
+    while (badgeNot.firstChild) badgeNot.removeChild(badgeNot.firstChild);
+    var dot = document.createElement('span'); dot.className = 'bdot';
+    var txt = document.createTextNode('Scored · ');
+    var sc = document.createElement('span'); sc.className = 'sc ' + scoreClass; sc.style.fontSize = '13px'; sc.textContent = score;
+    badgeNot.appendChild(dot); badgeNot.appendChild(txt); badgeNot.appendChild(sc);
+  }
+  btn.textContent = 'Re-score';
+
+  var saveDiv = card.querySelector('.idea-save');
+  if (saveDiv) { saveDiv.textContent = 'Scored just now'; saveDiv.style.color = 'var(--teal)'; }
+
+  if (!card.querySelector('.ai-score-tip')) {
+    var tip = document.createElement('div');
+    tip.className = 'ai-score-tip';
+    tip.style.cssText = 'background:var(--purple-m);border-radius:var(--r-md);padding:10px 12px;margin-top:10px;font-size:12px;color:var(--purple)';
+    tip.textContent = '💡 Hook looks strong — try adding a CTA in the first frame for better reach.';
+    card.appendChild(tip);
+  }
+  updateScoredCount();
+}
+
+function scoreAll() {
+  document.querySelectorAll('#step-3 .score-badge-not').forEach(function(badge) {
+    var btn = badge.parentElement.querySelector('.btn');
+    if (btn) scoreIdea(btn);
+  });
+}
+
+function updateScoredCount() {
+  var total = document.querySelectorAll('#step-3 .idea-card').length;
+  var scored = document.querySelectorAll('#step-3 .badge.b-scored').length;
+  var el = document.getElementById('scored-count');
+  if (el) el.textContent = scored;
+  var tot = document.getElementById('idea-total');
+  if (tot) tot.textContent = total;
+}
+
+/* ── Add idea card ── */
+function addIdeaCard() {
+  ideaCount++;
+  var card = document.createElement('div');
+  card.className = 'idea-card';
+
+  var head = document.createElement('div'); head.className = 'idea-card-head';
+  var num = document.createElement('span'); num.className = 'idea-num'; num.textContent = 'IDEA ' + ideaCount;
+  var badge = document.createElement('span'); badge.className = 'score-badge-not'; badge.textContent = 'Not Scored';
+  var scoreBtn = document.createElement('button'); scoreBtn.className = 'btn btn-sm btn-secondary'; scoreBtn.textContent = 'Score';
+  scoreBtn.addEventListener('click', function() { scoreIdea(this); });
+  var removeBtn = document.createElement('button'); removeBtn.className = 'btn btn-sm btn-ghost'; removeBtn.style.cssText = 'color:var(--text-muted);padding:0 8px'; removeBtn.textContent = '×';
+  removeBtn.addEventListener('click', function() { card.remove(); ideaCount--; updateScoredCount(); });
+  head.appendChild(num); head.appendChild(badge); head.appendChild(scoreBtn); head.appendChild(removeBtn);
+
+  var row2 = document.createElement('div'); row2.className = 'idea-row2';
+  ['Post Type', 'Pillar'].forEach(function(lbl, i) {
+    var d = document.createElement('div');
+    var l = document.createElement('label'); l.className = 'label'; l.style.fontSize = '12px'; l.textContent = lbl;
+    var s = document.createElement('select'); s.className = 'input select'; s.style.cssText = 'font-size:13px;padding:8px 12px';
+    var opts = i === 0 ? ['Reel','Carousel','Static','Story'] : ['Engagement','Promotion','Education'];
+    opts.forEach(function(o) { var op = document.createElement('option'); op.textContent = o; s.appendChild(op); });
+    d.appendChild(l); d.appendChild(s); row2.appendChild(d);
+  });
+
+  var cl = document.createElement('label'); cl.className = 'label'; cl.style.fontSize = '12px'; cl.textContent = 'Caption Draft';
+  var ta = document.createElement('textarea'); ta.className = 'textarea'; ta.style.cssText = 'font-size:13px;margin-top:6px'; ta.placeholder = 'Draft the post idea or caption here…';
+  var sd = document.createElement('div'); sd.className = 'idea-save'; sd.textContent = 'Draft not saved yet';
+
+  card.appendChild(head); card.appendChild(row2); card.appendChild(cl); card.appendChild(ta); card.appendChild(sd);
+
+  var addBtn = document.getElementById('add-idea-btn');
+  addBtn.parentElement.insertBefore(card, addBtn);
+  updateScoredCount();
+}
+
+/* ── Calendar interactivity (Step 5) ── */
+var selectedDay = null;
+var calendarIdeas = [
+  { text: 'Reel · Engagement', cls: 'blue' },
+  { text: 'Carousel · Promo 🚀', cls: 'purple' }
+];
+
+function initCalendar() {
+  document.querySelectorAll('#step-5 .cal-day:not(.empty)').forEach(function(cell) {
+    if (!cell.hasAttribute('data-cal-bound')) {
+      cell.setAttribute('data-cal-bound', '1');
+      cell.style.cursor = 'pointer';
+      cell.addEventListener('click', function() { dayClick(this); });
+    }
+  });
+}
+
+function dayClick(cell) {
+  selectedDay = cell;
+  var picker = document.getElementById('day-picker');
+  var list = document.getElementById('day-picker-list');
+  while (list.firstChild) list.removeChild(list.firstChild);
+  calendarIdeas.forEach(function(idea) {
+    var btn = document.createElement('button');
+    btn.style.cssText = 'display:block;width:100%;text-align:left;padding:8px 10px;border-radius:var(--r-md);border:1px solid var(--border-default);background:var(--bg-elevated);font-size:12px;font-weight:600;cursor:pointer;margin-bottom:4px;font-family:var(--font-ui);color:var(--text-primary)';
+    btn.textContent = idea.text;
+    btn.addEventListener('click', function() { scheduleOnDay(idea); });
+    list.appendChild(btn);
+  });
+  var rect = cell.getBoundingClientRect();
+  picker.style.left = Math.min(rect.left, window.innerWidth - 240) + 'px';
+  picker.style.top = (rect.bottom + 4) + 'px';
+  picker.style.display = 'block';
+}
+
+function scheduleOnDay(idea) {
+  if (!selectedDay) return;
+  var existing = selectedDay.querySelectorAll('.cal-post');
+  if (existing.length >= 2) { closePicker(); return; }
+  var post = document.createElement('div');
+  post.className = 'cal-post ' + idea.cls;
+  post.textContent = idea.text;
+  post.title = 'Click to remove';
+  post.style.cursor = 'pointer';
+  post.addEventListener('click', function(e) { e.stopPropagation(); post.remove(); });
+  selectedDay.appendChild(post);
+  closePicker();
+}
+
+function closePicker() {
+  document.getElementById('day-picker').style.display = 'none';
+  selectedDay = null;
+}
+
+function aiSuggestSchedule() {
+  document.querySelectorAll('#step-5 .cal-day').forEach(function(d) {
+    d.querySelectorAll('.cal-post').forEach(function(p) { p.remove(); });
+  });
+  var placements = [{ dayNum:'9', idea:calendarIdeas[0] }, { dayNum:'16', idea:calendarIdeas[1] }];
+  placements.forEach(function(p) {
+    document.querySelectorAll('#step-5 .cal-day').forEach(function(d) {
+      var n = d.querySelector('.day-num');
+      if (n && n.textContent.trim() === p.dayNum) {
+        var post = document.createElement('div');
+        post.className = 'cal-post ' + p.idea.cls;
+        post.textContent = p.idea.text;
+        post.style.cursor = 'pointer';
+        post.title = 'Click to remove';
+        post.addEventListener('click', function(e) { e.stopPropagation(); post.remove(); });
+        d.appendChild(post);
+      }
+    });
+  });
+}
+
+document.addEventListener('click', function(e) {
+  var picker = document.getElementById('day-picker');
+  if (picker && picker.style.display !== 'none' && !picker.contains(e.target) && !e.target.closest('.cal-day')) {
+    closePicker();
+  }
+});
+</script>
+</body>
+</html>

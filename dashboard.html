@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panya — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-base:       #FAFAFA;
+  --bg-surface:    #FFFFFF;
+  --bg-elevated:   #F4F4F5;
+  --bg-overlay:    #ECECED;
+  --border-subtle: #F0F0F1;
+  --border-default:#E4E4E7;
+  --border-strong: #D4D4D8;
+  --text-primary:  #18181B;
+  --text-secondary:#71717A;
+  --text-muted:    #A1A1AA;
+
+  --teal:    #00C7A8; --teal-m:   rgba(0,199,168,0.10);
+  --amber:   #F59E0B; --amber-m:  rgba(245,158,11,0.10);
+  --red:     #EF4444; --red-m:    rgba(239,68,68,0.10);
+  --blue:    #60A5FA; --blue-m:   rgba(96,165,250,0.10);
+  --purple:  #A78BFA; --purple-m: rgba(167,139,250,0.10);
+  --orange:  #F97316; --orange-m: rgba(249,115,22,0.10);
+  --gray:    #71717A; --gray-m:   rgba(113,113,122,0.10);
+
+  --font-ui:      'DM Sans', sans-serif;
+  --font-display: 'Instrument Serif', Georgia, serif;
+  --font-mono:    'JetBrains Mono', monospace;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+
+  --r-sm: 4px; --r-md: 8px; --r-lg: 12px; --r-full: 9999px;
+}
+
+html, body {
+  height: 100%; font-family: var(--font-ui);
+  background: var(--bg-base); color: var(--text-primary);
+  font-size: 15px; line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Layout ──────────────────────────────────── */
+.app { display: flex; height: 100vh; overflow: hidden; }
+
+/* ── Sidebar ─────────────────────────────────── */
+.sidebar {
+  width: 220px; min-width: 220px;
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border-default);
+  display: flex; flex-direction: column;
+  height: 100vh; z-index: 20;
+}
+.sidebar-inner {
+  display: flex; flex-direction: column;
+  height: 100%; padding: 20px 0; overflow-y: auto;
+}
+.logo {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 16px;
+}
+.logo-text {
+  font-family: var(--font-display); font-style: italic;
+  font-size: 22px; color: var(--text-primary); letter-spacing: -0.02em;
+}
+.logo-dot { color: var(--teal); }
+
+/* Nav */
+.nav { flex: 1; padding: 0 10px; display: flex; flex-direction: column; gap: 2px; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 12px; border-radius: var(--r-md);
+  cursor: pointer; text-decoration: none;
+  color: var(--text-secondary); font-size: 14px; font-weight: 500;
+  transition: all 150ms ease;
+}
+.nav-item:hover           { background: var(--bg-elevated); color: var(--text-primary); }
+.nav-item.active          { background: var(--teal-m); color: var(--teal); }
+.nav-icon                 { width: 16px; height: 16px; flex-shrink: 0; }
+.nav-label                { flex: 1; }
+.nav-badge {
+  font-size: 10px; font-weight: 700; font-family: var(--font-mono);
+  padding: 1px 6px; border-radius: var(--r-full);
+  background: var(--amber-m); color: var(--amber);
+}
+.nav-badge.red { background: var(--red-m); color: var(--red); }
+.nav-divider   { height: 1px; background: var(--border-subtle); margin: 6px 10px; }
+
+/* User */
+.sidebar-user { border-top: 1px solid var(--border-subtle); padding: 12px 10px 0; margin-top: 8px; }
+.user-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 12px; border-radius: var(--r-md);
+  cursor: pointer; transition: background 150ms;
+}
+.user-row:hover { background: var(--bg-elevated); }
+.u-avatar {
+  width: 28px; height: 28px; border-radius: var(--r-full);
+  background: var(--teal-m); color: var(--teal);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0;
+}
+.u-email {
+  font-size: 12px; font-weight: 500; color: var(--text-primary);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px;
+}
+.u-role { font-size: 11px; color: var(--text-muted); }
+
+/* ── Main ────────────────────────────────────── */
+.main { flex: 1; overflow-y: auto; padding: 40px 48px; }
+.inner { max-width: 1160px; margin: 0 auto; }
+
+/* Page header */
+.page-header {
+  display: flex; align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+.greeting {
+  font-family: var(--font-display); font-size: 28px; font-weight: 400;
+  color: var(--text-primary); letter-spacing: -0.02em; line-height: 1.3;
+}
+.greeting-date { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+
+/* ── Brand Filter Bar ────────────────────────── */
+.filter-bar {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.filter-label { font-size: 12px; color: var(--text-muted); font-weight: 500; white-space: nowrap; }
+.filter-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.fchip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 12px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--border-default);
+  background: var(--bg-surface);
+  font-family: var(--font-ui); font-size: 13px; font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer; transition: all 150ms ease;
+  user-select: none;
+}
+.fchip:hover { border-color: var(--border-strong); color: var(--text-primary); background: var(--bg-elevated); }
+.fchip.active {
+  background: var(--teal); border-color: var(--teal);
+  color: #fff; font-weight: 600;
+}
+.fchip.active:hover { background: #00b397; }
+.fchip-dot { width: 6px; height: 6px; border-radius: var(--r-full); }
+
+/* filtered out items */
+.filterable {
+  transition: opacity 250ms ease, transform 250ms ease;
+}
+.filterable.hidden {
+  opacity: 0; pointer-events: none;
+  transform: scale(0.98);
+  position: absolute; /* remove from flow */
+}
+
+/* ── Section ─────────────────────────────────── */
+.section { margin-bottom: 36px; }
+.section-head {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 14px;
+}
+.section-title {
+  font-size: 11px; font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.section-link {
+  font-size: 13px; font-weight: 500; color: var(--teal);
+  text-decoration: none; cursor: pointer;
+}
+.section-link:hover { text-decoration: underline; }
+.section-count {
+  font-size: 12px; color: var(--text-muted);
+  transition: opacity 200ms;
+}
+
+/* ── Attention ───────────────────────────────── */
+.attention-list { display: flex; flex-direction: column; gap: 10px; position: relative; min-height: 60px; }
+.attention-item {
+  background: var(--bg-surface); border: 1px solid var(--border-default);
+  border-radius: var(--r-lg); padding: 16px 20px;
+  display: flex; align-items: center; gap: 16px;
+  transition: box-shadow 150ms, border-color 150ms, opacity 250ms, transform 250ms;
+}
+.attention-item:hover { border-color: var(--border-strong); box-shadow: var(--shadow-sm); }
+.attention-item.urgent  { border-left: 3px solid var(--red); }
+.attention-item.warning { border-left: 3px solid var(--amber); }
+.attention-item.info    { border-left: 3px solid var(--blue); }
+.attn-icon  { font-size: 16px; width: 24px; text-align: center; flex-shrink: 0; }
+.attn-body  { flex: 1; min-width: 0; }
+.attn-ctx {
+  font-size: 12px; color: var(--text-muted);
+  display: flex; align-items: center; gap: 6px; margin-bottom: 3px;
+}
+.attn-ctx strong { color: var(--text-secondary); font-weight: 600; }
+.attn-reason { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+.attn-time   { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+/* all-clear state */
+.all-clear {
+  display: none;
+  padding: 16px 20px;
+  background: var(--bg-surface); border: 1px solid var(--border-subtle);
+  border-radius: var(--r-lg);
+  font-size: 14px; color: var(--text-secondary);
+  align-items: center; gap: 10px;
+}
+.all-clear.visible { display: flex; }
+
+/* Platform chip */
+.chip {
+  display: inline-flex; align-items: center;
+  padding: 2px 7px; border-radius: var(--r-sm);
+  background: var(--bg-elevated); color: var(--text-secondary);
+  font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
+}
+
+/* ── Plans Grid ──────────────────────────────── */
+.plans-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 14px; position: relative; min-height: 120px;
+}
+.plan-card {
+  background: var(--bg-surface); border: 1px solid var(--border-default);
+  border-radius: var(--r-lg); padding: 18px 20px;
+  cursor: pointer; transition: all 200ms ease;
+}
+.plan-card:hover { border-color: var(--border-strong); box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+.plan-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 14px; }
+.plan-brand { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+.plan-meta  { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+.plan-foot  {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 12px; border-top: 1px solid var(--border-subtle);
+  font-size: 13px; color: var(--text-secondary);
+}
+.plan-updated { font-size: 11px; color: var(--text-muted); }
+
+/* Status badge */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 8px; border-radius: var(--r-sm);
+  font-size: 10px; font-weight: 700; letter-spacing: 0.04em;
+  white-space: nowrap; flex-shrink: 0;
+}
+.bdot { width: 5px; height: 5px; border-radius: var(--r-full); flex-shrink: 0; }
+.b-brief  { background:var(--amber-m);  color:var(--amber);  } .b-brief  .bdot {background:var(--amber);}
+.b-draft  { background:var(--blue-m);   color:var(--blue);   } .b-draft  .bdot {background:var(--blue);}
+.b-scored { background:var(--purple-m); color:var(--purple); } .b-scored .bdot {background:var(--purple);}
+.b-prop   { background:var(--teal-m);   color:var(--teal);   } .b-prop   .bdot {background:var(--teal);}
+.b-fb     { background:var(--orange-m); color:var(--orange); } .b-fb     .bdot {background:var(--orange);}
+.b-done   { background:var(--gray-m);   color:var(--gray);   } .b-done   .bdot {background:var(--gray);}
+
+/* Score */
+.sc      { font-family: var(--font-mono); font-weight: 700; }
+.sc-ex   { color: var(--teal); }
+.sc-st   { color: var(--amber); }
+
+/* no-results state */
+.no-plans {
+  display: none; grid-column: 1/-1;
+  padding: 32px; text-align: center;
+  color: var(--text-muted); font-size: 14px;
+}
+.no-plans.visible { display: block; }
+
+/* ── Quick Actions ───────────────────────────── */
+.quick-actions { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+.qa-btn {
+  background: var(--bg-surface); border: 1px solid var(--border-default);
+  border-radius: var(--r-lg); padding: 18px 20px;
+  cursor: pointer; font-family: var(--font-ui);
+  display: flex; align-items: center; gap: 14px;
+  text-align: left; transition: all 200ms ease;
+}
+.qa-btn:hover { border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-m); }
+.qa-btn.primary { background: var(--teal); border-color: var(--teal); }
+.qa-btn.primary:hover { background: #00b397; box-shadow: 0 4px 14px rgba(0,199,168,.28); }
+.qa-icon {
+  width: 36px; height: 36px; border-radius: var(--r-md);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.qa-icon.teal   { background: var(--teal-m);   color: var(--teal); }
+.qa-icon.purple { background: var(--purple-m); color: var(--purple); }
+.qa-icon.blue   { background: var(--blue-m);   color: var(--blue); }
+.qa-btn.primary .qa-icon { background: rgba(255,255,255,.20); color: #fff; }
+.qa-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.qa-sub   { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.qa-btn.primary .qa-title, .qa-btn.primary .qa-sub { color: #fff; }
+.qa-btn.primary .qa-sub { opacity: .8; }
+
+/* ── Activity ────────────────────────────────── */
+.activity-list { display: flex; flex-direction: column; }
+.activity-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 0; border-bottom: 1px solid var(--border-subtle);
+}
+.activity-item:last-child { border-bottom: none; }
+.act-av {
+  width: 28px; height: 28px; border-radius: var(--r-full);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 2px;
+}
+.act-text { font-size: 13px; color: var(--text-primary); line-height: 1.5; }
+.act-time { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 0 16px; height: 34px; border-radius: var(--r-md);
+  font-family: var(--font-ui); font-size: 13px; font-weight: 600;
+  cursor: pointer; border: none; transition: all 150ms ease; white-space: nowrap;
+}
+.btn-primary   { background: var(--teal); color: #fff; }
+.btn-primary:hover { background: #00b397; }
+.btn-secondary { background: transparent; color: var(--text-primary); border: 1px solid var(--border-default); }
+.btn-secondary:hover { background: var(--bg-elevated); border-color: var(--border-strong); }
+.btn-ghost     { background: transparent; color: var(--text-secondary); }
+.btn-ghost:hover { background: var(--bg-elevated); color: var(--text-primary); }
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-thumb { background: var(--border-default); border-radius: var(--r-full); }
+::-webkit-scrollbar-track { background: transparent; }
+/* Toast */
+#toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+.toast { display: flex; align-items: flex-start; gap: 10px; min-width: 280px; max-width: 380px; padding: 13px 16px; background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: var(--r-lg); box-shadow: var(--shadow-md); pointer-events: all; font-size: 13px; animation: slideUp 220ms ease; position: relative; overflow: hidden; }
+.toast::before { font-size: 14px; flex-shrink: 0; }
+.toast-success::before { content: '✓'; color: var(--teal); }
+.toast-error::before { content: '✕'; color: var(--red); }
+.toast-warning::before { content: '!'; color: var(--amber); }
+.toast-info::before { content: 'i'; color: var(--blue); font-style: italic; font-weight: 700; }
+.toast-msg { flex: 1; color: var(--text-primary); line-height: 1.4; }
+.toast-close { flex-shrink: 0; background: none; border: none; font-size: 16px; color: var(--text-muted); cursor: pointer; padding: 0 2px; line-height: 1; }
+.toast-close:hover { color: var(--text-primary); }
+.toast-progress { position: absolute; bottom: 0; left: 0; height: 2px; animation: shrink linear forwards; transform-origin: left; }
+.toast-success .toast-progress { background: var(--teal); }
+.toast-error .toast-progress { background: var(--red); }
+.toast-warning .toast-progress { background: var(--amber); }
+.toast-info .toast-progress { background: var(--blue); }
+@keyframes slideUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes shrink { from { width: 100%; } to { width: 0%; } }
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ── Sidebar ──────────────────────────────────── -->
+<aside class="sidebar">
+<div class="sidebar-inner">
+
+  <div class="logo">
+    <span class="logo-text">Panya<span class="logo-dot">.</span></span>
+  </div>
+
+  <nav class="nav">
+    <a class="nav-item active" href="dashboard.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+        <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+      </svg>
+      <span class="nav-label">Dashboard</span>
+    </a>
+    <a class="nav-item" href="plans.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="4" width="18" height="18" rx="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+      <span class="nav-label">Plans</span>
+      <span class="nav-badge">2</span>
+    </a>
+    <a class="nav-item" href="content-tools.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+      </svg>
+      <span class="nav-label">Content Tools</span>
+    </a>
+    <a class="nav-item" href="brand-library.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
+      </svg>
+      <span class="nav-label">Brand Library</span>
+    </a>
+    <a class="nav-item" href="insights.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+      </svg>
+      <span class="nav-label">Insights</span>
+    </a>
+    <a class="nav-item" href="ask-panya.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+      </svg>
+      <span class="nav-label">Ask Panya</span>
+    </a>
+    <div class="nav-divider"></div>
+    <a class="nav-item" href="admin.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+      <span class="nav-label">Admin</span>
+      <span class="nav-badge red">1</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-user">
+    <div class="user-row">
+      <div class="u-avatar">P</div>
+      <div style="flex:1;min-width:0">
+        <div class="u-email">por.zax@gmail.com</div>
+        <div class="u-role">Admin</div>
+      </div>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-muted);flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </div>
+
+</div>
+</aside>
+
+<!-- ── Main ────────────────────────────────────────── -->
+<main class="main">
+<div class="inner">
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div>
+      <h1 class="greeting">Good morning, Patiphan.</h1>
+      <p class="greeting-date">Saturday, 16 May 2026</p>
+    </div>
+  </div>
+
+  <!-- Brand filter bar -->
+  <div class="filter-bar">
+    <span class="filter-label">Brand</span>
+    <div class="filter-chips">
+      <button class="fchip active" data-filter="all" onclick="filterBy('all')">All brands</button>
+      <button class="fchip" data-filter="Bonchon" onclick="filterBy('Bonchon')">
+        <span class="fchip-dot" style="background:var(--teal)"></span>Bonchon
+      </button>
+      <button class="fchip" data-filter="Haier Thailand" onclick="filterBy('Haier Thailand')">
+        <span class="fchip-dot" style="background:var(--blue)"></span>Haier Thailand
+      </button>
+      <button class="fchip" data-filter="Central Retail" onclick="filterBy('Central Retail')">
+        <span class="fchip-dot" style="background:var(--purple)"></span>Central Retail
+      </button>
+      <button class="fchip" data-filter="MK Restaurant" onclick="filterBy('MK Restaurant')">
+        <span class="fchip-dot" style="background:var(--amber)"></span>MK Restaurant
+      </button>
+    </div>
+  </div>
+
+  <!-- Needs Attention -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">Needs Attention</span>
+      <span class="section-count" id="attn-count"></span>
+    </div>
+    <div class="attention-list" id="attn-list">
+
+      <div class="attention-item urgent" data-brand="Bonchon">
+        <div class="attn-icon">⚡</div>
+        <div class="attn-body">
+          <div class="attn-ctx">
+            <strong>Bonchon</strong><span class="chip">Instagram</span>· May 2026
+          </div>
+          <div class="attn-reason">Client feedback received — 3 ideas need revision</div>
+          <div class="attn-time">3 days ago</div>
+        </div>
+        <button class="btn btn-primary" onclick="window.location='plans-detail.html'">See Feedback</button>
+      </div>
+
+      <div class="attention-item warning" data-brand="Haier Thailand">
+        <div class="attn-icon">⚠️</div>
+        <div class="attn-body">
+          <div class="attn-ctx">
+            <strong>Haier Thailand</strong><span class="chip">Facebook</span>· May 2026
+          </div>
+          <div class="attn-reason">Brief ready but no ideas drafted — 4 days since creation</div>
+          <div class="attn-time">4 days ago</div>
+        </div>
+        <button class="btn btn-secondary" onclick="window.location='plans-new.html'">Start Drafting</button>
+      </div>
+
+      <div class="attention-item info" data-brand="Central Retail">
+        <div class="attn-icon">ℹ️</div>
+        <div class="attn-body">
+          <div class="attn-ctx">
+            <strong>Central Retail</strong><span class="chip">TikTok</span>· May 2026
+          </div>
+          <div class="attn-reason">Plan proposed 6 days ago — no client response yet</div>
+          <div class="attn-time">6 days ago</div>
+        </div>
+        <button class="btn btn-ghost" onclick="followUp()">Follow Up</button>
+      </div>
+
+      <!-- All-clear state (shown when filtered brand has no items) -->
+      <div class="all-clear" id="attn-clear">
+        <span style="font-size:18px">✓</span>
+        <span>No pending items for this brand.</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Active Plans -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">Active Plans</span>
+      <a class="section-link" href="plans.html">View all plans →</a>
+    </div>
+    <div class="plans-grid" id="plans-grid" onclick="if(event.target.closest('.plan-card')){window.location='plans-detail.html'}">
+
+      <div class="plan-card" data-brand="Bonchon">
+        <div class="plan-top">
+          <div>
+            <div class="plan-brand">Bonchon</div>
+            <div class="plan-meta">Instagram · May 2026</div>
+          </div>
+          <span class="badge b-fb"><span class="bdot"></span>Feedback Pending</span>
+        </div>
+        <div class="plan-foot">
+          <span>6 ideas · 3 approved</span>
+          <span class="plan-updated">3 days ago</span>
+        </div>
+      </div>
+
+      <div class="plan-card" data-brand="Haier Thailand">
+        <div class="plan-top">
+          <div>
+            <div class="plan-brand">Haier Thailand</div>
+            <div class="plan-meta">Facebook · May 2026</div>
+          </div>
+          <span class="badge b-brief"><span class="bdot"></span>Brief Ready</span>
+        </div>
+        <div class="plan-foot">
+          <span>0 ideas drafted</span>
+          <span class="plan-updated">4 days ago</span>
+        </div>
+      </div>
+
+      <div class="plan-card" data-brand="MK Restaurant">
+        <div class="plan-top">
+          <div>
+            <div class="plan-brand">MK Restaurant</div>
+            <div class="plan-meta">Instagram · May 2026</div>
+          </div>
+          <span class="badge b-draft"><span class="bdot"></span>Drafting</span>
+        </div>
+        <div class="plan-foot">
+          <span>5 / 8 ideas drafted</span>
+          <span class="plan-updated">2 hours ago</span>
+        </div>
+      </div>
+
+      <div class="plan-card" data-brand="Central Retail">
+        <div class="plan-top">
+          <div>
+            <div class="plan-brand">Central Retail</div>
+            <div class="plan-meta">TikTok · May 2026</div>
+          </div>
+          <span class="badge b-prop"><span class="bdot"></span>Proposed</span>
+        </div>
+        <div class="plan-foot">
+          <span>10 ideas · AVG <span class="sc sc-st">72</span></span>
+          <span class="plan-updated">6 days ago</span>
+        </div>
+      </div>
+
+      <div class="plan-card" data-brand="Bonchon">
+        <div class="plan-top">
+          <div>
+            <div class="plan-brand">Bonchon</div>
+            <div class="plan-meta">Facebook · April 2026</div>
+          </div>
+          <span class="badge b-scored"><span class="bdot"></span>Scored</span>
+        </div>
+        <div class="plan-foot">
+          <span>8 ideas · AVG <span class="sc sc-ex">84</span></span>
+          <span class="plan-updated">Yesterday</span>
+        </div>
+      </div>
+
+      <div class="plan-card" data-brand="Haier Thailand" style="opacity:.65">
+        <div class="plan-top">
+          <div>
+            <div class="plan-brand">Haier Thailand</div>
+            <div class="plan-meta">Instagram · April 2026</div>
+          </div>
+          <span class="badge b-done"><span class="bdot"></span>Complete</span>
+        </div>
+        <div class="plan-foot">
+          <span>12 ideas · AVG <span class="sc sc-ex">81</span></span>
+          <span class="plan-updated">May 2</span>
+        </div>
+      </div>
+
+      <div class="no-plans" id="no-plans">No active plans for this brand.</div>
+
+    </div>
+  </div>
+
+  <!-- Quick Actions — always global, no filter -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">Quick Actions</span>
+    </div>
+    <div class="quick-actions">
+      <button class="qa-btn primary" onclick="window.location='plans-new.html'">
+        <div class="qa-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+        </div>
+        <div>
+          <div class="qa-title">New Plan</div>
+          <div class="qa-sub">Start a monthly content plan</div>
+        </div>
+      </button>
+      <button class="qa-btn">
+        <div class="qa-icon purple">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="qa-title">Score a Caption</div>
+          <div class="qa-sub">Evaluate with AI scoring</div>
+        </div>
+      </button>
+      <button class="qa-btn">
+        <div class="qa-icon blue">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 18h6M10 22h4M12 2a7 7 0 017 7c0 2.38-1.19 4.47-3 5.74V17H8v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 017-7z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="qa-title">Generate Ideas</div>
+          <div class="qa-sub">Ideas from trends &amp; topics</div>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Recent Activity — always global -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">Recent Activity</span>
+    </div>
+    <div class="activity-list">
+      <div class="activity-item">
+        <div class="act-av" style="background:var(--teal-m);color:var(--teal)">P</div>
+        <div>
+          <div class="act-text">You scored 3 captions for <strong>Bonchon Instagram</strong></div>
+          <div class="act-time">2 hours ago</div>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="act-av" style="background:var(--purple-m);color:var(--purple)">A</div>
+        <div>
+          <div class="act-text">Aom proposed May plan for <strong>Central Retail TikTok</strong></div>
+          <div class="act-time">5 hours ago</div>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="act-av" style="background:var(--teal-m);color:var(--teal)">P</div>
+        <div>
+          <div class="act-text">You uploaded 45 posts to <strong>Haier Thailand Facebook</strong> — data health updated to 78%</div>
+          <div class="act-time">Yesterday</div>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="act-av" style="background:var(--orange-m);color:var(--orange)">B</div>
+        <div>
+          <div class="act-text">Client feedback received on <strong>Bonchon Instagram</strong> — 3 ideas need revision</div>
+          <div class="act-time">Yesterday</div>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="act-av" style="background:var(--purple-m);color:var(--purple)">A</div>
+        <div>
+          <div class="act-text">Aom created May plan for <strong>MK Restaurant Instagram</strong></div>
+          <div class="act-time">2 days ago</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</main>
+</div>
+
+<script>
+let current = 'all';
+
+function filterBy(brand) {
+  current = brand;
+
+  // Update chips
+  document.querySelectorAll('.fchip').forEach(c => {
+    c.classList.toggle('active', c.dataset.filter === brand);
+  });
+
+  // Filter attention items
+  const attnItems = document.querySelectorAll('#attn-list .attention-item[data-brand]');
+  let visibleAttn = 0;
+  attnItems.forEach(item => {
+    const show = brand === 'all' || item.dataset.brand === brand;
+    item.style.display = show ? '' : 'none';
+    if (show) visibleAttn++;
+  });
+
+  // Toggle all-clear for attention
+  document.getElementById('attn-clear').classList.toggle('visible', visibleAttn === 0);
+
+  // Update attention count label
+  const attnCount = document.getElementById('attn-count');
+  attnCount.textContent = brand === 'all' ? '' : `${visibleAttn} item${visibleAttn !== 1 ? 's' : ''}`;
+
+  // Filter plan cards
+  const planCards = document.querySelectorAll('#plans-grid .plan-card[data-brand]');
+  let visiblePlans = 0;
+  planCards.forEach(card => {
+    const show = brand === 'all' || card.dataset.brand === brand;
+    card.style.display = show ? '' : 'none';
+    if (show) visiblePlans++;
+  });
+
+  // Toggle no-plans
+  document.getElementById('no-plans').classList.toggle('visible', visiblePlans === 0);
+}
+
+function followUp() {
+  window.toast('Reminder sent to client — Central Retail TikTok plan', 'success', 2800);
+}
+</script>
+<div id="toast-container"></div>
+<script src="toast.js"></script>
+</body>
+</html>

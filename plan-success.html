@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan Created — Panya</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+
+/* ── Success hero ────────────────────────────────── */
+.success-hero {
+  background: linear-gradient(135deg, rgba(0,199,168,0.06) 0%, rgba(0,199,168,0.02) 100%);
+  border: 1px solid rgba(0,199,168,0.18);
+  border-radius: var(--r-xl);
+  padding: 36px 40px;
+  display: flex; align-items: center; gap: 28px;
+  margin-bottom: 28px;
+}
+.success-icon {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: rgba(0,199,168,0.12);
+  border: 2px solid rgba(0,199,168,0.30);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.success-heading {
+  font-family: var(--font-display);
+  font-size: 26px; font-style: italic;
+  letter-spacing: -0.02em; color: var(--text-primary);
+  margin-bottom: 4px;
+}
+.success-sub {
+  font-size: 14px; color: var(--text-secondary); line-height: 1.5;
+}
+.success-actions {
+  margin-left: auto; display: flex; gap: 8px; flex-shrink: 0;
+}
+
+/* ── Two-column layout ───────────────────────────── */
+.success-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 24px;
+  align-items: start;
+}
+
+/* ── Plan summary card ───────────────────────────── */
+.plan-summary-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+.plan-summary-head {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-default);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.plan-summary-title {
+  font-size: 14px; font-weight: 700; color: var(--text-primary);
+}
+.plan-meta-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.plan-stat-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid var(--border-default);
+}
+.plan-stat {
+  padding: 18px 20px;
+  border-right: 1px solid var(--border-default);
+  display: flex; flex-direction: column; gap: 3px;
+}
+.plan-stat:last-child { border-right: none; }
+.plan-stat-label {
+  font-size: 11px; font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.plan-stat-value {
+  font-size: 22px; font-weight: 700; color: var(--text-primary);
+  font-family: var(--font-mono); letter-spacing: -0.02em;
+}
+.plan-stat-sub {
+  font-size: 11px; color: var(--text-muted);
+}
+
+/* ── Idea list inside summary ────────────────────── */
+.idea-list { padding: 0; }
+.idea-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 13px;
+}
+.idea-row:last-child { border-bottom: none; }
+.idea-row-num {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+  color: var(--text-muted); min-width: 20px;
+}
+.idea-row-title { flex: 1; color: var(--text-primary); font-weight: 500; }
+.idea-row-meta { color: var(--text-muted); font-size: 12px; }
+.idea-score-pill {
+  font-family: var(--font-mono); font-size: 12px; font-weight: 700;
+  padding: 2px 8px; border-radius: var(--r-full);
+  flex-shrink: 0;
+}
+.score-high { background: rgba(0,199,168,0.12); color: var(--teal); }
+.score-mid  { background: rgba(245,158,11,0.12); color: var(--amber); }
+.score-low  { background: rgba(239,68,68,0.12);  color: var(--red); }
+
+/* ── Schedule preview strip ──────────────────────── */
+.schedule-strip {
+  display: flex; gap: 0;
+  border-top: 1px solid var(--border-default);
+  overflow: hidden;
+}
+.sched-item {
+  flex: 1;
+  padding: 12px 14px;
+  border-right: 1px solid var(--border-subtle);
+  font-size: 12px;
+}
+.sched-item:last-child { border-right: none; }
+.sched-date { font-weight: 700; color: var(--text-primary); margin-bottom: 2px; }
+.sched-post { color: var(--text-secondary); }
+.sched-post .chip { font-size: 10px; padding: 1px 6px; }
+
+/* ── Right sidebar ───────────────────────────────── */
+.next-sidebar { display: flex; flex-direction: column; gap: 16px; }
+
+.next-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+.next-card-head {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 12px; font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.next-card-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; }
+
+.action-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 14px; border-radius: var(--r-md);
+  border: 1px solid var(--border-default);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 120ms;
+  background: var(--bg-surface);
+}
+.action-item:hover { border-color: var(--border-strong); background: var(--bg-elevated); }
+.action-item.primary-action {
+  background: rgba(0,199,168,0.06);
+  border-color: rgba(0,199,168,0.30);
+}
+.action-item.primary-action:hover {
+  background: rgba(0,199,168,0.10);
+  border-color: rgba(0,199,168,0.50);
+}
+.action-icon {
+  width: 34px; height: 34px; border-radius: var(--r-md);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.action-icon.teal-icon { background: rgba(0,199,168,0.12); color: var(--teal); }
+.action-icon.gray-icon { background: var(--bg-elevated); color: var(--text-secondary); }
+.action-label { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+.action-desc  { font-size: 12px; color: var(--text-secondary); line-height: 1.4; }
+
+/* Status flow diagram */
+.status-flow {
+  display: flex; flex-direction: column; gap: 0;
+}
+.flow-step {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 0;
+  font-size: 12px;
+}
+.flow-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  flex-shrink: 0;
+}
+.flow-line {
+  width: 1px; height: 16px; background: var(--border-default);
+  margin-left: 3px;
+}
+.flow-step-label { color: var(--text-secondary); }
+.flow-step.done .flow-dot   { background: var(--teal); }
+.flow-step.done .flow-step-label { color: var(--text-primary); font-weight: 600; }
+.flow-step.current .flow-dot { background: var(--teal); box-shadow: 0 0 0 3px rgba(0,199,168,0.20); }
+.flow-step.current .flow-step-label { color: var(--teal); font-weight: 700; }
+.flow-step.pending .flow-dot { background: var(--border-strong); }
+
+/* ── Send modal ──────────────────────────────────── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.40);
+  display: none; align-items: center; justify-content: center;
+  z-index: 100;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--bg-surface);
+  border-radius: var(--r-xl);
+  padding: 32px;
+  width: 480px;
+  box-shadow: var(--shadow-lg);
+}
+.modal-title { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+.modal-sub { font-size: 13px; color: var(--text-secondary); margin-bottom: 24px; }
+.modal-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.modal-label { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.modal-input {
+  width: 100%; padding: 9px 12px;
+  border: 1px solid var(--border-default); border-radius: var(--r-md);
+  font-size: 13px; font-family: var(--font-ui); color: var(--text-primary);
+  background: var(--bg-base); outline: none;
+  transition: border-color 150ms;
+}
+.modal-input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-m); }
+.modal-link-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 12px;
+  background: var(--bg-elevated); border-radius: var(--r-md);
+  margin-bottom: 20px; font-size: 12px;
+}
+.modal-link-url {
+  flex: 1; color: var(--text-secondary);
+  font-family: var(--font-mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.modal-note {
+  font-size: 12px; color: var(--text-muted);
+  background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.18);
+  border-radius: var(--r-md); padding: 10px 12px;
+  margin-bottom: 20px; line-height: 1.5;
+}
+.modal-footer { display: flex; justify-content: flex-end; gap: 8px; }
+
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ── Sidebar ──────────────────────────────────────── -->
+<aside class="sidebar">
+<div class="sidebar-inner">
+  <div class="logo">
+    <a href="dashboard.html" class="logo-link">
+      <span class="logo-text">Panya<span class="logo-dot">.</span></span>
+    </a>
+  </div>
+  <nav class="nav">
+    <a class="nav-item" href="dashboard.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      <span class="nav-label">Dashboard</span>
+    </a>
+    <a class="nav-item active" href="plans.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span class="nav-label">Plans</span>
+      <span class="nav-badge">2</span>
+    </a>
+    <a class="nav-item" href="content-tools.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <span class="nav-label">Content Tools</span>
+    </a>
+    <a class="nav-item" href="brand-library.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+      <span class="nav-label">Brand Library</span>
+    </a>
+    <a class="nav-item" href="insights.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span class="nav-label">Insights</span>
+    </a>
+    <a class="nav-item" href="ask-panya.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      <span class="nav-label">Ask Panya</span>
+    </a>
+    <div class="nav-divider"></div>
+    <a class="nav-item" href="admin.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span class="nav-label">Admin</span>
+      <span class="nav-badge red">1</span>
+    </a>
+  </nav>
+  <div class="sidebar-user">
+    <div class="user-row">
+      <div class="u-avatar">P</div>
+      <div style="flex:1;min-width:0">
+        <div class="u-email">por.zax@gmail.com</div>
+        <div class="u-role">Admin</div>
+      </div>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-muted);flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </div>
+</div>
+</aside>
+
+<!-- ── Main ──────────────────────────────────────────── -->
+<main class="main">
+<div class="inner">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb" style="margin-bottom:24px">
+    <a href="plans.html">Plans</a>
+    <span class="breadcrumb-sep">/</span>
+    <a href="plans-new.html">New Plan</a>
+    <span class="breadcrumb-sep">/</span>
+    <span>Plan Ready</span>
+  </div>
+
+  <!-- ── Success hero ──────────────────────────────── -->
+  <div class="success-hero">
+    <div class="success-icon">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+    </div>
+    <div>
+      <div class="success-heading">Plan is ready to send.</div>
+      <div class="success-sub">
+        Bonchon · Instagram · May 2026 &nbsp;·&nbsp;
+        <span class="badge b-scored" style="display:inline-flex;vertical-align:middle"><span class="bdot"></span>Scored</span>
+        &nbsp;·&nbsp; Created just now
+      </div>
+    </div>
+    <div class="success-actions">
+      <a class="btn btn-secondary" href="plans.html">All Plans</a>
+      <a class="btn btn-secondary" href="plans-detail.html">View Plan</a>
+      <button class="btn btn-primary" onclick="openSendModal()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Send to Client
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Two-column layout ─────────────────────────── -->
+  <div class="success-layout">
+
+    <!-- Left: Plan summary -->
+    <div class="plan-summary-card">
+
+      <div class="plan-summary-head">
+        <div class="plan-summary-title">Plan Summary</div>
+        <div class="plan-meta-chips">
+          <span class="chip">Instagram</span>
+          <span class="chip">May 2026</span>
+          <span class="chip">8 target posts</span>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div class="plan-stat-row">
+        <div class="plan-stat">
+          <span class="plan-stat-label">Ideas</span>
+          <span class="plan-stat-value">6</span>
+          <span class="plan-stat-sub">of 8 planned</span>
+        </div>
+        <div class="plan-stat">
+          <span class="plan-stat-label">AVG Score</span>
+          <span class="plan-stat-value sc sc-st">78.5</span>
+          <span class="plan-stat-sub">Strong · ≥75</span>
+        </div>
+        <div class="plan-stat">
+          <span class="plan-stat-label">Boosted</span>
+          <span class="plan-stat-value">3</span>
+          <span class="plan-stat-sub">posts · ฿19K budget</span>
+        </div>
+        <div class="plan-stat">
+          <span class="plan-stat-label">Campaign</span>
+          <span class="plan-stat-value" style="font-size:13px;font-family:var(--font-ui);font-weight:700;letter-spacing:0;padding-top:4px">Summer Crunch</span>
+          <span class="plan-stat-sub">ฤดูร้อนนี้ต้องกรอบ</span>
+        </div>
+      </div>
+
+      <!-- Idea list -->
+      <div class="idea-list">
+
+        <div class="idea-row">
+          <span class="idea-row-num">#1</span>
+          <span class="idea-row-title">The ASMR Wing Drop</span>
+          <span class="idea-row-meta"><span class="chip" style="font-size:10px">Reel</span></span>
+          <span class="idea-row-meta" style="min-width:50px;text-align:right">May 5</span>
+          <span class="idea-score-pill score-high">87</span>
+        </div>
+
+        <div class="idea-row">
+          <span class="idea-row-num">#2</span>
+          <span class="idea-row-title">Summer Crunch Playlist</span>
+          <span class="idea-row-meta"><span class="chip" style="font-size:10px">Carousel</span></span>
+          <span class="idea-row-meta" style="min-width:50px;text-align:right">May 8</span>
+          <span class="idea-score-pill score-high">81</span>
+        </div>
+
+        <div class="idea-row">
+          <span class="idea-row-num">#3</span>
+          <span class="idea-row-title">Mother's Day Wing Dedication</span>
+          <span class="idea-row-meta"><span class="chip" style="font-size:10px">Story + Feed</span></span>
+          <span class="idea-row-meta" style="min-width:50px;text-align:right">May 11</span>
+          <span class="idea-score-pill score-mid">74</span>
+        </div>
+
+        <div class="idea-row">
+          <span class="idea-row-num">#4</span>
+          <span class="idea-row-title">Mango Bingsoo Reveal</span>
+          <span class="idea-row-meta"><span class="chip" style="font-size:10px">Reel</span></span>
+          <span class="idea-row-meta" style="min-width:50px;text-align:right">May 14</span>
+          <span class="idea-score-pill score-high">89</span>
+        </div>
+
+        <div class="idea-row">
+          <span class="idea-row-num">#5</span>
+          <span class="idea-row-title">Real Customer Reactions</span>
+          <span class="idea-row-meta"><span class="chip" style="font-size:10px">Reel</span></span>
+          <span class="idea-row-meta" style="min-width:50px;text-align:right">May 20</span>
+          <span class="idea-score-pill score-mid">72</span>
+        </div>
+
+        <div class="idea-row">
+          <span class="idea-row-num">#6</span>
+          <span class="idea-row-title">Lunchtime Promo Flash</span>
+          <span class="idea-row-meta"><span class="chip" style="font-size:10px">Story</span></span>
+          <span class="idea-row-meta" style="min-width:50px;text-align:right">May 19–30</span>
+          <span class="idea-score-pill score-mid">68</span>
+        </div>
+
+      </div>
+
+      <!-- Schedule preview strip -->
+      <div class="schedule-strip">
+        <div class="sched-item">
+          <div class="sched-date">May 5</div>
+          <div class="sched-post"><span class="chip" style="font-size:10px;background:rgba(167,139,250,0.15);color:var(--purple);border:none">Reel</span> #1</div>
+        </div>
+        <div class="sched-item">
+          <div class="sched-date">May 8</div>
+          <div class="sched-post"><span class="chip" style="font-size:10px;background:rgba(0,199,168,0.12);color:var(--teal);border:none">Carousel</span> #2</div>
+        </div>
+        <div class="sched-item">
+          <div class="sched-date">May 11</div>
+          <div class="sched-post"><span class="chip" style="font-size:10px;background:rgba(96,165,250,0.15);color:var(--blue);border:none">Story</span> #3 🚀</div>
+        </div>
+        <div class="sched-item">
+          <div class="sched-date">May 14</div>
+          <div class="sched-post"><span class="chip" style="font-size:10px;background:rgba(167,139,250,0.15);color:var(--purple);border:none">Reel</span> #4 🚀</div>
+        </div>
+        <div class="sched-item">
+          <div class="sched-date">May 20</div>
+          <div class="sched-post"><span class="chip" style="font-size:10px;background:rgba(167,139,250,0.15);color:var(--purple);border:none">Reel</span> #5</div>
+        </div>
+        <div class="sched-item" style="border-right:none">
+          <div class="sched-date">May 19–30</div>
+          <div class="sched-post"><span class="chip" style="font-size:10px;background:rgba(96,165,250,0.15);color:var(--blue);border:none">Story</span> #6 🚀</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right: Next steps sidebar -->
+    <div class="next-sidebar">
+
+      <!-- Status flow -->
+      <div class="next-card">
+        <div class="next-card-head">Plan Status</div>
+        <div class="next-card-body" style="padding:18px">
+          <div class="status-flow">
+            <div class="flow-step done">
+              <div class="flow-dot"></div>
+              <span class="flow-step-label">Brief Ready</span>
+            </div>
+            <div class="flow-line"></div>
+            <div class="flow-step done">
+              <div class="flow-dot"></div>
+              <span class="flow-step-label">Ideas Drafted</span>
+            </div>
+            <div class="flow-line"></div>
+            <div class="flow-step current">
+              <div class="flow-dot"></div>
+              <span class="flow-step-label">Scored — Ready to send</span>
+            </div>
+            <div class="flow-line"></div>
+            <div class="flow-step pending">
+              <div class="flow-dot"></div>
+              <span class="flow-step-label" style="color:var(--text-muted)">Proposed to client</span>
+            </div>
+            <div class="flow-line"></div>
+            <div class="flow-step pending">
+              <div class="flow-dot"></div>
+              <span class="flow-step-label" style="color:var(--text-muted)">Feedback received</span>
+            </div>
+            <div class="flow-line"></div>
+            <div class="flow-step pending">
+              <div class="flow-dot"></div>
+              <span class="flow-step-label" style="color:var(--text-muted)">Complete</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="next-card">
+        <div class="next-card-head">Next Steps</div>
+        <div class="next-card-body">
+
+          <div class="action-item primary-action" onclick="openSendModal()" style="cursor:pointer">
+            <div class="action-icon teal-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </div>
+            <div>
+              <div class="action-label">Send to Client</div>
+              <div class="action-desc">Email proposal link · status becomes Proposed</div>
+            </div>
+          </div>
+
+          <a class="action-item" href="plans-detail.html">
+            <div class="action-icon gray-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <div>
+              <div class="action-label">View Full Plan</div>
+              <div class="action-desc">Open plan detail — edit ideas, check schedule</div>
+            </div>
+          </a>
+
+          <a class="action-item" href="plans-new.html">
+            <div class="action-icon gray-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </div>
+            <div>
+              <div class="action-label">Create Another Plan</div>
+              <div class="action-desc">Start a new plan for another brand or month</div>
+            </div>
+          </a>
+
+        </div>
+      </div>
+
+      <!-- Score note -->
+      <div style="background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.20);border-radius:var(--r-lg);padding:16px 18px">
+        <div style="font-size:12px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">
+          Score Insight
+        </div>
+        <div style="font-size:13px;color:var(--text-secondary);line-height:1.6">
+          AVG <strong style="color:var(--text-primary)">78.5</strong> — above the 75 "Strong" threshold. Ideas #4 (89) and #1 (87) are your hero posts. Consider leading with those in the proposal.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</main>
+</div>
+
+<!-- ── Send to Client modal ──────────────────────── -->
+<div class="modal-overlay" id="send-modal" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+      <div class="modal-title">Send Plan to Client</div>
+      <button onclick="closeSendModal()" style="background:none;border:none;cursor:pointer;color:var(--text-muted);padding:4px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-sub">Plan will be marked as <strong>Proposed</strong> once sent.</div>
+
+    <div class="modal-field">
+      <label class="modal-label">Client Email</label>
+      <input class="modal-input" type="email" value="marketing@bonchon.co.th" placeholder="client@brand.com">
+    </div>
+
+    <div class="modal-field">
+      <label class="modal-label">Subject</label>
+      <input class="modal-input" type="text" value="[Panya] Bonchon Instagram Plan — May 2026">
+    </div>
+
+    <div class="modal-field">
+      <label class="modal-label">Message (optional)</label>
+      <textarea class="modal-input" style="min-height:72px;resize:vertical" placeholder="Add a short note to accompany the proposal link…">Hi team, here's the Bonchon Instagram plan for May 2026. Please review the 6 ideas and leave your feedback via the link below. Happy to jump on a call to walk through it.</textarea>
+    </div>
+
+    <div style="margin-bottom:4px">
+      <div class="modal-label" style="margin-bottom:8px">Proposal Link</div>
+      <div class="modal-link-row">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+        <span class="modal-link-url">panya.app/proposal/bonchon-ig-may2026-x7k2</span>
+        <button onclick="copyLink(this)" style="background:none;border:none;cursor:pointer;color:var(--teal);font-size:12px;font-weight:600;white-space:nowrap">Copy</button>
+      </div>
+    </div>
+
+    <div class="modal-note">
+      <strong style="color:var(--amber)">Note:</strong> The client will see all 6 ideas with scores hidden. They can approve, request revision, or reject each idea and leave notes.
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeSendModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmSend()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Send & Mark Proposed
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="toast.js"></script>
+<script>
+function openSendModal() {
+  document.getElementById('send-modal').classList.add('open');
+}
+function closeSendModal() {
+  document.getElementById('send-modal').classList.remove('open');
+}
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('send-modal')) closeSendModal();
+}
+
+function copyLink(btn) {
+  btn.textContent = 'Copied!';
+  setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
+}
+
+function confirmSend() {
+  closeSendModal();
+  toast('Plan sent to Bonchon — status updated to Proposed.', 'success', 3000);
+  setTimeout(function() { window.location.href = 'plans-detail.html'; }, 1600);
+}
+</script>
+</body>
+</html>

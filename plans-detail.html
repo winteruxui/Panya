@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bonchon / Instagram / May 2026 — Panya</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+
+/* ── Sticky plan header ──────────────────────────── */
+.plan-header {
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-default);
+  padding: 20px 48px 0;
+  position: sticky; top: 0; z-index: 10;
+  /* sticky works because .main is the scroll container */
+}
+.plan-header-inner { max-width: 1160px; margin: 0 auto; }
+.plan-meta-row {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 20px;
+  padding-bottom: 16px;
+}
+.plan-title-block { display: flex; flex-direction: column; gap: 6px; }
+.plan-name {
+  font-size: 20px; font-weight: 700;
+  letter-spacing: -0.02em; color: var(--text-primary);
+  display: flex; align-items: center; gap: 10px;
+}
+.plan-sub { font-size: 13px; color: var(--text-secondary); }
+.plan-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+/* ── Tabs inside sticky header ───────────────────── */
+.plan-tabs { display: flex; gap: 0; }
+.plan-tab {
+  padding: 10px 18px; font-size: 14px; font-weight: 500;
+  color: var(--text-secondary); cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px; transition: all 150ms ease;
+  user-select: none;
+}
+.plan-tab:hover { color: var(--text-primary); }
+.plan-tab.active { color: var(--teal); border-bottom-color: var(--teal); font-weight: 600; }
+
+/* ── Main scroll area ────────────────────────────── */
+.plan-body { padding: 36px 48px; }
+.plan-body-inner { max-width: 1160px; margin: 0 auto; }
+
+/* ── Tab panels ──────────────────────────────────── */
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── Brief tab ───────────────────────────────────── */
+.brief-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+.brief-field { display: flex; flex-direction: column; gap: 4px; }
+.brief-key { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.brief-val { font-size: 14px; color: var(--text-primary); font-weight: 500; }
+.pillar-row { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+.pillar-item {
+  display: flex; align-items: center; gap: 10px;
+}
+.pillar-bar-wrap { flex: 1; height: 6px; background: var(--bg-elevated); border-radius: var(--r-full); overflow: hidden; }
+.pillar-bar { height: 100%; background: var(--teal); border-radius: var(--r-full); }
+.pillar-label { font-size: 13px; color: var(--text-primary); min-width: 160px; }
+.pillar-pct { font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); min-width: 32px; text-align: right; }
+
+/* ── Content/Idea cards ──────────────────────────── */
+.ideas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+.idea-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--r-lg); overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.idea-card-head {
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex; align-items: flex-start; gap: 10px;
+}
+.idea-num {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+  color: var(--text-muted); min-width: 24px;
+}
+.idea-title { font-size: 14px; font-weight: 600; color: var(--text-primary); flex: 1; line-height: 1.4; }
+.idea-score-pill {
+  font-family: var(--font-mono); font-size: 12px; font-weight: 700;
+  padding: 2px 8px; border-radius: var(--r-full);
+  flex-shrink: 0;
+}
+.score-high { background: rgba(0,199,168,0.12); color: var(--teal); }
+.score-mid  { background: rgba(245,158,11,0.12); color: var(--amber); }
+.score-low  { background: rgba(239,68,68,0.12); color: var(--red); }
+.idea-card-body { padding: 12px 16px; flex: 1; }
+.idea-meta { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; }
+.idea-hook { font-size: 13px; color: var(--text-primary); line-height: 1.5; }
+.idea-card-foot {
+  padding: 10px 16px; border-top: 1px solid var(--border-subtle);
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+
+/* ── Feedback vote chips ─────────────────────────── */
+.vote-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 10px; border-radius: var(--r-full);
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  border: 1px solid var(--border-default);
+  background: var(--bg-surface); color: var(--text-secondary);
+  transition: all 120ms; user-select: none;
+}
+.vote-chip:hover { border-color: var(--border-strong); color: var(--text-primary); }
+.vote-chip.v-approve { background: rgba(0,199,168,0.10); border-color: var(--teal); color: var(--teal); }
+.vote-chip.v-revise  { background: rgba(245,158,11,0.10); border-color: var(--amber); color: var(--amber); }
+.vote-chip.v-reject  { background: rgba(239,68,68,0.10); border-color: var(--red); color: var(--red); }
+
+/* ── Feedback tab layout ─────────────────────────── */
+.feedback-layout { display: grid; grid-template-columns: 1fr 340px; gap: 24px; }
+.fb-ideas { display: flex; flex-direction: column; gap: 12px; }
+.fb-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--r-lg); overflow: hidden;
+}
+.fb-card-head {
+  padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.fb-card-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+.fb-hook { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+.fb-votes { display: flex; align-items: center; gap: 8px; }
+.fb-note { display: flex; flex-direction: column; gap: 4px; }
+.fb-note-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+
+/* ── Feedback sidebar ────────────────────────────── */
+.fb-sidebar { display: flex; flex-direction: column; gap: 16px; }
+.fb-sidebar-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--r-lg); padding: 18px;
+}
+.fb-sidebar-title { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; }
+.fb-stat-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border-subtle); font-size: 13px; }
+.fb-stat-row:last-child { border-bottom: none; }
+.fb-stat-key { color: var(--text-secondary); }
+.fb-stat-val { font-weight: 600; font-family: var(--font-mono); }
+
+/* client note textarea */
+.client-note-area {
+  width: 100%; min-height: 80px; resize: vertical;
+  background: var(--bg-base);
+  border: 1px solid var(--border-default);
+  border-radius: var(--r-md);
+  padding: 10px 12px;
+  font-family: var(--font-ui); font-size: 13px;
+  color: var(--text-primary); outline: none;
+  transition: border-color 150ms;
+}
+.client-note-area::placeholder { color: var(--text-muted); }
+.client-note-area:focus { border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-m); }
+
+/* ── Media tab ───────────────────────────────────── */
+.media-table-wrap {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--r-lg); overflow: hidden;
+  margin-bottom: 16px;
+}
+.media-table { width: 100%; border-collapse: collapse; }
+.media-table thead th {
+  padding: 11px 16px; text-align: left;
+  font-size: 11px; font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  background: var(--bg-elevated); border-bottom: 1px solid var(--border-default);
+}
+.media-table tbody tr { border-bottom: 1px solid var(--border-subtle); }
+.media-table tbody tr:last-child { border-bottom: none; }
+.media-table tbody td { padding: 13px 16px; font-size: 13px; color: var(--text-primary); vertical-align: middle; }
+.budget-cell { font-family: var(--font-mono); font-weight: 600; }
+.media-footer {
+  background: var(--bg-elevated);
+  border-top: 1px solid var(--border-default);
+  padding: 12px 16px;
+  display: flex; align-items: center; justify-content: flex-end; gap: 24px;
+  font-size: 13px;
+}
+.media-total-key { color: var(--text-secondary); }
+.media-total-val { font-family: var(--font-mono); font-weight: 700; font-size: 15px; }
+
+/* ── Summary tab ─────────────────────────────────── */
+.summary-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+.summary-layout { display: grid; grid-template-columns: 1fr 280px; gap: 24px; }
+
+/* Calendar */
+.calendar-wrap {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--r-lg); overflow: hidden;
+}
+.calendar-head {
+  padding: 14px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border-default);
+}
+.calendar-month { font-size: 15px; font-weight: 700; }
+.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
+.cal-day-name {
+  padding: 8px 4px; text-align: center;
+  font-size: 11px; font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
+}
+.cal-cell {
+  border-right: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  min-height: 88px; padding: 6px;
+  vertical-align: top;
+}
+.cal-cell:nth-child(7n) { border-right: none; }
+.cal-num { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+.cal-num.today { color: var(--teal); font-weight: 700; }
+.cal-cell.other-month .cal-num { color: var(--border-strong); }
+.cal-post {
+  padding: 3px 6px; border-radius: 4px;
+  font-size: 11px; font-weight: 600; margin-bottom: 3px;
+  cursor: pointer; line-height: 1.3;
+}
+.post-reel { background: rgba(167,139,250,0.15); color: var(--purple); }
+.post-story { background: rgba(96,165,250,0.15); color: var(--blue); }
+.post-carousel { background: rgba(0,199,168,0.12); color: var(--teal); }
+.post-collab { background: rgba(245,158,11,0.12); color: var(--amber); }
+
+/* Summary side panel */
+.summary-side { display: flex; flex-direction: column; gap: 16px; }
+.side-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--r-lg); padding: 18px;
+}
+.side-card-title { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; }
+.pillar-summary-row { display: flex; flex-direction: column; gap: 8px; }
+.ps-item { display: flex; align-items: center; gap: 10px; }
+.ps-label { font-size: 13px; color: var(--text-primary); flex: 1; }
+.ps-count { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }
+.ps-bar-w { width: 80px; height: 5px; background: var(--bg-elevated); border-radius: var(--r-full); overflow: hidden; }
+.ps-bar   { height: 100%; background: var(--teal); border-radius: var(--r-full); }
+.legend-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-secondary); }
+.legend-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
+/* ── Attention banner ────────────────────────────── */
+.attention-banner {
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(249,115,22,0.06);
+  border: 1px solid rgba(249,115,22,0.25);
+  border-radius: var(--r-md);
+  padding: 12px 16px; margin-bottom: 24px;
+  font-size: 13px; color: var(--orange);
+}
+.attention-banner strong { font-weight: 700; }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<!-- ── Sidebar ──────────────────────────────────────── -->
+<aside class="sidebar">
+<div class="sidebar-inner">
+  <div class="logo">
+    <a href="dashboard.html" class="logo-link">
+      <span class="logo-text">Panya<span class="logo-dot">.</span></span>
+    </a>
+  </div>
+  <nav class="nav">
+    <a class="nav-item" href="dashboard.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      <span class="nav-label">Dashboard</span>
+    </a>
+    <a class="nav-item active" href="plans.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span class="nav-label">Plans</span>
+      <span class="nav-badge">2</span>
+    </a>
+    <a class="nav-item" href="content-tools.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <span class="nav-label">Content Tools</span>
+    </a>
+    <a class="nav-item" href="brand-library.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+      <span class="nav-label">Brand Library</span>
+    </a>
+    <a class="nav-item" href="insights.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span class="nav-label">Insights</span>
+    </a>
+    <a class="nav-item" href="ask-panya.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      <span class="nav-label">Ask Panya</span>
+    </a>
+    <div class="nav-divider"></div>
+    <a class="nav-item" href="admin.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span class="nav-label">Admin</span>
+      <span class="nav-badge red">1</span>
+    </a>
+  </nav>
+  <div class="sidebar-user">
+    <div class="user-row">
+      <div class="u-avatar">P</div>
+      <div style="flex:1;min-width:0">
+        <div class="u-email">por.zax@gmail.com</div>
+        <div class="u-role">Admin</div>
+      </div>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-muted);flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </div>
+</div>
+</aside>
+
+<!-- ── Main: scroll container ─────────────────────── -->
+<main class="main" style="padding:0;">
+
+  <!-- Sticky plan header (sticky inside scroll container) -->
+  <div class="plan-header">
+    <div class="plan-header-inner">
+
+      <!-- Breadcrumb -->
+      <div class="breadcrumb" style="margin-bottom:12px">
+        <a href="plans.html">Plans</a>
+        <span class="breadcrumb-sep">/</span>
+        <span>Bonchon · Instagram · May 2026</span>
+      </div>
+
+      <!-- Title + actions row -->
+      <div class="plan-meta-row">
+        <div class="plan-title-block">
+          <div class="plan-name">
+            Bonchon Instagram — May 2026
+            <span class="badge b-fb"><span class="bdot"></span>Feedback Pending</span>
+          </div>
+          <div class="plan-sub">6 ideas · Sent to client 3 days ago · AVG score pending client response</div>
+        </div>
+        <div class="plan-actions">
+          <button class="btn btn-secondary btn-sm" onclick="switchTab('content')">View Ideas</button>
+          <button class="btn btn-primary btn-sm" onclick="switchTab('feedback')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            Log Feedback
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab bar -->
+      <div class="plan-tabs">
+        <div class="plan-tab active" data-tab="overview" onclick="switchTab('overview')">Overview</div>
+        <div class="plan-tab" data-tab="content" onclick="switchTab('content')">Content <span style="font-size:11px;color:var(--text-muted);font-weight:400">(6)</span></div>
+        <div class="plan-tab" data-tab="feedback" onclick="switchTab('feedback')">Feedback
+          <span style="font-size:10px;font-weight:700;font-family:var(--font-mono);padding:1px 5px;border-radius:var(--r-full);background:rgba(249,115,22,0.10);color:var(--orange);margin-left:4px;">!</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab content -->
+  <div class="plan-body">
+  <div class="plan-body-inner">
+
+    <!-- ══ OVERVIEW TAB ═══════════════════════════════ -->
+    <section id="tab-overview" class="tab-panel active">
+
+      <!-- Brief summary card -->
+      <div class="card" style="margin-bottom:20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div style="font-size:14px;font-weight:700">Brief Summary</div>
+          <button class="btn btn-ghost btn-sm" id="brief-toggle-btn" onclick="toggleBrief()" style="color:var(--teal);font-size:12px">Show Full Brief ↓</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:14px">
+          <div class="brief-field"><span class="brief-key">Campaign</span><span class="brief-val" style="font-size:13px">Summer Crunch — ฤดูร้อนนี้ต้องกรอบ</span></div>
+          <div class="brief-field"><span class="brief-key">Product Focus</span><span class="brief-val" style="font-size:13px">Crispy Wings · Mango Bingsoo</span></div>
+          <div class="brief-field"><span class="brief-key">Audience</span><span class="brief-val" style="font-size:13px">Urban Thai 18–28 · Korean food fans</span></div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+          <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em">Pillars</span>
+          <span class="chip">Product 35%</span><span class="chip">Lifestyle 25%</span><span class="chip">UGC 20%</span><span class="chip">Promo 15%</span><span class="chip">BTS 5%</span>
+        </div>
+        <!-- Expandable full brief -->
+        <div id="brief-full-detail" style="display:none;margin-top:20px;padding-top:20px;border-top:1px solid var(--border-subtle)">
+          <div class="brief-grid">
+            <div class="brief-field"><span class="brief-key">Brand</span><span class="brief-val">Bonchon</span></div>
+            <div class="brief-field"><span class="brief-key">Platform</span><span class="brief-val"><span class="chip">Instagram</span></span></div>
+            <div class="brief-field"><span class="brief-key">Month</span><span class="brief-val">May 2026</span></div>
+            <div class="brief-field"><span class="brief-key">Target Posts</span><span class="brief-val">8 posts</span></div>
+            <div class="brief-field" style="grid-column:1/-1"><span class="brief-key">Campaign Goal</span><span class="brief-val">Drive in-store visits during summer lunchtime peak (11am–2pm weekdays). Secondary: build aspirational brand affinity with 18–28 urban audience.</span></div>
+            <div class="brief-field" style="grid-column:1/-1"><span class="brief-key">Tone of Voice</span><span class="brief-val">Fun, crunchy, relatable. Thai-English mix (Thanglish) for captions. Avoid stiff or corporate.</span></div>
+            <div class="brief-field" style="grid-column:1/-1"><span class="brief-key">Notes</span><span class="brief-val" style="color:var(--text-secondary)">Avoid heavy promotion language. May 11 = Mother's Day — weave in organically. No political or religious references.</span></div>
+          </div>
+          <div style="margin-top:16px">
+            <div class="brief-key" style="margin-bottom:12px">Full Pillar Mix</div>
+            <div class="pillar-row">
+              <div class="pillar-item"><span class="pillar-label">Product Highlight</span><div class="pillar-bar-wrap"><div class="pillar-bar" style="width:35%"></div></div><span class="pillar-pct">35%</span></div>
+              <div class="pillar-item"><span class="pillar-label">Lifestyle / Mood</span><div class="pillar-bar-wrap"><div class="pillar-bar" style="width:25%"></div></div><span class="pillar-pct">25%</span></div>
+              <div class="pillar-item"><span class="pillar-label">UGC / Social Proof</span><div class="pillar-bar-wrap"><div class="pillar-bar" style="width:20%"></div></div><span class="pillar-pct">20%</span></div>
+              <div class="pillar-item"><span class="pillar-label">Offer / Promotion</span><div class="pillar-bar-wrap"><div class="pillar-bar" style="width:15%"></div></div><span class="pillar-pct">15%</span></div>
+              <div class="pillar-item"><span class="pillar-label">Behind the Scenes</span><div class="pillar-bar-wrap"><div class="pillar-bar" style="width:5%"></div></div><span class="pillar-pct">5%</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div class="summary-stats" style="margin-bottom:20px">
+        <div class="stat-card"><div class="stat-label">Total Ideas</div><div class="stat-value">6</div><div class="stat-sub">of 8 planned</div></div>
+        <div class="stat-card"><div class="stat-label">AVG Panya Score</div><div class="stat-value sc sc-st">78.5</div><div class="stat-sub">Strong · above 75 threshold</div></div>
+        <div class="stat-card"><div class="stat-label">Boost Budget</div><div class="stat-value">฿19K</div><div class="stat-sub">3 boosted posts</div></div>
+        <div class="stat-card"><div class="stat-label">Feedback</div><div class="stat-value" style="font-size:20px;color:var(--orange)">Pending</div><div class="stat-sub">Sent May 13 · 3 days ago</div></div>
+      </div>
+
+      <!-- View toggle -->
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+        <button class="tchip active" id="ov-btn-cal" onclick="switchView('cal')" style="font-size:13px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Calendar
+        </button>
+        <button class="tchip" id="ov-btn-table" onclick="switchView('table')" style="font-size:13px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+          Media Table
+        </button>
+        <div style="flex:1"></div>
+        <button class="btn btn-secondary btn-sm">Export</button>
+      </div>
+
+      <!-- Calendar view -->
+      <div id="ov-cal-view">
+        <div class="calendar-wrap">
+          <div class="calendar-head">
+            <span class="calendar-month">May 2026</span>
+            <div class="legend-row">
+              <span class="legend-item"><span class="legend-dot" style="background:rgba(167,139,250,0.5)"></span>Reel</span>
+              <span class="legend-item"><span class="legend-dot" style="background:rgba(96,165,250,0.5)"></span>Story</span>
+              <span class="legend-item"><span class="legend-dot" style="background:rgba(0,199,168,0.4)"></span>Carousel</span>
+              <span class="legend-item" style="opacity:.6"><span class="legend-dot" style="background:var(--amber)"></span>🚀 Boosted</span>
+            </div>
+          </div>
+          <div class="calendar-grid">
+            <div class="cal-day-name">Sun</div><div class="cal-day-name">Mon</div><div class="cal-day-name">Tue</div><div class="cal-day-name">Wed</div><div class="cal-day-name">Thu</div><div class="cal-day-name">Fri</div><div class="cal-day-name">Sat</div>
+            <div class="cal-cell other-month"><div class="cal-num">26</div></div>
+            <div class="cal-cell other-month"><div class="cal-num">27</div></div>
+            <div class="cal-cell other-month"><div class="cal-num">28</div></div>
+            <div class="cal-cell other-month"><div class="cal-num">29</div></div>
+            <div class="cal-cell other-month"><div class="cal-num">30</div></div>
+            <div class="cal-cell"><div class="cal-num">1</div></div>
+            <div class="cal-cell"><div class="cal-num">2</div></div>
+            <div class="cal-cell"><div class="cal-num">3</div></div>
+            <div class="cal-cell"><div class="cal-num">4</div></div>
+            <div class="cal-cell"><div class="cal-num">5</div><div class="cal-post post-reel">#1 ASMR Wing</div></div>
+            <div class="cal-cell"><div class="cal-num">6</div></div>
+            <div class="cal-cell"><div class="cal-num">7</div></div>
+            <div class="cal-cell"><div class="cal-num">8</div><div class="cal-post post-carousel">#2 Crunch Playlist</div></div>
+            <div class="cal-cell"><div class="cal-num">9</div></div>
+            <div class="cal-cell"><div class="cal-num">10</div></div>
+            <div class="cal-cell"><div class="cal-num">11</div><div class="cal-post post-story">#3 Mother's Day 🚀</div></div>
+            <div class="cal-cell"><div class="cal-num">12</div></div>
+            <div class="cal-cell"><div class="cal-num">13</div></div>
+            <div class="cal-cell"><div class="cal-num">14</div><div class="cal-post post-reel">#4 Mango Reveal 🚀</div></div>
+            <div class="cal-cell"><div class="cal-num">15</div></div>
+            <div class="cal-cell"><div class="cal-num today">16</div></div>
+            <div class="cal-cell"><div class="cal-num">17</div></div>
+            <div class="cal-cell"><div class="cal-num">18</div></div>
+            <div class="cal-cell"><div class="cal-num">19</div><div class="cal-post post-story">#6 Promo 🚀</div></div>
+            <div class="cal-cell"><div class="cal-num">20</div><div class="cal-post post-reel">#5 UGC Reel</div></div>
+            <div class="cal-cell"><div class="cal-num">21</div></div>
+            <div class="cal-cell"><div class="cal-num">22</div><div class="cal-post post-story">#6 Promo</div></div>
+            <div class="cal-cell"><div class="cal-num">23</div></div>
+            <div class="cal-cell"><div class="cal-num">24</div></div>
+            <div class="cal-cell"><div class="cal-num">25</div><div class="cal-post post-story">#6 Promo</div></div>
+            <div class="cal-cell"><div class="cal-num">26</div></div>
+            <div class="cal-cell"><div class="cal-num">27</div></div>
+            <div class="cal-cell"><div class="cal-num">28</div><div class="cal-post post-story">#6 Promo</div></div>
+            <div class="cal-cell"><div class="cal-num">29</div></div>
+            <div class="cal-cell"><div class="cal-num">30</div></div>
+            <div class="cal-cell"><div class="cal-num">31</div></div>
+            <div class="cal-cell other-month"><div class="cal-num">1</div></div>
+            <div class="cal-cell other-month"><div class="cal-num">2</div></div>
+            <div class="cal-cell other-month"><div class="cal-num">3</div></div>
+            <div class="cal-cell other-month"><div class="cal-num">4</div></div>
+            <div class="cal-cell other-month"><div class="cal-num">5</div></div>
+            <div class="cal-cell other-month"><div class="cal-num">6</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table view -->
+      <div id="ov-table-view" style="display:none">
+        <div class="media-table-wrap">
+          <table class="media-table">
+            <thead><tr><th>#</th><th>Idea Title</th><th>Format</th><th>Schedule</th><th>Boost</th><th>Objective</th><th>Budget (฿)</th><th>Duration</th></tr></thead>
+            <tbody>
+              <tr><td style="color:var(--text-muted);font-family:var(--font-mono)">1</td><td>ASMR Wing Drop</td><td><span class="chip">Reel</span></td><td class="td-muted">May 5</td><td><span style="display:inline-block;padding:3px 10px;border-radius:var(--r-full);background:var(--bg-elevated);font-size:11px;font-weight:600;color:var(--text-muted)">Organic</span></td><td class="td-muted">–</td><td class="budget-cell td-muted">–</td><td class="td-muted">–</td></tr>
+              <tr><td style="color:var(--text-muted);font-family:var(--font-mono)">2</td><td>Summer Crunch Playlist</td><td><span class="chip">Carousel</span></td><td class="td-muted">May 8</td><td><span style="display:inline-block;padding:3px 10px;border-radius:var(--r-full);background:var(--bg-elevated);font-size:11px;font-weight:600;color:var(--text-muted)">Organic</span></td><td class="td-muted">–</td><td class="budget-cell td-muted">–</td><td class="td-muted">–</td></tr>
+              <tr><td style="color:var(--text-muted);font-family:var(--font-mono)">3</td><td>Mother's Day Wing Dedication</td><td><span class="chip">Story + Feed</span></td><td class="td-muted">May 11</td><td><span style="display:inline-block;padding:3px 10px;border-radius:var(--r-full);background:var(--amber-m);font-size:11px;font-weight:600;color:var(--amber)">Boosted</span></td><td>Reach</td><td class="budget-cell">5,000</td><td>3 days</td></tr>
+              <tr><td style="color:var(--text-muted);font-family:var(--font-mono)">4</td><td>Mango Bingsoo Reveal</td><td><span class="chip">Reel</span></td><td class="td-muted">May 14</td><td><span style="display:inline-block;padding:3px 10px;border-radius:var(--r-full);background:var(--amber-m);font-size:11px;font-weight:600;color:var(--amber)">Boosted</span></td><td>Video Views</td><td class="budget-cell">8,000</td><td>5 days</td></tr>
+              <tr><td style="color:var(--text-muted);font-family:var(--font-mono)">5</td><td>Real Customer Reactions</td><td><span class="chip">Reel</span></td><td class="td-muted">May 20</td><td><span style="display:inline-block;padding:3px 10px;border-radius:var(--r-full);background:var(--bg-elevated);font-size:11px;font-weight:600;color:var(--text-muted)">Organic</span></td><td class="td-muted">–</td><td class="budget-cell td-muted">–</td><td class="td-muted">–</td></tr>
+              <tr><td style="color:var(--text-muted);font-family:var(--font-mono)">6</td><td>Lunchtime Promo Flash</td><td><span class="chip">Story</span></td><td class="td-muted">May 19–30</td><td><span style="display:inline-block;padding:3px 10px;border-radius:var(--r-full);background:var(--amber-m);font-size:11px;font-weight:600;color:var(--amber)">Boosted</span></td><td>Traffic</td><td class="budget-cell">6,000</td><td>12 days</td></tr>
+            </tbody>
+          </table>
+          <div class="media-footer"><span class="media-total-key">Total Boost Budget</span><span class="media-total-val sc sc-st">฿19,000</span></div>
+        </div>
+        <div class="card" style="background:rgba(245,158,11,0.04);border-color:rgba(245,158,11,0.20)">
+          <div style="font-size:12px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Media Notes</div>
+          <div style="font-size:13px;color:var(--text-secondary);line-height:1.6">Boosted posts target Women + Men 18–30, Bangkok + major cities. Hero post: Mango Bingsoo Reveal — prioritise budget here if client wants to reduce total spend.</div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ══ CONTENT TAB ════════════════════════════════ -->
+    <section id="tab-content" class="tab-panel">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <div>
+          <div style="font-size:15px;font-weight:700">6 Ideas</div>
+          <div style="font-size:13px;color:var(--text-secondary);margin-top:2px">AVG Panya Score: –  ·  Client feedback pending</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-secondary btn-sm">Export PDF</button>
+          <button class="btn btn-primary btn-sm" onclick="addIdeaCard()">+ Add Idea</button>
+        </div>
+      </div>
+      <div class="ideas-grid">
+
+        <!-- Idea 1 -->
+        <div class="idea-card">
+          <div class="idea-card-head">
+            <span class="idea-num">#1</span>
+            <span class="idea-title">The ASMR Wing Drop — satisfying crunch close-up reel</span>
+            <span class="idea-score-pill score-high">87</span>
+          </div>
+          <div class="idea-card-body">
+            <div class="idea-meta"><span class="chip">Reel</span> &nbsp;·&nbsp; Product Highlight &nbsp;·&nbsp; Week 1</div>
+            <div class="idea-hook">Close-up slow-mo of crispy wing being bitten into, ASMR audio, no voiceover. Caption: "ฟังเสียงความกรอบแบบนี้แล้วยังจะทน?" with wing emoji.</div>
+          </div>
+          <div class="idea-card-foot">
+            <span class="chip">KV: Studio shot</span>
+            <span class="chip">Audio-led</span>
+          </div>
+        </div>
+
+        <!-- Idea 2 -->
+        <div class="idea-card">
+          <div class="idea-card-head">
+            <span class="idea-num">#2</span>
+            <span class="idea-title">Summer Crunch Playlist — lifestyle carousel with food mood</span>
+            <span class="idea-score-pill score-high">81</span>
+          </div>
+          <div class="idea-card-body">
+            <div class="idea-meta"><span class="chip">Carousel</span> &nbsp;·&nbsp; Lifestyle / Mood &nbsp;·&nbsp; Week 2</div>
+            <div class="idea-hook">5-slide carousel pairing each wing flavour with a summer vibe: Soy Garlic = "study session", Original = "pool day". Last slide: "Which crunch are you this summer?"</div>
+          </div>
+          <div class="idea-card-foot">
+            <span class="chip">UGC style</span>
+            <span class="chip">Swipeable</span>
+          </div>
+        </div>
+
+        <!-- Idea 3 -->
+        <div class="idea-card">
+          <div class="idea-card-head">
+            <span class="idea-num">#3</span>
+            <span class="idea-title">Mother's Day Wing Dedication — "ส่งความอร่อยให้แม่"</span>
+            <span class="idea-score-pill score-mid">74</span>
+          </div>
+          <div class="idea-card-body">
+            <div class="idea-meta"><span class="chip">Story + Feed</span> &nbsp;·&nbsp; Lifestyle / Mood &nbsp;·&nbsp; May 11</div>
+            <div class="idea-hook">A heartfelt post around Mother's Day — sharing a Bonchon box with mom. Soft, warm aesthetic. Caption invites followers to tag their mom. Boosted post.</div>
+          </div>
+          <div class="idea-card-foot">
+            <span class="chip">Seasonal</span>
+            <span class="chip">Boosted</span>
+          </div>
+        </div>
+
+        <!-- Idea 4 -->
+        <div class="idea-card">
+          <div class="idea-card-head">
+            <span class="idea-num">#4</span>
+            <span class="idea-title">Mango Bingsoo Reveal — limited edition summer drop</span>
+            <span class="idea-score-pill score-high">89</span>
+          </div>
+          <div class="idea-card-body">
+            <div class="idea-meta"><span class="chip">Reel</span> &nbsp;·&nbsp; Product Highlight &nbsp;·&nbsp; Week 2</div>
+            <div class="idea-hook">Reveal reel for the Mango Bingsoo. Hand placing mango pieces on top in slow-mo. "อากาศแบบนี้ต้องกินแบบนี้" caption. Trending summer audio.</div>
+          </div>
+          <div class="idea-card-foot">
+            <span class="chip">Hero post</span>
+            <span class="chip">Boosted</span>
+          </div>
+        </div>
+
+        <!-- Idea 5 -->
+        <div class="idea-card">
+          <div class="idea-card-head">
+            <span class="idea-num">#5</span>
+            <span class="idea-title">Real Customer Reactions — UGC compilation reel</span>
+            <span class="idea-score-pill score-mid">72</span>
+          </div>
+          <div class="idea-card-body">
+            <div class="idea-meta"><span class="chip">Reel</span> &nbsp;·&nbsp; UGC / Social Proof &nbsp;·&nbsp; Week 3</div>
+            <div class="idea-hook">Compile 5–6 customer reaction videos (sourced from tagged IG posts, permission granted). Quick cuts, upbeat audio. End card: "Join the crunch fam 🍗".</div>
+          </div>
+          <div class="idea-card-foot">
+            <span class="chip">Community</span>
+            <span class="chip">Rights needed</span>
+          </div>
+        </div>
+
+        <!-- Idea 6 -->
+        <div class="idea-card">
+          <div class="idea-card-head">
+            <span class="idea-num">#6</span>
+            <span class="idea-title">Lunchtime Promo Flash — buy 2 get 1 story offer</span>
+            <span class="idea-score-pill score-mid">68</span>
+          </div>
+          <div class="idea-card-body">
+            <div class="idea-meta"><span class="chip">Story</span> &nbsp;·&nbsp; Offer / Promotion &nbsp;·&nbsp; Week 3–4</div>
+            <div class="idea-hook">Time-sensitive story series: "Lunchtime crunch deal — วันนี้เท่านั้น 11–2PM". Buy 2 get 1 on wings. Link to LINE OA order. Run Mon–Fri for 2 weeks.</div>
+          </div>
+          <div class="idea-card-foot">
+            <span class="chip">CTA-driven</span>
+            <span class="chip">Recurring</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══ FEEDBACK TAB ══════════════════════════════ -->
+
+    <!-- ══ FEEDBACK TAB ═══════════════════════════════ -->
+    <section id="tab-feedback" class="tab-panel">
+
+      <div class="attention-banner">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <div>Waiting on client feedback · Plan sent <strong>May 13, 2026</strong>. Log any verbal or written feedback from the client below.</div>
+      </div>
+
+      <div class="feedback-layout">
+
+        <!-- Idea feedback cards -->
+        <div class="fb-ideas">
+
+          <!-- Idea 1 -->
+          <div class="fb-card">
+            <div class="fb-card-head">
+              <span style="font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--text-muted)">#1</span>
+              <span style="font-size:14px;font-weight:600;flex:1">ASMR Wing Drop</span>
+              <span class="idea-score-pill score-high" style="font-family:var(--font-mono);font-size:12px;font-weight:700;padding:2px 8px;border-radius:var(--r-full)">87</span>
+              <span class="chip">Reel</span>
+            </div>
+            <div class="fb-card-body">
+              <div class="fb-hook">Close-up slow-mo of crispy wing being bitten, ASMR audio, no voiceover. Caption invites followers to feel the crunch.</div>
+              <div class="fb-votes">
+                <span class="vote-chip v-approve" onclick="vote(this,'approve')">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Approved
+                </span>
+                <span class="vote-chip" onclick="vote(this,'revise')">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  Needs Revision
+                </span>
+                <span class="vote-chip" onclick="vote(this,'reject')">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  Rejected
+                </span>
+              </div>
+              <div class="fb-note">
+                <span class="fb-note-label">Client Notes</span>
+                <textarea class="client-note-area" placeholder="Add client's feedback for this idea…"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Idea 2 -->
+          <div class="fb-card">
+            <div class="fb-card-head">
+              <span style="font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--text-muted)">#2</span>
+              <span style="font-size:14px;font-weight:600;flex:1">Summer Crunch Playlist</span>
+              <span class="idea-score-pill score-high" style="font-family:var(--font-mono);font-size:12px;font-weight:700;padding:2px 8px;border-radius:var(--r-full)">81</span>
+              <span class="chip">Carousel</span>
+            </div>
+            <div class="fb-card-body">
+              <div class="fb-hook">5-slide carousel pairing each wing flavour with a summer vibe. Last slide invites followers to share which crunch they are.</div>
+              <div class="fb-votes">
+                <span class="vote-chip" onclick="vote(this,'approve')">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Approved
+                </span>
+                <span class="vote-chip v-revise" onclick="vote(this,'revise')">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  Needs Revision
+                </span>
+                <span class="vote-chip" onclick="vote(this,'reject')">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  Rejected
+                </span>
+              </div>
+              <div class="fb-note">
+                <span class="fb-note-label">Client Notes</span>
+                <textarea class="client-note-area" placeholder="Add client's feedback for this idea…">ชอบ concept แต่อยากให้ลด slide เป็น 3 อัน และใส่ price promo ใน slide สุดท้ายด้วย</textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Idea 3 -->
+          <div class="fb-card">
+            <div class="fb-card-head">
+              <span style="font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--text-muted)">#3</span>
+              <span style="font-size:14px;font-weight:600;flex:1">Mother's Day Wing Dedication</span>
+              <span class="idea-score-pill score-mid" style="font-family:var(--font-mono);font-size:12px;font-weight:700;padding:2px 8px;border-radius:var(--r-full)">74</span>
+              <span class="chip">Story + Feed</span>
+            </div>
+            <div class="fb-card-body">
+              <div class="fb-hook">Heartfelt Mother's Day post — sharing a Bonchon box with mom. Soft warm aesthetic, invite followers to tag their mom.</div>
+              <div class="fb-votes">
+                <span class="vote-chip v-approve" onclick="vote(this,'approve')">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Approved
+                </span>
+                <span class="vote-chip" onclick="vote(this,'revise')">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  Needs Revision
+                </span>
+                <span class="vote-chip" onclick="vote(this,'reject')">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  Rejected
+                </span>
+              </div>
+              <div class="fb-note">
+                <span class="fb-note-label">Client Notes</span>
+                <textarea class="client-note-area" placeholder="Add client's feedback for this idea…"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Idea 4 -->
+          <div class="fb-card">
+            <div class="fb-card-head">
+              <span style="font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--text-muted)">#4</span>
+              <span style="font-size:14px;font-weight:600;flex:1">Mango Bingsoo Reveal</span>
+              <span class="idea-score-pill score-high" style="font-family:var(--font-mono);font-size:12px;font-weight:700;padding:2px 8px;border-radius:var(--r-full)">89</span>
+              <span class="chip">Reel</span>
+            </div>
+            <div class="fb-card-body">
+              <div class="fb-hook">Reveal reel for limited-edition Mango Bingsoo — slow-mo mango placement, trending summer audio.</div>
+              <div class="fb-votes">
+                <span class="vote-chip" onclick="vote(this,'approve')">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Approved
+                </span>
+                <span class="vote-chip" onclick="vote(this,'revise')">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  Needs Revision
+                </span>
+                <span class="vote-chip v-reject" onclick="vote(this,'reject')">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  Rejected
+                </span>
+              </div>
+              <div class="fb-note">
+                <span class="fb-note-label">Client Notes</span>
+                <textarea class="client-note-area" placeholder="Add client's feedback for this idea…">ยังไม่ได้ approve เมนูนี้จาก marketing ภายในก่อน ขอ hold ไว้ก่อน</textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Idea 5 -->
+          <div class="fb-card">
+            <div class="fb-card-head">
+              <span style="font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--text-muted)">#5</span>
+              <span style="font-size:14px;font-weight:600;flex:1">Real Customer Reactions</span>
+              <span class="idea-score-pill score-mid" style="font-family:var(--font-mono);font-size:12px;font-weight:700;padding:2px 8px;border-radius:var(--r-full)">72</span>
+              <span class="chip">Reel</span>
+            </div>
+            <div class="fb-card-body">
+              <div class="fb-hook">Compilation of 5–6 customer reaction videos from tagged IG posts (permission required). Quick-cut, upbeat audio.</div>
+              <div class="fb-votes">
+                <span class="vote-chip" onclick="vote(this,'approve')">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Approved
+                </span>
+                <span class="vote-chip" onclick="vote(this,'revise')">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  Needs Revision
+                </span>
+                <span class="vote-chip" onclick="vote(this,'reject')">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  Rejected
+                </span>
+              </div>
+              <div class="fb-note">
+                <span class="fb-note-label">Client Notes</span>
+                <textarea class="client-note-area" placeholder="Add client's feedback for this idea…"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Idea 6 -->
+          <div class="fb-card">
+            <div class="fb-card-head">
+              <span style="font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--text-muted)">#6</span>
+              <span style="font-size:14px;font-weight:600;flex:1">Lunchtime Promo Flash</span>
+              <span class="idea-score-pill score-mid" style="font-family:var(--font-mono);font-size:12px;font-weight:700;padding:2px 8px;border-radius:var(--r-full)">68</span>
+              <span class="chip">Story</span>
+            </div>
+            <div class="fb-card-body">
+              <div class="fb-hook">Time-sensitive story series: Buy 2 get 1 on wings, 11am–2pm weekdays. Link to LINE OA order. Runs Mon–Fri for 2 weeks.</div>
+              <div class="fb-votes">
+                <span class="vote-chip" onclick="vote(this,'approve')">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Approved
+                </span>
+                <span class="vote-chip" onclick="vote(this,'revise')">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  Needs Revision
+                </span>
+                <span class="vote-chip" onclick="vote(this,'reject')">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  Rejected
+                </span>
+              </div>
+              <div class="fb-note">
+                <span class="fb-note-label">Client Notes</span>
+                <textarea class="client-note-area" placeholder="Add client's feedback for this idea…"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Save feedback button -->
+          <div style="display:flex;justify-content:flex-end;gap:10px;padding-top:4px">
+            <button class="btn btn-secondary">Save Draft</button>
+            <button class="btn btn-primary">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Save Feedback & Update Status
+            </button>
+          </div>
+        </div>
+
+        <!-- Feedback sidebar -->
+        <div class="fb-sidebar">
+
+          <!-- Score summary -->
+          <div class="fb-sidebar-card">
+            <div class="fb-sidebar-title">Panya Scores</div>
+            <div class="fb-stat-row">
+              <span class="fb-stat-key">#1 ASMR Wing Drop</span>
+              <span class="fb-stat-val sc sc-ex">87</span>
+            </div>
+            <div class="fb-stat-row">
+              <span class="fb-stat-key">#2 Crunch Playlist</span>
+              <span class="fb-stat-val sc sc-ex">81</span>
+            </div>
+            <div class="fb-stat-row">
+              <span class="fb-stat-key">#3 Mother's Day</span>
+              <span class="fb-stat-val sc sc-st">74</span>
+            </div>
+            <div class="fb-stat-row">
+              <span class="fb-stat-key">#4 Mango Reveal</span>
+              <span class="fb-stat-val sc sc-ex">89</span>
+            </div>
+            <div class="fb-stat-row">
+              <span class="fb-stat-key">#5 UGC Reactions</span>
+              <span class="fb-stat-val sc sc-st">72</span>
+            </div>
+            <div class="fb-stat-row">
+              <span class="fb-stat-key">#6 Promo Flash</span>
+              <span class="fb-stat-val sc sc-av">68</span>
+            </div>
+            <div class="fb-stat-row" style="margin-top:4px;padding-top:10px;border-top:1px solid var(--border-default)">
+              <span class="fb-stat-key" style="font-weight:700;color:var(--text-primary)">Plan AVG</span>
+              <span class="fb-stat-val sc sc-st" style="font-size:16px">78.5</span>
+            </div>
+          </div>
+
+          <!-- Feedback status -->
+          <div class="fb-sidebar-card">
+            <div class="fb-sidebar-title">Feedback Status</div>
+            <div class="fb-stat-row">
+              <span class="fb-stat-key">Approved</span>
+              <span class="fb-stat-val" style="color:var(--teal)">2</span>
+            </div>
+            <div class="fb-stat-row">
+              <span class="fb-stat-key">Needs Revision</span>
+              <span class="fb-stat-val" style="color:var(--amber)">1</span>
+            </div>
+            <div class="fb-stat-row">
+              <span class="fb-stat-key">Rejected</span>
+              <span class="fb-stat-val" style="color:var(--red)">1</span>
+            </div>
+            <div class="fb-stat-row">
+              <span class="fb-stat-key">Pending</span>
+              <span class="fb-stat-val" style="color:var(--text-muted)">2</span>
+            </div>
+          </div>
+
+          <!-- Overall client note -->
+          <div class="fb-sidebar-card">
+            <div class="fb-sidebar-title">Overall Client Note</div>
+            <textarea class="client-note-area" style="min-height:100px" placeholder="Overall feedback from client call or email…">โดยรวมชอบ direction นี้ อยากให้ focus ที่ wing มากกว่า dessert ก่อน — เดือนหน้าค่อยทำ Bingsoo</textarea>
+          </div>
+
+          <!-- History -->
+          <div class="fb-sidebar-card">
+            <div class="fb-sidebar-title">Activity</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="font-size:12px;line-height:1.5">
+                <span style="color:var(--text-muted)">May 13, 2026 · 9:41am</span><br>
+                <span style="color:var(--text-secondary)">Plan sent to Bonchon via email (6 ideas).</span>
+              </div>
+              <div style="font-size:12px;line-height:1.5">
+                <span style="color:var(--text-muted)">May 14, 2026 · 3:15pm</span><br>
+                <span style="color:var(--text-secondary)">Client opened proposal link.</span>
+              </div>
+              <div style="font-size:12px;line-height:1.5">
+                <span style="color:var(--text-muted)">Today, 10:30am</span><br>
+                <span style="color:var(--text-secondary)">Partial feedback logged from client call.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ END OF TABS ══════════════════════════════════ -->
+    <section id="tab-summary-removed" style="display:none">
+
+      <!-- Stats row -->
+      <div class="summary-stats">
+        <div class="stat-card">
+          <div class="stat-label">Total Ideas</div>
+          <div class="stat-value">6</div>
+          <div class="stat-sub">of 8 planned</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">AVG Panya Score</div>
+          <div class="stat-value sc sc-st">78.5</div>
+          <div class="stat-sub">Strong · above 75 threshold</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Boosted Posts</div>
+          <div class="stat-value">3</div>
+          <div class="stat-sub">฿19,000 total budget</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Feedback</div>
+          <div class="stat-value sc sc-av">–</div>
+          <div class="stat-sub">Awaiting client response</div>
+        </div>
+      </div>
+
+      <!-- Calendar + side -->
+      <div class="summary-layout">
+
+        <!-- Calendar -->
+        <div class="calendar-wrap">
+          <div class="calendar-head">
+            <span class="calendar-month">May 2026</span>
+            <div style="display:flex;gap:6px">
+              <div class="legend-row">
+                <span class="legend-item"><span class="legend-dot" style="background:rgba(167,139,250,0.5)"></span>Reel</span>
+                <span class="legend-item"><span class="legend-dot" style="background:rgba(96,165,250,0.5)"></span>Story</span>
+                <span class="legend-item"><span class="legend-dot" style="background:rgba(0,199,168,0.4)"></span>Carousel</span>
+              </div>
+            </div>
+          </div>
+          <div class="calendar-grid">
+            <!-- Day names -->
+            <div class="cal-day-name">Sun</div>
+            <div class="cal-day-name">Mon</div>
+            <div class="cal-day-name">Tue</div>
+            <div class="cal-day-name">Wed</div>
+            <div class="cal-day-name">Thu</div>
+            <div class="cal-day-name">Fri</div>
+            <div class="cal-day-name">Sat</div>
+
+            <!-- April 26–30 (other month) -->
+            <div class="cal-cell other-month"><div class="cal-num">26</div></div>
+            <div class="cal-cell other-month"><div class="cal-num">27</div></div>
+            <div class="cal-cell other-month"><div class="cal-num">28</div></div>
+            <div class="cal-cell other-month"><div class="cal-num">29</div></div>
+            <div class="cal-cell other-month"><div class="cal-num">30</div></div>
+
+            <!-- May 1 -->
+            <div class="cal-cell"><div class="cal-num">1</div></div>
+            <div class="cal-cell"><div class="cal-num">2</div></div>
+
+            <!-- May 3–9 -->
+            <div class="cal-cell"><div class="cal-num">3</div></div>
+            <div class="cal-cell"><div class="cal-num">4</div></div>
+            <div class="cal-cell"><div class="cal-num">5</div>
+              <div class="cal-post post-reel">#1 ASMR Wing</div>
+            </div>
+            <div class="cal-cell"><div class="cal-num">6</div></div>
+            <div class="cal-cell"><div class="cal-num">7</div></div>
+            <div class="cal-cell"><div class="cal-num">8</div>
+              <div class="cal-post post-carousel">#2 Crunch Playlist</div>
+            </div>
+            <div class="cal-cell"><div class="cal-num">9</div></div>
+
+            <!-- May 10–16 -->
+            <div class="cal-cell"><div class="cal-num">10</div></div>
+            <div class="cal-cell"><div class="cal-num">11</div>
+              <div class="cal-post post-story">#3 Mother's Day</div>
+            </div>
+            <div class="cal-cell"><div class="cal-num">12</div></div>
+            <div class="cal-cell"><div class="cal-num">13</div></div>
+            <div class="cal-cell"><div class="cal-num">14</div>
+              <div class="cal-post post-reel">#4 Mango Reveal</div>
+            </div>
+            <div class="cal-cell"><div class="cal-num">15</div></div>
+            <div class="cal-cell"><div class="cal-num today">16</div></div>
+
+            <!-- May 17–23 -->
+            <div class="cal-cell"><div class="cal-num">17</div></div>
+            <div class="cal-cell"><div class="cal-num">18</div></div>
+            <div class="cal-cell"><div class="cal-num">19</div>
+              <div class="cal-post post-story">#6 Promo Flash</div>
+            </div>
+            <div class="cal-cell"><div class="cal-num">20</div>
+              <div class="cal-post post-reel">#5 UGC Reel</div>
+            </div>
+            <div class="cal-cell"><div class="cal-num">21</div></div>
+            <div class="cal-cell"><div class="cal-num">22</div>
+              <div class="cal-post post-story">#6 Promo Flash</div>
+            </div>
+            <div class="cal-cell"><div class="cal-num">23</div></div>
+
+            <!-- May 24–30 -->
+            <div class="cal-cell"><div class="cal-num">24</div></div>
+            <div class="cal-cell"><div class="cal-num">25</div>
+              <div class="cal-post post-story">#6 Promo Flash</div>
+            </div>
+            <div class="cal-cell"><div class="cal-num">26</div></div>
+            <div class="cal-cell"><div class="cal-num">27</div></div>
+            <div class="cal-cell"><div class="cal-num">28</div>
+              <div class="cal-post post-story">#6 Promo Flash</div>
+            </div>
+            <div class="cal-cell"><div class="cal-num">29</div></div>
+            <div class="cal-cell"><div class="cal-num">30</div></div>
+
+            <!-- May 31 + June 1–5 -->
+            <div class="cal-cell"><div class="cal-num">31</div></div>
+            <div class="cal-cell other-month"><div class="cal-num">1</div></div>
+            <div class="cal-cell other-month"><div class="cal-num">2</div></div>
+            <div class="cal-cell other-month"><div class="cal-num">3</div></div>
+            <div class="cal-cell other-month"><div class="cal-num">4</div></div>
+            <div class="cal-cell other-month"><div class="cal-num">5</div></div>
+            <div class="cal-cell other-month"><div class="cal-num">6</div></div>
+          </div>
+        </div>
+
+        <!-- Side panel -->
+        <div class="summary-side">
+          <div class="side-card">
+            <div class="side-card-title">Pillar Distribution</div>
+            <div class="pillar-summary-row">
+              <div class="ps-item">
+                <span class="ps-label">Product Highlight</span>
+                <div class="ps-bar-w"><div class="ps-bar" style="width:100%"></div></div>
+                <span class="ps-count">2</span>
+              </div>
+              <div class="ps-item">
+                <span class="ps-label">Lifestyle / Mood</span>
+                <div class="ps-bar-w"><div class="ps-bar" style="width:100%"></div></div>
+                <span class="ps-count">2</span>
+              </div>
+              <div class="ps-item">
+                <span class="ps-label">UGC / Social Proof</span>
+                <div class="ps-bar-w"><div class="ps-bar" style="width:50%"></div></div>
+                <span class="ps-count">1</span>
+              </div>
+              <div class="ps-item">
+                <span class="ps-label">Offer / Promotion</span>
+                <div class="ps-bar-w"><div class="ps-bar" style="width:50%"></div></div>
+                <span class="ps-count">1</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="side-card">
+            <div class="side-card-title">Format Mix</div>
+            <div class="pillar-summary-row">
+              <div class="ps-item">
+                <span class="ps-label">Reel</span>
+                <div class="ps-bar-w"><div class="ps-bar" style="width:75%"></div></div>
+                <span class="ps-count">3</span>
+              </div>
+              <div class="ps-item">
+                <span class="ps-label">Story Series</span>
+                <div class="ps-bar-w"><div class="ps-bar" style="width:50%"></div></div>
+                <span class="ps-count">1 (recurring)</span>
+              </div>
+              <div class="ps-item">
+                <span class="ps-label">Carousel</span>
+                <div class="ps-bar-w"><div class="ps-bar" style="width:25%"></div></div>
+                <span class="ps-count">1</span>
+              </div>
+              <div class="ps-item">
+                <span class="ps-label">Story + Feed</span>
+                <div class="ps-bar-w"><div class="ps-bar" style="width:25%"></div></div>
+                <span class="ps-count">1</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="side-card">
+            <div class="side-card-title">Next Steps</div>
+            <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--text-secondary)">
+              <div style="display:flex;gap:8px;align-items:flex-start">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2.5" style="flex-shrink:0;margin-top:2px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                Collect full client feedback from all 6 ideas
+              </div>
+              <div style="display:flex;gap:8px;align-items:flex-start">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" style="flex-shrink:0;margin-top:2px"><circle cx="12" cy="12" r="10"/></svg>
+                Revise Idea #2 (reduce to 3 slides + add promo)
+              </div>
+              <div style="display:flex;gap:8px;align-items:flex-start">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" style="flex-shrink:0;margin-top:2px"><circle cx="12" cy="12" r="10"/></svg>
+                Replace Idea #4 (Mango Bingsoo on hold)
+              </div>
+              <div style="display:flex;gap:8px;align-items:flex-start">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" style="flex-shrink:0;margin-top:2px"><circle cx="12" cy="12" r="10"/></svg>
+                Mark plan Proposed once feedback complete
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+  </div><!-- /plan-body -->
+
+</main><!-- /main -->
+
+</div><!-- /app -->
+
+<script>
+/* ── Tab switching ───────────────────────────────── */
+function switchTab(name) {
+  document.querySelectorAll('.plan-tab').forEach(function(t) {
+    t.classList.toggle('active', t.getAttribute('data-tab') === name);
+  });
+  document.querySelectorAll('.tab-panel').forEach(function(p) {
+    p.classList.toggle('active', p.id === 'tab-' + name);
+  });
+}
+
+/* ── Overview: toggle full brief ─────────────────── */
+function toggleBrief() {
+  var detail = document.getElementById('brief-full-detail');
+  var btn = document.getElementById('brief-toggle-btn');
+  var expanded = detail.style.display !== 'none';
+  detail.style.display = expanded ? 'none' : 'block';
+  btn.textContent = expanded ? 'Show Full Brief ↓' : 'Hide Brief ↑';
+}
+
+/* ── Overview: calendar / table view toggle ──────── */
+function switchView(mode) {
+  var calView = document.getElementById('ov-cal-view');
+  var tableView = document.getElementById('ov-table-view');
+  var calBtn = document.getElementById('ov-btn-cal');
+  var tableBtn = document.getElementById('ov-btn-table');
+  var showCal = mode === 'cal';
+  calView.style.display = showCal ? 'block' : 'none';
+  tableView.style.display = showCal ? 'none' : 'block';
+  calBtn.classList.toggle('active', showCal);
+  tableBtn.classList.toggle('active', !showCal);
+}
+
+/* ── Content tab: add idea card ──────────────────── */
+var ideaCount = 6;
+function addIdeaCard() {
+  ideaCount++;
+  var grid = document.querySelector('#tab-content .ideas-grid');
+
+  var card = document.createElement('div');
+  card.className = 'idea-card';
+
+  var head = document.createElement('div');
+  head.className = 'idea-card-head';
+
+  var num = document.createElement('span');
+  num.className = 'idea-num';
+  num.textContent = '#' + ideaCount;
+
+  var input = document.createElement('input');
+  input.type = 'text';
+  input.placeholder = 'Idea title…';
+  input.style.cssText = 'flex:1;border:none;outline:none;background:transparent;font-size:14px;font-weight:600;color:var(--text-primary);font-family:var(--font-ui)';
+
+  head.appendChild(num);
+  head.appendChild(input);
+  card.appendChild(head);
+
+  var body = document.createElement('div');
+  body.className = 'idea-card-body';
+
+  var meta = document.createElement('div');
+  meta.className = 'idea-meta';
+  meta.style.color = 'var(--text-muted)';
+  meta.textContent = 'Format · Pillar · Week';
+  body.appendChild(meta);
+
+  var hook = document.createElement('textarea');
+  hook.placeholder = 'Describe the idea…';
+  hook.style.cssText = 'width:100%;min-height:60px;resize:vertical;border:1px solid var(--border-default);border-radius:var(--r-md);padding:8px 10px;font-size:13px;font-family:var(--font-ui);background:var(--bg-base);color:var(--text-primary);outline:none';
+  body.appendChild(hook);
+
+  card.appendChild(body);
+  grid.appendChild(card);
+  input.focus();
+
+  var header = document.querySelector('#tab-content > div > div:first-child > div');
+  if (header) header.textContent = ideaCount + ' Ideas';
+}
+
+/* ── Feedback tab: vote chips ────────────────────── */
+function vote(chip, type) {
+  var container = chip.closest('.fb-votes');
+  var chips = container.querySelectorAll('.vote-chip');
+  chips.forEach(function(c) {
+    c.classList.remove('v-approve', 'v-revise', 'v-reject');
+  });
+  chip.classList.add('v-' + type);
+}
+</script>
+
+</body>
+</html>

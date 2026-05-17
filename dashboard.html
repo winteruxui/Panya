@@ -6,39 +6,10 @@
 <title>Panya — Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Noto+Serif+Thai:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-:root {
-  --bg-base:       #FAFAFA;
-  --bg-surface:    #FFFFFF;
-  --bg-elevated:   #F4F4F5;
-  --bg-overlay:    #ECECED;
-  --border-subtle: #F0F0F1;
-  --border-default:#E4E4E7;
-  --border-strong: #D4D4D8;
-  --text-primary:  #18181B;
-  --text-secondary:#71717A;
-  --text-muted:    #A1A1AA;
-
-  --teal:    #00C7A8; --teal-m:   rgba(0,199,168,0.10);
-  --amber:   #F59E0B; --amber-m:  rgba(245,158,11,0.10);
-  --red:     #EF4444; --red-m:    rgba(239,68,68,0.10);
-  --blue:    #60A5FA; --blue-m:   rgba(96,165,250,0.10);
-  --purple:  #A78BFA; --purple-m: rgba(167,139,250,0.10);
-  --orange:  #F97316; --orange-m: rgba(249,115,22,0.10);
-  --gray:    #71717A; --gray-m:   rgba(113,113,122,0.10);
-
-  --font-ui:      'DM Sans', sans-serif;
-  --font-display: 'Instrument Serif', Georgia, serif;
-  --font-mono:    'JetBrains Mono', monospace;
-
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-
-  --r-sm: 4px; --r-md: 8px; --r-lg: 12px; --r-full: 9999px;
-}
 
 html, body {
   height: 100%; font-family: var(--font-ui);
@@ -67,8 +38,8 @@ html, body {
   border-bottom: 1px solid var(--border-subtle);
   margin-bottom: 16px;
 }
-.logo-text {
-  font-family: var(--font-display); font-style: italic;
+.logo-text { font-weight: 700;
+  font-family: var(--font-display);
   font-size: 22px; color: var(--text-primary); letter-spacing: -0.02em;
 }
 .logo-dot { color: var(--teal); }
@@ -155,7 +126,7 @@ html, body {
   background: var(--teal); border-color: var(--teal);
   color: #fff; font-weight: 600;
 }
-.fchip.active:hover { background: #00b397; }
+.fchip.active:hover { background: var(--brand-dark); }
 .fchip-dot { width: 6px; height: 6px; border-radius: var(--r-full); }
 
 /* filtered out items */
@@ -289,7 +260,7 @@ html, body {
 }
 .qa-btn:hover { border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-m); }
 .qa-btn.primary { background: var(--teal); border-color: var(--teal); }
-.qa-btn.primary:hover { background: #00b397; box-shadow: 0 4px 14px rgba(0,199,168,.28); }
+.qa-btn.primary:hover { background: var(--brand-dark); box-shadow: 0 4px 14px rgba(0,199,168,.28); }
 .qa-icon {
   width: 36px; height: 36px; border-radius: var(--r-md);
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
@@ -326,7 +297,7 @@ html, body {
   cursor: pointer; border: none; transition: all 150ms ease; white-space: nowrap;
 }
 .btn-primary   { background: var(--teal); color: #fff; }
-.btn-primary:hover { background: #00b397; }
+.btn-primary:hover { background: var(--brand-dark); }
 .btn-secondary { background: transparent; color: var(--text-primary); border: 1px solid var(--border-default); }
 .btn-secondary:hover { background: var(--bg-elevated); border-color: var(--border-strong); }
 .btn-ghost     { background: transparent; color: var(--text-secondary); }
@@ -354,6 +325,7 @@ html, body {
 @keyframes slideUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes shrink { from { width: 100%; } to { width: 0%; } }
 </style>
+<link rel="stylesheet" href="ds.css">
 </head>
 <body>
 <div class="app">

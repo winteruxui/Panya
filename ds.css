@@ -1,0 +1,99 @@
+/* ══════════════════════════════════════════════════════════════
+   PANYA DESIGN SYSTEM  ·  v2.0
+   ── CI: #E96B38 · #1E140D · #9A7060 · #FFF5EE ──────────────
+   Font: Noto Sans Thai · Noto Serif Thai · JetBrains Mono
+   ══════════════════════════════════════════════════════════════
+
+   HOW TO EDIT:
+   ─ Colors  → Edit the Brand / Surfaces / Text sections below
+   ─ Spacing → Edit --r-* radius and --shadow-* tokens
+   ─ Fonts   → Edit --font-* tokens (update <link> in HTML too)
+   ─ Motion  → Edit --dur-* and --ease-* tokens
+
+   ══════════════════════════════════════════════════════════════ */
+
+:root {
+
+  /* ── 1. BRAND PALETTE ────────────────────────────────────────
+     Primary CI orange. Used for all interactive accent states.  */
+  --brand:      #E96B38;
+  --brand-dark: #D4582A;   /* hover / pressed */
+  --brand-m:    rgba(233, 107, 56, 0.10);  /* tinted bg — active nav, chips */
+  --brand-s:    rgba(233, 107, 56, 0.06);  /* very subtle — hover rows */
+
+  /* Legacy aliases — existing pages reference --teal.
+     Keeping these means zero code changes in any page.         */
+  --teal:   #E96B38;
+  --teal-m: rgba(233, 107, 56, 0.10);
+
+  /* Full CI palette tokens */
+  --ci-dark: #1E140D;   /* dark brown — primary text, deep accents */
+  --ci-mid:  #9A7060;   /* warm brown — secondary elements           */
+  --ci-warm: #FFF5EE;   /* cream — warm surface tints                */
+
+  /* ── 2. SURFACES ─────────────────────────────────────────────
+     All backgrounds. Keep the main content feeling white/airy.  */
+  --bg-base:    #FAF8F6;   /* App shell background — slightly warm white  */
+  --bg-surface: #FFFFFF;   /* Cards, sidebar, modal — pure white           */
+  --bg-elevated:#F5EEE8;   /* Hover rows, tag chips, subtle fills          */
+  --bg-overlay: #EDE5DC;   /* Pressed states, overlay tints                */
+  --bg-warm:    #FFF5EE;   /* Accent warm sections — CI cream              */
+
+  /* ── 3. BORDERS ──────────────────────────────────────────────
+     Warm-toned border hierarchy.                                */
+  --border-subtle:  #EDE8E3;
+  --border-default: #DDD5CE;
+  --border-strong:  #C8BEB8;
+
+  /* ── 4. TEXT ─────────────────────────────────────────────────
+     All text uses the CI dark brown as primary.                 */
+  --text-primary:   #1E140D;   /* CI dark — headlines, body               */
+  --text-secondary: #6B5549;   /* Warm mid-brown — labels, helper text    */
+  --text-muted:     #9A8070;   /* Light warm gray — placeholder, captions */
+
+  /* ── 5. STATUS COLORS ────────────────────────────────────────
+     Keep semantic status colors standard for clarity.           */
+  --amber:   #F59E0B; --amber-m:  rgba(245, 158,  11, 0.10);
+  --red:     #EF4444; --red-m:    rgba(239,  68,  68, 0.10);
+  --blue:    #60A5FA; --blue-m:   rgba( 96, 165, 250, 0.10);
+  --green:   #22C55E; --green-m:  rgba( 34, 197,  94, 0.10);
+  --purple:  #A78BFA; --purple-m: rgba(167, 139, 250, 0.10);
+  --orange:  #F97316; --orange-m: rgba(249, 115,  22, 0.10);  /* chart accent */
+  --gray:    #71717A; --gray-m:   rgba(113, 113, 122, 0.10);
+
+  /* ── 6. TYPOGRAPHY ───────────────────────────────────────────
+     Noto Sans Thai covers both Thai and Latin beautifully.
+     Noto Serif Thai for logo and display headlines.             */
+  --font-ui:      'Noto Sans Thai', sans-serif;
+  --font-display: 'Noto Serif Thai', serif;
+  --font-mono:    'JetBrains Mono', monospace;
+
+  /* ── 7. RADIUS ───────────────────────────────────────────────
+     Generous rounding for a warm, modern, human feel.           */
+  --r-xs:   4px;
+  --r-sm:   8px;
+  --r-md:   12px;   /* buttons, inputs, small cards  */
+  --r-lg:   16px;   /* main cards, panels            */
+  --r-xl:   20px;   /* large modals, hero cards      */
+  --r-2xl:  24px;   /* very large containers         */
+  --r-full: 9999px; /* pill badges, avatars          */
+
+  /* ── 8. SHADOWS ──────────────────────────────────────────────
+     Warm-tinted shadows using CI dark brown for organic depth.  */
+  --shadow-xs: 0 1px 2px rgba(30, 20, 13, 0.04);
+  --shadow-sm: 0 1px 4px  rgba(30, 20, 13, 0.06),
+               0 1px 2px  rgba(30, 20, 13, 0.04);
+  --shadow-md: 0 4px 16px rgba(30, 20, 13, 0.08),
+               0 2px 4px  rgba(30, 20, 13, 0.04);
+  --shadow-lg: 0 8px 32px rgba(30, 20, 13, 0.12),
+               0 2px 8px  rgba(30, 20, 13, 0.06);
+
+  /* ── 9. MOTION ───────────────────────────────────────────────
+     Smooth, purposeful transitions. Felt not seen.              */
+  --ease-out:  cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-in:   cubic-bezier(0.55, 0.06, 0.68, 0.19);
+  --ease-both: cubic-bezier(0.45, 0.00, 0.55, 1.00);
+  --dur-fast:  120ms;
+  --dur-base:  180ms;
+  --dur-slow:  280ms;
+}

@@ -18,7 +18,7 @@
 }
 .success-icon {
   width: 64px; height: 64px; border-radius: 50%;
-  background: rgba(0,199,168,0.12);
+  background: var(--brand-m);
   border: 2px solid rgba(0,199,168,0.30);
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
@@ -104,7 +104,7 @@
   padding: 2px 8px; border-radius: var(--r-full);
   flex-shrink: 0;
 }
-.score-high { background: rgba(0,199,168,0.12); color: var(--teal); }
+.score-high { background: var(--brand-m); color: var(--teal); }
 .score-mid  { background: rgba(245,158,11,0.12); color: var(--amber); }
 .score-low  { background: rgba(239,68,68,0.12);  color: var(--red); }
 
@@ -157,7 +157,7 @@
   border-color: rgba(0,199,168,0.30);
 }
 .action-item.primary-action:hover {
-  background: rgba(0,199,168,0.10);
+  background: var(--brand-m);
   border-color: rgba(0,199,168,0.50);
 }
 .action-icon {
@@ -165,7 +165,7 @@
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
-.action-icon.teal-icon { background: rgba(0,199,168,0.12); color: var(--teal); }
+.action-icon.teal-icon { background: var(--brand-m); color: var(--teal); }
 .action-icon.gray-icon { background: var(--bg-elevated); color: var(--text-secondary); }
 .action-label { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
 .action-desc  { font-size: 12px; color: var(--text-secondary); line-height: 1.4; }
@@ -190,7 +190,7 @@
 .flow-step-label { color: var(--text-secondary); }
 .flow-step.done .flow-dot   { background: var(--teal); }
 .flow-step.done .flow-step-label { color: var(--text-primary); font-weight: 600; }
-.flow-step.current .flow-dot { background: var(--teal); box-shadow: 0 0 0 3px rgba(0,199,168,0.20); }
+.flow-step.current .flow-dot { background: var(--teal); box-shadow: 0 0 0 3px var(--brand-m); }
 .flow-step.current .flow-step-label { color: var(--teal); font-weight: 700; }
 .flow-step.pending .flow-dot { background: var(--border-strong); }
 
@@ -239,6 +239,7 @@
 .modal-footer { display: flex; justify-content: flex-end; gap: 8px; }
 
 </style>
+<link rel="stylesheet" href="ds.css">
 </head>
 <body>
 <div class="app">
@@ -435,7 +436,7 @@
         </div>
         <div class="sched-item">
           <div class="sched-date">May 8</div>
-          <div class="sched-post"><span class="chip" style="font-size:10px;background:rgba(0,199,168,0.12);color:var(--teal);border:none">Carousel</span> #2</div>
+          <div class="sched-post"><span class="chip" style="font-size:10px;background:var(--brand-m);color:var(--teal);border:none">Carousel</span> #2</div>
         </div>
         <div class="sched-item">
           <div class="sched-date">May 11</div>

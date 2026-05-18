@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Request Access — Panya</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Noto+Serif+Thai:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="ds.css">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  height: 100%; font-family: var(--font-ui);
+  background: var(--bg-base); color: var(--text-primary);
+  font-size: var(--text-base); -webkit-font-smoothing: antialiased;
+}
+
+.auth-shell {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  padding: var(--space-6);
+}
+
+.auth-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--r-2xl);
+  padding: var(--space-10) var(--space-10);
+  width: 100%; max-width: 440px;
+  box-shadow: var(--shadow-md);
+}
+
+.auth-logo {
+  font-family: var(--font-display); font-size: 28px; font-weight: 700;
+  color: var(--text-primary); letter-spacing: -0.03em;
+  margin-bottom: var(--space-8);
+}
+.auth-logo span { color: var(--brand); }
+
+.auth-title { font-size: var(--text-xl); font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-1); }
+.auth-sub { font-size: var(--text-sm); color: var(--text-secondary); margin-bottom: var(--space-8); line-height: var(--leading-relaxed); }
+
+.form-group { margin-bottom: var(--space-4); }
+.form-label { display: block; font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-2); }
+.form-input {
+  width: 100%; padding: 11px var(--space-4);
+  border: 1.5px solid var(--border-default); border-radius: var(--r-md);
+  font-family: var(--font-ui); font-size: var(--text-sm); color: var(--text-primary);
+  background: var(--bg-base); outline: none;
+  transition: border-color var(--dur-base), box-shadow var(--dur-base);
+}
+.form-input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-m); }
+.form-input::placeholder { color: var(--text-muted); }
+.form-error { font-size: var(--text-xs); color: var(--red); margin-top: 5px; display: none; }
+.form-error.visible { display: block; }
+
+.role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin-bottom: var(--space-5); }
+.role-card {
+  padding: var(--space-4); border: 1.5px solid var(--border-default); border-radius: var(--r-lg);
+  cursor: pointer; transition: all var(--dur-base) var(--ease-out); text-align: left;
+  background: none;
+  font-family: var(--font-ui);
+}
+.role-card:hover { border-color: var(--border-strong); background: var(--bg-elevated); }
+.role-card.selected { border-color: var(--brand); background: var(--brand-m); }
+.role-icon { font-size: 20px; margin-bottom: var(--space-2); }
+.role-name { font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+.role-desc { font-size: var(--text-xs); color: var(--text-muted); }
+
+.btn-primary {
+  width: 100%; padding: 13px var(--space-4);
+  background: var(--brand); color: #fff;
+  border: none; border-radius: var(--r-md);
+  font-family: var(--font-ui); font-size: var(--text-sm); font-weight: 600;
+  cursor: pointer; transition: all var(--dur-base) var(--ease-out);
+  display: flex; align-items: center; justify-content: center; gap: var(--space-2);
+}
+.btn-primary:hover { background: var(--brand-dark); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.btn-primary:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.auth-footer { margin-top: var(--space-6); text-align: center; font-size: var(--text-sm); color: var(--text-secondary); }
+.auth-footer a { color: var(--brand); font-weight: 600; text-decoration: none; }
+.auth-footer a:hover { text-decoration: underline; }
+
+/* Success state */
+.success-state { display: none; text-align: center; padding: var(--space-4) 0; }
+.success-icon { font-size: 40px; margin-bottom: var(--space-4); }
+.success-title { font-size: var(--text-lg); font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-2); }
+.success-sub { font-size: var(--text-sm); color: var(--text-secondary); line-height: var(--leading-relaxed); }
+
+/* Note box */
+.note-box {
+  display: flex; gap: var(--space-3); align-items: flex-start;
+  padding: var(--space-4); border-radius: var(--r-md);
+  background: var(--bg-elevated); border: 1px solid var(--border-subtle);
+  font-size: var(--text-xs); color: var(--text-secondary); line-height: var(--leading-relaxed);
+  margin-bottom: var(--space-5);
+}
+.note-icon { flex-shrink: 0; font-size: 14px; margin-top: 1px; }
+
+/* Toast */
+#toast-container { position: fixed; bottom: var(--space-6); right: var(--space-6); z-index: 9999; display: flex; flex-direction: column; gap: var(--space-2); pointer-events: none; }
+.toast { display: flex; align-items: flex-start; gap: var(--space-3); min-width: 260px; max-width: 360px; padding: var(--space-3) var(--space-4); background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: var(--r-lg); box-shadow: var(--shadow-md); pointer-events: all; font-size: var(--text-sm); animation: slideUp 220ms var(--ease-out); }
+.toast-success::before { content: '✓'; color: var(--brand); font-weight: 700; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<div class="auth-shell">
+  <div class="auth-card">
+
+    <div class="auth-logo">Panya<span>.</span></div>
+
+    <!-- Form state -->
+    <div id="form-state">
+      <div class="auth-title">Request access</div>
+      <div class="auth-sub">Panya is invite-only. Fill in your details and an admin will review your request within 1 business day.</div>
+
+      <div class="form-group">
+        <label class="form-label" for="name-input">Full name <span style="color:var(--red)">*</span></label>
+        <input class="form-input" id="name-input" type="text" placeholder="Patiphan S." oninput="validateForm()" autocomplete="name">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="email-input">Work email <span style="color:var(--red)">*</span></label>
+        <input class="form-input" id="email-input" type="email" placeholder="you@agency.com" oninput="validateForm()" autocomplete="email">
+        <div class="form-error" id="email-error">Please enter a valid email address.</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">I'll be joining as <span style="color:var(--red)">*</span></label>
+        <div class="role-grid">
+          <button class="role-card" data-role="agency" onclick="selectRole(this)">
+            <div class="role-icon">🏢</div>
+            <div class="role-name">Agency Team</div>
+            <div class="role-desc">Create and manage content plans</div>
+          </button>
+          <button class="role-card" data-role="client" onclick="selectRole(this)">
+            <div class="role-icon">👤</div>
+            <div class="role-name">Client</div>
+            <div class="role-desc">Review and approve plans</div>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:var(--space-5)">
+        <label class="form-label" for="agency-input">Agency / company name</label>
+        <input class="form-input" id="agency-input" type="text" placeholder="Winter Creative">
+      </div>
+
+      <div class="note-box">
+        <span class="note-icon">ℹ️</span>
+        <span>Your request will be sent to the workspace admin. Once approved, you'll receive a magic link to complete your sign-in.</span>
+      </div>
+
+      <button class="btn-primary" id="submit-btn" disabled onclick="submitRequest()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
+        Send request
+      </button>
+    </div>
+
+    <!-- Success state -->
+    <div class="success-state" id="success-state">
+      <div class="success-icon">🎉</div>
+      <div class="success-title">Request sent!</div>
+      <div class="success-sub">Your access request has been sent to the workspace admin. We'll email you at <strong id="success-email"></strong> once it's approved — usually within 1 business day.</div>
+      <div style="margin-top:var(--space-6)">
+        <a class="btn-primary" href="signin.html" style="display:inline-flex;text-decoration:none">Back to sign in</a>
+      </div>
+    </div>
+
+    <div class="auth-footer">
+      Already have access? <a href="signin.html">Sign in →</a>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+var selectedRole = null;
+
+function selectRole(el) {
+  document.querySelectorAll('.role-card').forEach(function(c) { c.classList.remove('selected'); });
+  el.classList.add('selected');
+  selectedRole = el.dataset.role;
+  validateForm();
+}
+
+function validateForm() {
+  var name  = document.getElementById('name-input').value.trim();
+  var email = document.getElementById('email-input').value.trim();
+  var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  var errEl = document.getElementById('email-error');
+  errEl.classList.toggle('visible', email.length > 0 && !emailOk);
+  document.getElementById('submit-btn').disabled = !(name && emailOk && selectedRole);
+}
+
+function submitRequest() {
+  var email = document.getElementById('email-input').value.trim();
+  document.getElementById('success-email').textContent = email;
+  document.getElementById('form-state').style.display = 'none';
+  document.getElementById('success-state').style.display = 'block';
+}
+</script>
+</body>
+</html>

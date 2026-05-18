@@ -6,298 +6,316 @@
 <title>Content Tools — Panya</title>
 <link rel="stylesheet" href="shared.css">
 <style>
+/* ── Content Tools ───────────────────────────────── */
+.tools-shell { display: flex; flex: 1; overflow: hidden; }
 
-/* ── Tool shell ──────────────────────────────────── */
-.tools-shell {
-  display: flex; flex: 1; overflow: hidden;
-}
-
-/* ── Tool sidebar ────────────────────────────────── */
+/* Tool sidebar */
 .tool-sidebar {
   width: 232px; min-width: 232px;
   background: var(--bg-surface);
   border-right: 1px solid var(--border-default);
   display: flex; flex-direction: column;
-  overflow-y: auto; padding: 20px 0;
+  overflow-y: auto; padding: var(--space-5) 0;
 }
 .tool-sidebar-head {
-  padding: 0 16px 14px;
-  font-size: 11px; font-weight: 700; color: var(--text-muted);
+  padding: 0 var(--space-4) var(--space-4);
+  font-size: var(--text-xs); font-weight: 700; color: var(--text-muted);
   text-transform: uppercase; letter-spacing: 0.06em;
 }
 .tool-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 9px 16px; cursor: pointer;
-  font-size: 13px; font-weight: 500; color: var(--text-secondary);
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: 9px var(--space-4); cursor: pointer;
+  font-size: var(--text-sm); font-weight: 500; color: var(--text-secondary);
   border-left: 3px solid transparent;
-  transition: all 100ms; user-select: none;
+  transition: all var(--dur-fast) var(--ease-out); user-select: none;
 }
 .tool-item:hover { color: var(--text-primary); background: var(--bg-elevated); }
 .tool-item.active {
-  color: var(--teal); font-weight: 600;
-  border-left-color: var(--teal);
+  color: var(--brand); font-weight: 600;
+  border-left-color: var(--brand);
   background: var(--brand-s);
 }
 .tool-icon {
   width: 28px; height: 28px; border-radius: var(--r-md);
   display: flex; align-items: center; justify-content: center;
-  font-size: 14px; flex-shrink: 0;
+  font-size: var(--text-sm); flex-shrink: 0;
   background: var(--bg-elevated);
 }
 .tool-item.active .tool-icon { background: var(--brand-m); }
 .tool-badge {
   margin-left: auto; font-size: 10px; font-weight: 700;
-  padding: 1px 6px; border-radius: var(--r-full);
-  background: var(--teal-m); color: var(--teal);
+  padding: 1px var(--space-2); border-radius: var(--r-full);
+  background: var(--brand-m); color: var(--brand);
 }
-.tool-divider {
-  height: 1px; background: var(--border-subtle);
-  margin: 12px 16px;
-}
+.tool-divider { height: 1px; background: var(--border-subtle); margin: var(--space-3) var(--space-4); }
 .tool-section-label {
-  padding: 10px 16px 6px;
+  padding: var(--space-3) var(--space-4) var(--space-2);
   font-size: 10px; font-weight: 700; color: var(--text-muted);
   text-transform: uppercase; letter-spacing: 0.07em;
 }
 
-/* ── Workspace ───────────────────────────────────── */
-.workspace {
-  flex: 1; overflow-y: auto;
-  display: flex; flex-direction: column;
-}
+/* Workspace */
+.workspace { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
 .tool-panel { display: none; flex: 1; }
 .tool-panel.active { display: flex; flex-direction: column; }
 
 .workspace-head {
-  padding: 22px 36px 0;
+  padding: var(--space-6) var(--space-10) 0;
   border-bottom: 1px solid var(--border-default);
-  background: var(--bg-surface);
-  flex-shrink: 0;
+  background: var(--bg-surface); flex-shrink: 0;
 }
 .workspace-title {
-  font-size: 18px; font-weight: 700; color: var(--text-primary);
-  display: flex; align-items: center; gap: 8px; margin-bottom: 3px;
+  font-size: var(--text-lg); font-weight: 700; color: var(--text-primary);
+  display: flex; align-items: center; gap: var(--space-2); margin-bottom: 3px;
 }
-.workspace-sub { font-size: 13px; color: var(--text-secondary); margin-bottom: 14px; }
+.workspace-sub { font-size: var(--text-sm); color: var(--text-secondary); margin-bottom: var(--space-4); }
 .ai-badge {
-  font-size: 10px; font-weight: 700; padding: 2px 7px;
+  font-size: 10px; font-weight: 700; padding: 2px var(--space-2);
   border-radius: var(--r-full);
   background: linear-gradient(135deg, var(--brand-m), rgba(167,139,250,0.15));
-  color: var(--teal); border: 1px solid rgba(233,107,56,0.25);
+  color: var(--brand); border: 1px solid rgba(233,107,56,0.25);
 }
 
-/* ── Sub-tabs ────────────────────────────────────── */
-.subtab-bar {
-  display: flex; gap: 0;
-  background: var(--bg-surface);
-  padding: 0 36px;
-}
+/* Sub-tabs */
+.subtab-bar { display: flex; background: var(--bg-surface); padding: 0 var(--space-10); }
 .subtab {
-  padding: 11px 16px;
-  font-size: 13px; font-weight: 500; color: var(--text-secondary);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-sm); font-weight: 500; color: var(--text-secondary);
   border: none; border-bottom: 2px solid transparent;
   background: none; cursor: pointer;
-  font-family: var(--font-ui); transition: all 100ms;
+  font-family: var(--font-ui);
+  transition: all var(--dur-fast) var(--ease-out);
   margin-bottom: -1px;
 }
 .subtab:hover { color: var(--text-primary); }
-.subtab.active { color: var(--teal); font-weight: 600; border-bottom-color: var(--teal); }
-
+.subtab.active { color: var(--brand); font-weight: 600; border-bottom-color: var(--brand); }
 .subpanel { display: none; }
 .subpanel.active { display: block; }
 
-/* ── Workspace body ──────────────────────────────── */
+/* Workspace body */
 .workspace-body {
-  flex: 1; padding: 28px 36px;
-  display: flex; flex-direction: column; gap: 20px;
+  flex: 1; padding: var(--space-6) var(--space-8);
+  display: flex; flex-direction: column; gap: var(--space-5);
 }
 
-/* ── Inputs ──────────────────────────────────────── */
-.input-grid {
-  display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
-  gap: 10px; margin-bottom: 4px;
+/* 3-col split: config | results */
+.tool-cols { display: grid; grid-template-columns: 380px 1fr; gap: var(--space-6); align-items: start; }
+.col-config { display: flex; flex-direction: column; gap: var(--space-4); }
+.col-results { display: flex; flex-direction: column; gap: var(--space-4); }
+.results-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: var(--space-12) var(--space-8); text-align: center;
+  background: var(--bg-surface); border: 1.5px dashed var(--border-default);
+  border-radius: var(--r-lg); color: var(--text-muted); gap: var(--space-3);
+  min-height: 200px;
 }
+.results-empty-icon { font-size: 28px; opacity: .4; }
+.results-empty-text { font-size: var(--text-sm); font-weight: 500; }
+.results-empty-sub  { font-size: var(--text-xs); color: var(--text-muted); }
+.results-filled { display: none; flex-direction: column; gap: var(--space-4); }
+.results-filled.visible { display: flex; }
+
+/* Add to Plan modal */
+.atp-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 1000; display: flex; align-items: center; justify-content: center; }
+.atp-box { background: var(--bg-base); border-radius: var(--r-xl); box-shadow: var(--shadow-xl); width: 440px; max-width: calc(100vw - 32px); overflow: hidden; }
+.atp-head { padding: var(--space-5) var(--space-6); border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; }
+.atp-head h3 { font-size: var(--text-lg); font-weight: 700; }
+.atp-close { background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 20px; line-height: 1; padding: 2px; }
+.atp-body { padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-3); }
+.atp-option { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-4) var(--space-5); border: 1.5px solid var(--border-default); border-radius: var(--r-lg); cursor: pointer; transition: all var(--dur-base); }
+.atp-option:hover { border-color: var(--brand); background: var(--brand-s); }
+.atp-option-icon { width: 40px; height: 40px; border-radius: var(--r-md); background: var(--bg-elevated); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.atp-option-title { font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); }
+.atp-option-sub { font-size: var(--text-xs); color: var(--text-muted); margin-top: 2px; }
+.atp-foot { padding: var(--space-4) var(--space-6); border-top: 1px solid var(--border-subtle); }
+.atp-cancel { background: none; border: none; cursor: pointer; font-family: var(--font-ui); font-size: var(--text-sm); color: var(--text-secondary); }
+
+/* Inputs */
+.input-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: var(--space-3); margin-bottom: 4px; }
 .field-label {
-  font-size: 11px; font-weight: 700; color: var(--text-muted);
-  text-transform: uppercase; letter-spacing: 0.06em;
-  margin-bottom: 5px;
+  font-size: var(--text-xs); font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 5px;
 }
 select.tool-select, textarea.tool-textarea, input.tool-input {
-  width: 100%; padding: 9px 12px;
-  border: 1px solid var(--border-default); border-radius: var(--r-md);
-  font-family: var(--font-ui); font-size: 13px;
+  width: 100%; padding: 9px var(--space-3);
+  border: 1.5px solid var(--border-default); border-radius: var(--r-md);
+  font-family: var(--font-ui); font-size: var(--text-sm);
   color: var(--text-primary); background: var(--bg-base);
-  outline: none; transition: border-color 150ms;
+  outline: none; transition: border-color var(--dur-base) var(--ease-out);
 }
 select.tool-select:focus,
 textarea.tool-textarea:focus,
-input.tool-input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-m); }
-textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
-.generate-row { display: flex; align-items: center; gap: 10px; }
+input.tool-input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-m); }
+textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: var(--leading-relaxed); }
+.generate-row { display: flex; align-items: center; gap: var(--space-3); }
 .generate-row textarea { flex: 1; min-height: 72px; }
 .btn-generate {
-  padding: 12px 24px; border-radius: var(--r-md);
-  background: var(--teal); color: #fff;
-  font-family: var(--font-ui); font-size: 13px; font-weight: 700;
+  padding: var(--space-3) var(--space-6); border-radius: var(--r-md);
+  background: var(--brand); color: #fff;
+  font-family: var(--font-ui); font-size: var(--text-sm); font-weight: 700;
   border: none; cursor: pointer;
   display: flex; flex-direction: column; align-items: center; gap: 3px;
-  transition: opacity 120ms; white-space: nowrap; align-self: flex-end;
+  transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+  white-space: nowrap; align-self: flex-end;
 }
-.btn-generate:hover { opacity: 0.88; }
-.btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-generate:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-generate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 .btn-generate .spark { font-size: 18px; }
 
-/* ── Output cards ────────────────────────────────── */
+/* Output cards */
 .output-section-label {
-  font-size: 12px; font-weight: 700; color: var(--text-muted);
+  font-size: var(--text-xs); font-weight: 700; color: var(--text-muted);
   text-transform: uppercase; letter-spacing: 0.06em;
-  margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+  margin-bottom: var(--space-3); display: flex; align-items: center; gap: var(--space-2);
 }
 .output-section-label::after { content: ''; flex: 1; height: 1px; background: var(--border-subtle); }
-.output-cards { display: flex; flex-direction: column; gap: 12px; }
+.output-cards { display: flex; flex-direction: column; gap: var(--space-3); }
 .output-card {
   background: var(--bg-surface); border: 1px solid var(--border-default);
-  border-radius: var(--r-lg); overflow: hidden; transition: border-color 150ms;
+  border-radius: var(--r-lg); overflow: hidden;
+  box-shadow: var(--shadow-xs);
+  transition: border-color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
 }
-.output-card:hover { border-color: var(--border-strong); }
+.output-card:hover { border-color: var(--border-strong); box-shadow: var(--shadow-sm); }
 .output-card-head {
-  padding: 10px 14px; background: var(--bg-elevated);
+  padding: var(--space-3) var(--space-4); background: var(--bg-elevated);
   border-bottom: 1px solid var(--border-subtle);
-  display: flex; align-items: center; gap: 8px; font-size: 12px;
+  display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-xs);
 }
 .option-label { font-weight: 700; color: var(--text-muted); min-width: 56px; }
-.output-card-body { padding: 14px 16px; font-size: 14px; line-height: 1.7; color: var(--text-primary); }
+.output-card-body { padding: var(--space-4) var(--space-4); font-size: var(--text-sm); line-height: var(--leading-loose); color: var(--text-primary); }
 .output-card-foot {
-  padding: 10px 14px; border-top: 1px solid var(--border-subtle);
-  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  padding: var(--space-3) var(--space-4); border-top: 1px solid var(--border-subtle);
+  display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap;
 }
-.breakdown-chips { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
+.breakdown-chips { display: flex; gap: var(--space-2); flex-wrap: wrap; flex: 1; }
 .bchip {
-  font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: var(--r-full);
+  font-size: var(--text-xs); font-weight: 600; padding: 2px var(--space-2); border-radius: var(--r-full);
   background: var(--bg-elevated); color: var(--text-secondary);
 }
-.bchip.good { background: var(--brand-m); color: var(--teal); }
+.bchip.good { background: var(--brand-m); color: var(--brand); }
 .bchip.warn { background: rgba(245,158,11,0.10); color: var(--amber); }
 .bchip.fail { background: rgba(239,68,68,0.10); color: var(--red); }
 
-/* ── Rewrite goal toggles ────────────────────────── */
-.goal-group { display: flex; gap: 8px; flex-wrap: wrap; }
+/* Rewrite goal toggles */
+.goal-group { display: flex; gap: var(--space-2); flex-wrap: wrap; }
 .goal-btn {
-  padding: 6px 14px; border-radius: var(--r-full);
+  padding: var(--space-2) var(--space-4); border-radius: var(--r-full);
   border: 1px solid var(--border-default);
   background: var(--bg-surface); color: var(--text-secondary);
-  font-size: 12px; font-weight: 500; font-family: var(--font-ui);
-  cursor: pointer; transition: all 100ms;
+  font-size: var(--text-xs); font-weight: 500; font-family: var(--font-ui);
+  cursor: pointer; transition: all var(--dur-fast) var(--ease-out);
 }
-.goal-btn:hover { border-color: var(--teal); color: var(--teal); }
-.goal-btn.active { background: var(--teal-m); border-color: var(--teal); color: var(--teal); font-weight: 600; }
+.goal-btn:hover { border-color: var(--brand); color: var(--brand); }
+.goal-btn.active { background: var(--brand-m); border-color: var(--brand); color: var(--brand); font-weight: 600; }
 
-/* ── Hook scorer ─────────────────────────────────── */
+/* Hook scorer */
 .score-result {
   background: var(--bg-surface); border: 1px solid var(--border-default);
-  border-radius: var(--r-lg); overflow: hidden;
+  border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--shadow-sm);
 }
 .score-hero {
-  padding: 28px; display: flex; align-items: center; gap: 28px;
+  padding: var(--space-8); display: flex; align-items: center; gap: var(--space-8);
   border-bottom: 1px solid var(--border-default);
 }
 .score-ring {
   width: 80px; height: 80px; border-radius: 50%; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center; flex-direction: column;
-  border: 4px solid var(--teal);
+  border: 4px solid var(--brand);
 }
-.score-ring-num { font-family: var(--font-mono); font-size: 24px; font-weight: 700; line-height: 1; }
+.score-ring-num { font-family: var(--font-mono); font-size: var(--text-2xl); font-weight: 700; line-height: 1; }
 .score-ring-label { font-size: 9px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em; }
-.score-breakdown { display: flex; flex-direction: column; gap: 10px; flex: 1; }
-.score-row { display: flex; align-items: center; gap: 10px; }
-.score-row-label { font-size: 12px; color: var(--text-secondary); width: 130px; flex-shrink: 0; }
+.score-breakdown { display: flex; flex-direction: column; gap: var(--space-3); flex: 1; }
+.score-row { display: flex; align-items: center; gap: var(--space-3); }
+.score-row-label { font-size: var(--text-xs); color: var(--text-secondary); width: 130px; flex-shrink: 0; }
 .score-bar-wrap { flex: 1; height: 6px; background: var(--bg-elevated); border-radius: var(--r-full); overflow: hidden; }
 .score-bar { height: 100%; border-radius: var(--r-full); }
-.score-row-val { font-family: var(--font-mono); font-size: 12px; font-weight: 700; min-width: 28px; text-align: right; }
-.score-feedback { padding: 18px 24px; display: flex; flex-direction: column; gap: 8px; }
-.fb-point { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+.score-row-val { font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 700; min-width: 28px; text-align: right; }
+.score-feedback { padding: var(--space-5) var(--space-6); display: flex; flex-direction: column; gap: var(--space-2); }
+.fb-point { display: flex; align-items: flex-start; gap: var(--space-2); font-size: var(--text-sm); color: var(--text-secondary); line-height: var(--leading-normal); }
 .fb-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
 
-/* ── Policy Check ────────────────────────────────── */
+/* Policy Check */
 .policy-result {
   background: var(--bg-surface); border: 1px solid var(--border-default);
-  border-radius: var(--r-lg); overflow: hidden;
+  border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--shadow-sm);
 }
 .policy-summary {
-  padding: 18px 24px;
-  display: flex; align-items: center; gap: 16px;
+  padding: var(--space-5) var(--space-6);
+  display: flex; align-items: center; gap: var(--space-4);
   border-bottom: 1px solid var(--border-default);
-  background: rgba(0,199,168,0.04);
+  background: var(--brand-s);
 }
 .policy-summary-icon {
   width: 40px; height: 40px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   font-size: 18px; flex-shrink: 0;
 }
-.policy-summary-icon.pass   { background: var(--brand-m); }
-.policy-summary-icon.warn   { background: rgba(245,158,11,0.12); }
+.policy-summary-icon.pass { background: var(--brand-m); }
+.policy-summary-icon.warn { background: rgba(245,158,11,0.12); }
 .policy-summary-meta { flex: 1; }
-.policy-summary-title { font-size: 14px; font-weight: 700; color: var(--text-primary); }
-.policy-summary-sub   { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
-.policy-checks { padding: 8px 0; }
+.policy-summary-title { font-size: var(--text-sm); font-weight: 700; color: var(--text-primary); }
+.policy-summary-sub   { font-size: var(--text-xs); color: var(--text-secondary); margin-top: 2px; }
+.policy-checks { padding: var(--space-2) 0; }
 .policy-check-row {
-  display: flex; align-items: flex-start; gap: 14px;
-  padding: 14px 24px; border-bottom: 1px solid var(--border-subtle);
+  display: flex; align-items: flex-start; gap: var(--space-4);
+  padding: var(--space-4) var(--space-6); border-bottom: 1px solid var(--border-subtle);
 }
 .policy-check-row:last-child { border-bottom: none; }
 .policy-check-icon {
   width: 26px; height: 26px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 12px; font-weight: 800; flex-shrink: 0; margin-top: 1px;
+  font-size: var(--text-xs); font-weight: 800; flex-shrink: 0; margin-top: 1px;
 }
-.policy-check-icon.pass { background: var(--brand-m); color: var(--teal); }
+.policy-check-icon.pass { background: var(--brand-m); color: var(--brand); }
 .policy-check-icon.warn { background: rgba(245,158,11,0.12); color: var(--amber); }
 .policy-check-icon.fail { background: rgba(239,68,68,0.10); color: var(--red); }
 .policy-check-body { flex: 1; }
-.policy-check-title { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
-.policy-check-desc  { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
-.policy-check-fix   { font-size: 12px; color: var(--amber); margin-top: 4px; }
+.policy-check-title { font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+.policy-check-desc  { font-size: var(--text-xs); color: var(--text-secondary); line-height: var(--leading-normal); }
+.policy-check-fix   { font-size: var(--text-xs); color: var(--amber); margin-top: 4px; }
 
-/* ── Hashtag builder ─────────────────────────────── */
+/* Hashtag builder */
 .hashtag-output {
   background: var(--bg-surface); border: 1px solid var(--border-default);
-  border-radius: var(--r-lg); overflow: hidden;
+  border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--shadow-xs);
 }
-.hashtag-set { padding: 16px 20px; border-bottom: 1px solid var(--border-subtle); }
+.hashtag-set { padding: var(--space-4) var(--space-5); border-bottom: 1px solid var(--border-subtle); }
 .hashtag-set:last-child { border-bottom: none; }
 .hashtag-set-title {
-  font-size: 11px; font-weight: 700; color: var(--text-muted);
-  text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px;
+  font-size: var(--text-xs); font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: var(--space-3);
 }
-.hashtag-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.hashtag-pills { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .htag {
-  font-size: 12px; font-weight: 500; padding: 3px 10px; border-radius: var(--r-full);
+  font-size: var(--text-xs); font-weight: 500; padding: 3px var(--space-3); border-radius: var(--r-full);
   background: var(--bg-elevated); color: var(--text-primary);
-  cursor: pointer; transition: all 120ms; border: 1px solid transparent; user-select: none;
+  cursor: pointer; transition: all var(--dur-fast) var(--ease-out);
+  border: 1px solid transparent; user-select: none;
 }
-.htag:hover { background: var(--teal-m); color: var(--teal); border-color: rgba(0,199,168,0.3); }
-.htag.selected { background: var(--teal-m); color: var(--teal); border-color: rgba(0,199,168,0.3); font-weight: 600; }
+.htag:hover    { background: var(--brand-m); color: var(--brand); border-color: rgba(233,107,56,0.30); }
+.htag.selected { background: var(--brand-m); color: var(--brand); border-color: rgba(233,107,56,0.30); font-weight: 600; }
 .hashtag-footer {
-  padding: 12px 20px; background: var(--bg-elevated);
+  padding: var(--space-3) var(--space-5); background: var(--bg-elevated);
   border-top: 1px solid var(--border-default);
-  display: flex; align-items: center; gap: 10px; font-size: 12px;
+  display: flex; align-items: center; gap: var(--space-3); font-size: var(--text-xs);
 }
 
-/* ── Idea spark ──────────────────────────────────── */
-.idea-spark-cards { display: flex; flex-direction: column; gap: 10px; }
+/* Idea spark */
+.idea-spark-cards { display: flex; flex-direction: column; gap: var(--space-3); }
 .spark-card {
   background: var(--bg-surface); border: 1px solid var(--border-default);
-  border-radius: var(--r-lg); padding: 14px 16px;
-  display: flex; gap: 14px; align-items: flex-start;
-  cursor: pointer; transition: border-color 120ms;
+  border-radius: var(--r-lg); padding: var(--space-4) var(--space-4);
+  display: flex; gap: var(--space-4); align-items: flex-start;
+  cursor: pointer; box-shadow: var(--shadow-xs);
+  transition: border-color var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
 }
-.spark-card:hover { border-color: var(--teal); }
-.spark-num { font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--text-muted); min-width: 18px; margin-top: 2px; }
+.spark-card:hover { border-color: var(--brand); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.spark-num { font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 700; color: var(--text-muted); min-width: 18px; margin-top: 2px; }
 .spark-body { flex: 1; }
-.spark-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
-.spark-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
-.spark-chips { display: flex; gap: 6px; margin-top: 8px; }
-
+.spark-title { font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+.spark-desc { font-size: var(--text-xs); color: var(--text-secondary); line-height: var(--leading-normal); }
+.spark-chips { display: flex; gap: var(--space-2); margin-top: var(--space-2); }
 </style>
 <link rel="stylesheet" href="ds.css">
 </head>
@@ -423,7 +441,8 @@ textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
 
         <!-- ── Generate sub-panel ─────────────────── -->
         <div class="subpanel active" id="sub-caption-generate">
-          <div>
+          <div class="tool-cols">
+          <div class="col-config">
             <div class="input-grid">
               <div>
                 <div class="field-label">Brand</div>
@@ -466,15 +485,21 @@ textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
             </div>
           </div>
 
-          <div>
+          <div class="col-results">
+            <div class="results-empty" style="display:none">
+              <div class="results-empty-icon">✦</div>
+              <div class="results-empty-text">No captions yet</div>
+              <div class="results-empty-sub">Fill in the fields and click Generate to create captions.</div>
+            </div>
+            <div class="results-filled visible">
             <div class="output-section-label">Generated Captions</div>
             <div class="output-cards">
 
               <div class="output-card">
                 <div class="output-card-head">
                   <span class="option-label">Option A</span>
-                  <span style="font-family:var(--font-mono);font-size:12px;font-weight:700;padding:2px 8px;border-radius:var(--r-full);background:var(--brand-m);color:var(--teal)">87</span>
-                  <span style="font-size:11px;color:var(--teal);font-weight:600">Strong</span>
+                  <span style="font-family:var(--font-mono);font-size:12px;font-weight:700;padding:2px 8px;border-radius:var(--r-full);background:var(--brand-m);color:var(--brand)">87</span>
+                  <span style="font-size:11px;color:var(--brand);font-weight:600">Strong</span>
                   <div style="flex:1"></div>
                   <button class="btn btn-sm btn-ghost" onclick="copyCaption(this)">Copy</button>
                   <button class="btn btn-sm btn-secondary" style="font-size:11px" onclick="useInPlan()">Use in Plan</button>
@@ -541,12 +566,15 @@ textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
               </div>
 
             </div>
-          </div>
+            </div><!-- /results-filled -->
+          </div><!-- /col-results -->
+          </div><!-- /tool-cols -->
         </div><!-- /sub-caption-generate -->
 
         <!-- ── Rewrite sub-panel ───────────────────── -->
         <div class="subpanel" id="sub-caption-rewrite">
-          <div>
+          <div class="tool-cols">
+          <div class="col-config">
             <div class="input-grid" style="grid-template-columns:1fr 1fr">
               <div>
                 <div class="field-label">Brand</div>
@@ -582,9 +610,15 @@ textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
                 </button>
               </div>
             </div>
-          </div>
+          </div><!-- /col-config -->
 
-          <div>
+          <div class="col-results">
+            <div class="results-empty" style="display:none">
+              <div class="results-empty-icon">↺</div>
+              <div class="results-empty-text">No rewrite yet</div>
+              <div class="results-empty-sub">Paste a caption and click Rewrite to improve it.</div>
+            </div>
+            <div class="results-filled visible">
             <div class="output-section-label">Rewrite Result</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
               <div class="output-card">
@@ -603,9 +637,9 @@ textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
                   </div>
                 </div>
               </div>
-              <div class="output-card" style="border-color:rgba(0,199,168,0.30)">
+              <div class="output-card" style="border-color:rgba(233, 107, 56, 0.30)">
                 <div class="output-card-head" style="background:var(--brand-s);border-color:var(--brand-m)">
-                  <span style="font-size:12px;font-weight:700;color:var(--teal)">Rewritten · Score 87</span>
+                  <span style="font-size:12px;font-weight:700;color:var(--brand)">Rewritten · Score 87</span>
                   <div style="flex:1"></div>
                   <button class="btn btn-sm btn-ghost" onclick="copyCaption(this)">Copy</button>
                   <button class="btn btn-sm btn-secondary" style="font-size:11px" onclick="useInPlan()">Use in Plan</button>
@@ -624,7 +658,9 @@ textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
                 </div>
               </div>
             </div>
-          </div>
+            </div><!-- /results-filled -->
+          </div><!-- /col-results -->
+          </div><!-- /tool-cols -->
         </div><!-- /sub-caption-rewrite -->
 
       </div>
@@ -644,7 +680,8 @@ textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
 
         <!-- ── Hook Score sub-panel ───────────────── -->
         <div class="subpanel active" id="sub-checker-hook">
-          <div>
+          <div class="tool-cols">
+          <div class="col-config">
             <div class="field-label" style="margin-bottom:6px">Paste your caption or hook</div>
             <div class="generate-row">
               <textarea class="tool-textarea" style="min-height:90px">ฟังเสียงความกรอบแบบนี้แล้วยังจะทน? 🍗 Bonchon Crispy Wings — ทุกคำคือความสุข #BonchonThailand #CrispyWings</textarea>
@@ -663,8 +700,15 @@ textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
                 <select class="tool-select"><option>Instagram</option><option>Facebook</option><option>TikTok</option></select>
               </div>
             </div>
-          </div>
+          </div><!-- /col-config -->
 
+          <div class="col-results">
+            <div class="results-empty" style="display:none">
+              <div class="results-empty-icon">◎</div>
+              <div class="results-empty-text">No score yet</div>
+              <div class="results-empty-sub">Paste a caption and click Score It to analyse it.</div>
+            </div>
+            <div class="results-filled visible">
           <div class="score-result">
             <div class="score-hero">
               <div class="score-ring">
@@ -674,18 +718,18 @@ textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
               <div class="score-breakdown">
                 <div class="score-row">
                   <span class="score-row-label">Hook Strength</span>
-                  <div class="score-bar-wrap"><div class="score-bar" style="width:92%;background:var(--teal)"></div></div>
-                  <span class="score-row-val" style="color:var(--teal)">92</span>
+                  <div class="score-bar-wrap"><div class="score-bar" style="width:92%;background:var(--brand)"></div></div>
+                  <span class="score-row-val" style="color:var(--brand)">92</span>
                 </div>
                 <div class="score-row">
                   <span class="score-row-label">Brand Alignment</span>
-                  <div class="score-bar-wrap"><div class="score-bar" style="width:88%;background:var(--teal)"></div></div>
-                  <span class="score-row-val" style="color:var(--teal)">88</span>
+                  <div class="score-bar-wrap"><div class="score-bar" style="width:88%;background:var(--brand)"></div></div>
+                  <span class="score-row-val" style="color:var(--brand)">88</span>
                 </div>
                 <div class="score-row">
                   <span class="score-row-label">Tone Match</span>
-                  <div class="score-bar-wrap"><div class="score-bar" style="width:85%;background:var(--teal)"></div></div>
-                  <span class="score-row-val" style="color:var(--teal)">85</span>
+                  <div class="score-bar-wrap"><div class="score-bar" style="width:85%;background:var(--brand)"></div></div>
+                  <span class="score-row-val" style="color:var(--brand)">85</span>
                 </div>
                 <div class="score-row">
                   <span class="score-row-label">Hashtag Quality</span>
@@ -700,17 +744,20 @@ textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
               </div>
             </div>
             <div class="score-feedback">
-              <div class="fb-point"><div class="fb-dot" style="background:var(--teal)"></div><span>Opening question is strong — Thai-language hooks perform 23% better with this audience than English-first openers.</span></div>
-              <div class="fb-point"><div class="fb-dot" style="background:var(--teal)"></div><span>Brand name appears naturally mid-caption — avoids feeling like an ad.</span></div>
+              <div class="fb-point"><div class="fb-dot" style="background:var(--brand)"></div><span>Opening question is strong — Thai-language hooks perform 23% better with this audience than English-first openers.</span></div>
+              <div class="fb-point"><div class="fb-dot" style="background:var(--brand)"></div><span>Brand name appears naturally mid-caption — avoids feeling like an ad.</span></div>
               <div class="fb-point"><div class="fb-dot" style="background:var(--amber)"></div><span>Hashtags are slightly generic — consider adding niche tags like #ASMRfood #ไก่ทอด to reach food-curious micro-audiences.</span></div>
               <div class="fb-point"><div class="fb-dot" style="background:var(--amber)"></div><span>No clear CTA — adding "ลองได้เลย สาขาใกล้บ้าน" or a save/share prompt could lift engagement rate by ~12%.</span></div>
             </div>
-          </div>
+            </div><!-- /results-filled -->
+          </div><!-- /col-results -->
+          </div><!-- /tool-cols -->
         </div><!-- /sub-checker-hook -->
 
         <!-- ── Policy Check sub-panel ─────────────── -->
         <div class="subpanel" id="sub-checker-policy">
-          <div>
+          <div class="tool-cols">
+          <div class="col-config">
             <div class="field-label" style="margin-bottom:6px">Paste caption to check</div>
             <div class="generate-row">
               <textarea class="tool-textarea" style="min-height:90px">กรอบทุกคำ อร่อยทุกกัด 🍗 Bonchon Wings — ดีที่สุดในไทย! มาลองสั่งตัวเองไปดิ สาขาใกล้บ้านคุณ #Bonchon #BestChickenThailand #อร่อยที่สุด</textarea>
@@ -729,8 +776,15 @@ textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
                 <select class="tool-select"><option>Instagram</option><option>Facebook</option><option>TikTok</option></select>
               </div>
             </div>
-          </div>
+          </div><!-- /col-config -->
 
+          <div class="col-results">
+            <div class="results-empty" style="display:none">
+              <div class="results-empty-icon">🛡</div>
+              <div class="results-empty-text">No check yet</div>
+              <div class="results-empty-sub">Paste a caption and click Check to run a policy review.</div>
+            </div>
+            <div class="results-filled visible">
           <div class="policy-result">
             <div class="policy-summary">
               <div class="policy-summary-icon warn">⚠</div>
@@ -776,7 +830,9 @@ textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
               </div>
 
             </div>
-          </div>
+            </div><!-- /results-filled -->
+          </div><!-- /col-results -->
+          </div><!-- /tool-cols -->
         </div><!-- /sub-checker-policy -->
 
       </div>
@@ -789,20 +845,28 @@ textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
         <div class="workspace-sub">Build optimised hashtag sets by brand, pillar, and audience. Click to select, then copy.</div>
       </div>
       <div class="workspace-body">
-        <div class="input-grid" style="grid-template-columns:1fr 1fr 1fr">
-          <div>
-            <div class="field-label">Brand</div>
-            <select class="tool-select"><option>Bonchon</option><option>Haier Thailand</option></select>
+        <div class="tool-cols">
+        <div class="col-config">
+          <div class="input-grid" style="grid-template-columns:1fr 1fr">
+            <div>
+              <div class="field-label">Brand</div>
+              <select class="tool-select"><option>Bonchon</option><option>Haier Thailand</option></select>
+            </div>
+            <div>
+              <div class="field-label">Content Theme</div>
+              <select class="tool-select"><option>Crispy Chicken / Wings</option><option>Summer Promotion</option><option>Lifestyle / Mood</option></select>
+            </div>
           </div>
-          <div>
-            <div class="field-label">Content Theme</div>
-            <select class="tool-select"><option>Crispy Chicken / Wings</option><option>Summer Promotion</option><option>Lifestyle / Mood</option></select>
-          </div>
-          <div style="display:flex;align-items:flex-end">
-            <button class="btn btn-primary" style="width:100%" onclick="runHashtag()">✦ Build Set</button>
-          </div>
-        </div>
+          <button class="btn btn-primary" style="width:100%" onclick="runHashtag()">✦ Build Set</button>
+        </div><!-- /col-config -->
 
+        <div class="col-results">
+          <div class="results-empty" style="display:none">
+            <div class="results-empty-icon">#</div>
+            <div class="results-empty-text">No hashtags yet</div>
+            <div class="results-empty-sub">Select brand and theme, then click Build Set.</div>
+          </div>
+          <div class="results-filled visible">
         <div class="hashtag-output">
           <div class="hashtag-set">
             <div class="hashtag-set-title">Brand Core (always use)</div>
@@ -974,9 +1038,9 @@ textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
                 </div>
               </div>
             </div>
-            <div class="output-card" style="border-color:rgba(0,199,168,0.30)">
+            <div class="output-card" style="border-color:rgba(233, 107, 56, 0.30)">
               <div class="output-card-head" style="background:var(--brand-s);border-color:var(--brand-m)">
-                <span style="font-size:12px;font-weight:700;color:var(--teal)">After — Polished</span>
+                <span style="font-size:12px;font-weight:700;color:var(--brand)">After — Polished</span>
                 <div style="flex:1"></div>
                 <button class="btn btn-sm btn-ghost" onclick="copyCaption(this)">Copy</button>
               </div>
@@ -1039,7 +1103,7 @@ textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
               </div>
               <div style="display:flex;flex-direction:column;gap:4px">
                 <span style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">Boost Budget</span>
-                <span style="font-size:13px;font-weight:600;color:var(--teal)">฿19,000 · 3 posts</span>
+                <span style="font-size:13px;font-weight:600;color:var(--brand)">฿19,000 · 3 posts</span>
               </div>
             </div>
           </div>

@@ -6,57 +6,99 @@
 <title>Panya — Plans</title>
 <link rel="stylesheet" href="shared.css">
 <style>
-/* ── Page-specific ───────────────────────────────── */
-.table-wrap { background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: var(--r-lg); overflow: hidden; }
+/* ── Plans page ─────────────────────────────────── */
+.table-wrap {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
 table { width: 100%; border-collapse: collapse; }
+
 thead th {
-  padding: 11px 16px; text-align: left;
-  font-size: 11px; font-weight: 700; color: var(--text-muted);
-  text-transform: uppercase; letter-spacing: 0.06em;
-  background: var(--bg-elevated); border-bottom: 1px solid var(--border-default);
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-default);
   white-space: nowrap;
 }
 thead th:last-child { text-align: right; }
-tbody tr { border-bottom: 1px solid var(--border-subtle); transition: background 100ms; cursor: pointer; }
-tbody tr:last-child  { border-bottom: none; }
-tbody tr:hover       { background: var(--bg-elevated); }
-tbody td { padding: 14px 16px; font-size: 13px; color: var(--text-primary); vertical-align: middle; }
-tbody td:last-child  { text-align: right; }
 
-/* Status cell — larger, more scannable badge */
+tbody tr {
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background var(--dur-fast) var(--ease-out);
+  cursor: pointer;
+}
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover      { background: var(--brand-s); }
+
+tbody td {
+  padding: var(--space-4) var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+tbody td:last-child { text-align: right; }
+
+/* Badge in table — scannable size */
 tbody td .badge {
-  font-size: 12px;
-  padding: 4px 10px 4px 8px;
+  font-size: var(--text-xs);
+  padding: 4px var(--space-3) 4px var(--space-2);
+  border-radius: var(--r-full);
 }
-tbody td .bdot {
-  width: 7px; height: 7px;
-}
+tbody td .bdot { width: 7px; height: 7px; }
 
-.td-brand  { font-weight: 600; font-size: 14px; }
-.td-meta   { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
-.td-score  { font-family: var(--font-mono); font-weight: 700; }
-.td-muted  { color: var(--text-secondary); }
-.td-actions { display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
+.td-brand   { font-weight: 600; font-size: var(--text-sm); }
+.td-meta    { font-size: var(--text-xs); color: var(--text-secondary); margin-top: 2px; }
+.td-score   { font-family: var(--font-mono); font-weight: 700; }
+.td-muted   { color: var(--text-secondary); }
+.td-actions { display: flex; align-items: center; justify-content: flex-end; gap: var(--space-2); }
+
+/* Select with chevron */
+.select-wrap { position: relative; display: inline-flex; align-items: center; }
+.select-wrap .filter-select { padding-right: var(--space-8); appearance: none; -webkit-appearance: none; }
+.select-chevron { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--text-muted); flex-shrink: 0; }
+
+/* Disabled action button */
+.btn-disabled { opacity: 0.38; cursor: not-allowed; pointer-events: none; }
 
 /* Pagination */
 .pagination {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 16px; border-top: 1px solid var(--border-subtle);
-  font-size: 13px; color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--border-subtle);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
 }
-.page-btns { display: flex; gap: 4px; }
+.page-btns { display: flex; gap: var(--space-1); }
 .page-btn {
-  width: 30px; height: 30px; border-radius: var(--r-md);
+  width: 32px; height: 32px;
+  border-radius: var(--r-md);
   display: flex; align-items: center; justify-content: center;
-  font-size: 13px; font-weight: 500; cursor: pointer;
-  border: 1px solid var(--border-default); background: var(--bg-surface);
-  color: var(--text-secondary); transition: all 100ms;
+  font-size: var(--text-sm); font-weight: 500; cursor: pointer;
+  border: 1px solid var(--border-default);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  transition: all var(--dur-fast) var(--ease-out);
 }
 .page-btn:hover  { background: var(--bg-elevated); color: var(--text-primary); }
-.page-btn.active { background: var(--teal); border-color: var(--teal); color: #fff; }
+.page-btn.active { background: var(--brand); border-color: var(--brand); color: #fff; }
 
-/* empty state */
-.empty-row td { text-align: center; padding: 48px 16px; color: var(--text-muted); }
+/* Empty state */
+.empty-row td {
+  text-align: center;
+  padding: var(--space-12) var(--space-4);
+  color: var(--text-muted);
+}
 </style>
 <link rel="stylesheet" href="ds.css">
 </head>
@@ -139,36 +181,48 @@ tbody td .bdot {
       <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input class="filter-search" type="text" placeholder="Search brand or month…">
     </div>
-    <select class="filter-select">
-      <option>All Brands</option>
-      <option>Bonchon</option>
-      <option>Haier Thailand</option>
-      <option>Central Retail</option>
-      <option>MK Restaurant</option>
-    </select>
-    <select class="filter-select">
-      <option>All Platforms</option>
-      <option>Facebook</option>
-      <option>Instagram</option>
-      <option>TikTok</option>
-    </select>
-    <select class="filter-select">
-      <option>All Statuses</option>
-      <option>Brief Ready</option>
-      <option>Drafting</option>
-      <option>Scored</option>
-      <option>Proposed</option>
-      <option>Feedback Pending</option>
-      <option>Complete</option>
-    </select>
+    <div class="select-wrap">
+      <select class="filter-select">
+        <option>All Brands</option>
+        <option>Bonchon</option>
+        <option>Haier Thailand</option>
+        <option>Central Retail</option>
+        <option>MK Restaurant</option>
+      </select>
+      <svg class="select-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="select-wrap">
+      <select class="filter-select">
+        <option>All Platforms</option>
+        <option>Facebook</option>
+        <option>Instagram</option>
+        <option>TikTok</option>
+      </select>
+      <svg class="select-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="select-wrap">
+      <select class="filter-select">
+        <option>All Statuses</option>
+        <option>Brief Ready</option>
+        <option>Drafting</option>
+        <option>Scored</option>
+        <option>Proposed</option>
+        <option>Feedback Pending</option>
+        <option>Complete</option>
+      </select>
+      <svg class="select-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
     <div class="filter-spacer"></div>
-    <select class="filter-select">
-      <option>Sort: Last Updated</option>
-      <option>Sort: Status</option>
-      <option>Sort: Month (newest)</option>
-      <option>Sort: AVG Score</option>
-      <option>Sort: Brand A–Z</option>
-    </select>
+    <div class="select-wrap">
+      <select class="filter-select">
+        <option>Sort: Last Updated</option>
+        <option>Sort: Status</option>
+        <option>Sort: Month (newest)</option>
+        <option>Sort: AVG Score</option>
+        <option>Sort: Brand A–Z</option>
+      </select>
+      <svg class="select-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
   </div>
 
   <!-- Table -->
@@ -187,7 +241,7 @@ tbody td .bdot {
       </thead>
       <tbody>
 
-        <!-- FEEDBACK PENDING — orange left border -->
+        <!-- FEEDBACK PENDING -->
         <tr class="row-fb" onclick="window.location='plans-detail.html'">
           <td>
             <div class="td-brand">Bonchon</div>
@@ -200,13 +254,13 @@ tbody td .bdot {
           <td class="td-muted">3 days ago</td>
           <td>
             <div class="td-actions">
-              <a class="btn btn-sm btn-primary" href="plans-detail.html" onclick="event.stopPropagation()">Log Feedback</a>
-              <a class="btn btn-sm btn-ghost" href="plans-detail.html" onclick="event.stopPropagation()">Open Plan</a>
+              <a class="btn btn-sm btn-secondary" href="plans-detail.html" onclick="event.stopPropagation()">Open Plan</a>
+              <a class="btn btn-sm btn-ghost btn-disabled" onclick="event.stopPropagation()">Log Feedback</a>
             </div>
           </td>
         </tr>
 
-        <!-- BRIEF READY — amber left border -->
+        <!-- BRIEF READY -->
         <tr class="row-brief" onclick="window.location='plans-detail.html'">
           <td>
             <div class="td-brand">Haier Thailand</div>
@@ -219,7 +273,8 @@ tbody td .bdot {
           <td class="td-muted">4 days ago</td>
           <td>
             <div class="td-actions">
-              <a class="btn btn-sm btn-primary" href="plans-detail.html" onclick="event.stopPropagation()">Open Plan</a>
+              <a class="btn btn-sm btn-secondary" href="plans-detail.html" onclick="event.stopPropagation()">Open Plan</a>
+              <a class="btn btn-sm btn-ghost btn-disabled" onclick="event.stopPropagation()">Log Feedback</a>
             </div>
           </td>
         </tr>
@@ -237,12 +292,13 @@ tbody td .bdot {
           <td class="td-muted">2 hours ago</td>
           <td>
             <div class="td-actions">
-              <a class="btn btn-sm btn-primary" href="plans-detail.html" onclick="event.stopPropagation()">Open Plan</a>
+              <a class="btn btn-sm btn-secondary" href="plans-detail.html" onclick="event.stopPropagation()">Open Plan</a>
+              <a class="btn btn-sm btn-ghost btn-disabled" onclick="event.stopPropagation()">Log Feedback</a>
             </div>
           </td>
         </tr>
 
-        <!-- PROPOSED -->
+        <!-- PROPOSED — Log Feedback enabled -->
         <tr class="row-prop" onclick="window.location='plans-detail.html'">
           <td>
             <div class="td-brand">Central Retail</div>
@@ -255,8 +311,8 @@ tbody td .bdot {
           <td class="td-muted">6 days ago</td>
           <td>
             <div class="td-actions">
-              <a class="btn btn-sm btn-primary" href="plans-detail.html" onclick="event.stopPropagation()">Log Feedback</a>
-              <a class="btn btn-sm btn-ghost" href="plans-detail.html" onclick="event.stopPropagation()">Open Plan</a>
+              <a class="btn btn-sm btn-secondary" href="plans-detail.html" onclick="event.stopPropagation()">Open Plan</a>
+              <a class="btn btn-sm btn-ghost" href="plans-detail.html" onclick="event.stopPropagation()">Log Feedback</a>
             </div>
           </td>
         </tr>
@@ -274,7 +330,8 @@ tbody td .bdot {
           <td class="td-muted">Yesterday</td>
           <td>
             <div class="td-actions">
-              <a class="btn btn-sm btn-primary" href="plans-detail.html" onclick="event.stopPropagation()">Open Plan</a>
+              <a class="btn btn-sm btn-secondary" href="plans-detail.html" onclick="event.stopPropagation()">Open Plan</a>
+              <a class="btn btn-sm btn-ghost btn-disabled" onclick="event.stopPropagation()">Log Feedback</a>
             </div>
           </td>
         </tr>
@@ -293,6 +350,7 @@ tbody td .bdot {
           <td>
             <div class="td-actions">
               <a class="btn btn-sm btn-secondary" href="plans-detail.html" onclick="event.stopPropagation()">Open Plan</a>
+              <a class="btn btn-sm btn-ghost btn-disabled" onclick="event.stopPropagation()">Log Feedback</a>
             </div>
           </td>
         </tr>

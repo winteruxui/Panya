@@ -1,99 +1,131 @@
 /* ══════════════════════════════════════════════════════════════
-   PANYA DESIGN SYSTEM  ·  v2.0
-   ── CI: #E96B38 · #1E140D · #9A7060 · #FFF5EE ──────────────
-   Font: Noto Sans Thai · Noto Serif Thai · JetBrains Mono
-   ══════════════════════════════════════════════════════════════
-
-   HOW TO EDIT:
-   ─ Colors  → Edit the Brand / Surfaces / Text sections below
-   ─ Spacing → Edit --r-* radius and --shadow-* tokens
-   ─ Fonts   → Edit --font-* tokens (update <link> in HTML too)
-   ─ Motion  → Edit --dur-* and --ease-* tokens
-
+   PANYA DESIGN SYSTEM  ·  v3.0
+   ── Aesthetic: Approachable Clarity (DESIGN_BIBLE v1.0)
+   ── CI Override: #E96B38 · #1E140D · #9A7060 · #FFF5EE
+   ── Font: Noto Sans Thai · Noto Serif Thai · JetBrains Mono
    ══════════════════════════════════════════════════════════════ */
 
 :root {
 
   /* ── 1. BRAND PALETTE ────────────────────────────────────────
-     Primary CI orange. Used for all interactive accent states.  */
+     Panya CI orange. Overrides DESIGN_BIBLE accent (#6366F1). */
   --brand:      #E96B38;
-  --brand-dark: #D4582A;   /* hover / pressed */
-  --brand-m:    rgba(233, 107, 56, 0.10);  /* tinted bg — active nav, chips */
-  --brand-s:    rgba(233, 107, 56, 0.06);  /* very subtle — hover rows */
+  --brand-dark: #D4582A;
+  --brand-m:    rgba(233, 107, 56, 0.10);
+  --brand-s:    rgba(233, 107, 56, 0.06);
 
-  /* Legacy aliases — existing pages reference --teal.
-     Keeping these means zero code changes in any page.         */
+  /* Legacy aliases */
   --teal:   #E96B38;
   --teal-m: rgba(233, 107, 56, 0.10);
 
-  /* Full CI palette tokens */
-  --ci-dark: #1E140D;   /* dark brown — primary text, deep accents */
-  --ci-mid:  #9A7060;   /* warm brown — secondary elements           */
-  --ci-warm: #FFF5EE;   /* cream — warm surface tints                */
+  /* CI palette */
+  --ci-dark: #1E140D;
+  --ci-mid:  #9A7060;
+  --ci-warm: #FFF5EE;
 
-  /* ── 2. SURFACES ─────────────────────────────────────────────
-     All backgrounds. Keep the main content feeling white/airy.  */
-  --bg-base:    #FAF8F6;   /* App shell background — slightly warm white  */
-  --bg-surface: #FFFFFF;   /* Cards, sidebar, modal — pure white           */
-  --bg-elevated:#F5EEE8;   /* Hover rows, tag chips, subtle fills          */
-  --bg-overlay: #EDE5DC;   /* Pressed states, overlay tints                */
-  --bg-warm:    #FFF5EE;   /* Accent warm sections — CI cream              */
+  /* ── 2. SURFACES — DESIGN_BIBLE white-dominant ───────────────
+     #FFFFFF covers 70%+ of every page. #F9FAFB for surfaces.  */
+  --bg-base:    #FFFFFF;   /* App shell — pure white              */
+  --bg-surface: #F9FAFB;   /* Cards, sidebar — near-white         */
+  --bg-elevated:#F3F4F6;   /* Hover zones, muted fills            */
+  --bg-overlay: #E5E7EB;   /* Pressed states, strong dividers     */
+  --bg-warm:    #FFF5EE;   /* CI cream — accent warm sections     */
 
   /* ── 3. BORDERS ──────────────────────────────────────────────
-     Warm-toned border hierarchy.                                */
+     Warm-toned borders retained as Panya CI brand.            */
   --border-subtle:  #EDE8E3;
   --border-default: #DDD5CE;
   --border-strong:  #C8BEB8;
 
   /* ── 4. TEXT ─────────────────────────────────────────────────
-     All text uses the CI dark brown as primary.                 */
-  --text-primary:   #1E140D;   /* CI dark — headlines, body               */
-  --text-secondary: #6B5549;   /* Warm mid-brown — labels, helper text    */
-  --text-muted:     #9A8070;   /* Light warm gray — placeholder, captions */
+     Warm CI dark brown hierarchy retained as Panya CI brand.  */
+  --text-primary:   #1E140D;
+  --text-secondary: #6B5549;
+  --text-muted:     #9A8070;
 
-  /* ── 5. STATUS COLORS ────────────────────────────────────────
-     Keep semantic status colors standard for clarity.           */
+  /* ── 5. STATUS COLORS ────────────────────────────────────────gg */
   --amber:   #F59E0B; --amber-m:  rgba(245, 158,  11, 0.10);
   --red:     #EF4444; --red-m:    rgba(239,  68,  68, 0.10);
   --blue:    #60A5FA; --blue-m:   rgba( 96, 165, 250, 0.10);
   --green:   #22C55E; --green-m:  rgba( 34, 197,  94, 0.10);
   --purple:  #A78BFA; --purple-m: rgba(167, 139, 250, 0.10);
-  --orange:  #F97316; --orange-m: rgba(249, 115,  22, 0.10);  /* chart accent */
+  --orange:  #F97316; --orange-m: rgba(249, 115,  22, 0.10);
   --gray:    #71717A; --gray-m:   rgba(113, 113, 122, 0.10);
 
   /* ── 6. TYPOGRAPHY ───────────────────────────────────────────
-     Noto Sans Thai covers both Thai and Latin beautifully.
-     Noto Serif Thai for logo and display headlines.             */
+     Font family: Panya CI override retained.
+     Scale + weights: DESIGN_BIBLE rules apply.               */
   --font-ui:      'Noto Sans Thai', sans-serif;
   --font-display: 'Noto Serif Thai', serif;
   --font-mono:    'JetBrains Mono', monospace;
 
-  /* ── 7. RADIUS ───────────────────────────────────────────────
-     Generous rounding for a warm, modern, human feel.           */
-  --r-xs:   4px;
-  --r-sm:   8px;
-  --r-md:   12px;   /* buttons, inputs, small cards  */
-  --r-lg:   16px;   /* main cards, panels            */
-  --r-xl:   20px;   /* large modals, hero cards      */
-  --r-2xl:  24px;   /* very large containers         */
-  --r-full: 9999px; /* pill badges, avatars          */
+  /* Type scale — DESIGN_BIBLE §3 */
+  --text-xs:   12px;
+  --text-sm:   14px;
+  --text-base: 16px;
+  --text-lg:   18px;
+  --text-xl:   22px;
+  --text-2xl:  28px;
+  --text-3xl:  36px;
+  --text-4xl:  48px;
 
-  /* ── 8. SHADOWS ──────────────────────────────────────────────
-     Warm-tinted shadows using CI dark brown for organic depth.  */
-  --shadow-xs: 0 1px 2px rgba(30, 20, 13, 0.04);
-  --shadow-sm: 0 1px 4px  rgba(30, 20, 13, 0.06),
-               0 1px 2px  rgba(30, 20, 13, 0.04);
-  --shadow-md: 0 4px 16px rgba(30, 20, 13, 0.08),
-               0 2px 4px  rgba(30, 20, 13, 0.04);
-  --shadow-lg: 0 8px 32px rgba(30, 20, 13, 0.12),
-               0 2px 8px  rgba(30, 20, 13, 0.06);
+  /* Line heights */
+  --leading-tight:   1.2;
+  --leading-snug:    1.3;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.6;
+  --leading-loose:   1.75;
 
-  /* ── 9. MOTION ───────────────────────────────────────────────
-     Smooth, purposeful transitions. Felt not seen.              */
-  --ease-out:  cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  --ease-in:   cubic-bezier(0.55, 0.06, 0.68, 0.19);
-  --ease-both: cubic-bezier(0.45, 0.00, 0.55, 1.00);
-  --dur-fast:  120ms;
-  --dur-base:  180ms;
-  --dur-slow:  280ms;
+  /* ── 7. SPACING SCALE — DESIGN_BIBLE §4 ─────────────────────
+     Base unit: 4px                                           */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* Layout dimensions */
+  --layout-max-width:      1200px;
+  --layout-padding-x:       48px;
+  --layout-section-gap:     64px;
+  --layout-navbar-height:   64px;
+  --layout-sidebar-width:  260px;
+
+  /* ── 8. BORDER RADIUS — DESIGN_BIBLE §5 ─────────────────────
+     Minimum 6px. Nothing sharp.                              */
+  --r-xs:   6px;    /* absolute minimum — tight labels        */
+  --r-sm:   6px;    /* small badges, tight elements           */
+  --r-md:   8px;    /* buttons, inputs, small cards           */
+  --r-lg:   12px;   /* standard cards, panels                 */
+  --r-xl:   16px;   /* large cards, modals                    */
+  --r-2xl:  20px;   /* feature cards, hero sections           */
+  --r-full: 9999px; /* pills, avatars, toggles                */
+
+  /* ── 9. SHADOWS — DESIGN_BIBLE §6 ───────────────────────────
+     Clean black shadows. Sparing depth via border + shadow. */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08),
+               0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08),
+               0 2px 4px  rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.10),
+               0 4px 8px  rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 16px 40px rgba(0, 0, 0, 0.12);
+
+  /* ── 10. MOTION — DESIGN_BIBLE §10 ──────────────────────────
+     Felt, not seen. Never delay content visibility.         */
+  --ease-out:    ease;
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-fast:  100ms;
+  --dur-base:  150ms;
+  --dur-slow:  200ms;
+  --dur-xslow: 300ms;
 }

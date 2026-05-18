@@ -157,6 +157,34 @@ html, body {
 }
 .u-role { font-size: 11px; color: var(--text-muted); }
 
+/* ── User popup menu ─────────────────────────────── */
+.sidebar-user { position: relative; }
+.user-popup {
+  position: absolute; bottom: calc(100% + 8px); left: var(--space-3); right: var(--space-3);
+  background: var(--bg-surface); border: 1px solid var(--border-default);
+  border-radius: var(--r-lg); box-shadow: var(--shadow-md);
+  padding: var(--space-2); z-index: 100;
+  display: none;
+  animation: fadeUp 150ms var(--ease-out);
+}
+.user-popup.open { display: block; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.user-popup-item {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: 9px var(--space-3); border-radius: var(--r-md);
+  font-size: var(--text-sm); font-weight: 500; color: var(--text-secondary);
+  cursor: pointer; text-decoration: none;
+  transition: all var(--dur-fast) var(--ease-out);
+  background: none; border: none; width: 100%;
+  font-family: var(--font-ui); text-align: left;
+}
+.user-popup-item:hover { background: var(--bg-elevated); color: var(--text-primary); }
+.user-popup-item.danger:hover { background: rgba(239,68,68,0.08); color: var(--red); }
+.user-popup-divider { height: 1px; background: var(--border-subtle); margin: var(--space-1) 0; }
+
 /* ── Main area ───────────────────────────────────── */
 .main { flex: 1; overflow-y: auto; padding: var(--space-12) var(--space-12); }
 .inner { max-width: var(--layout-max-width); margin: 0 auto; }

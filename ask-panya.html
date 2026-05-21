@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -152,6 +152,18 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
 .toast-info .toast-progress    { background: var(--blue); }
 @keyframes slideUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes shrink  { from { width: 100%; } to { width: 0%; } }
+
+/* ── User popup ── */
+.sidebar-user { position: relative; }
+.user-popup { position: absolute; bottom: calc(100% + 8px); left: 12px; right: 12px; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); padding: 4px; z-index: 100; display: none; animation: fadeUp 150ms ease; }
+.user-popup.open { display: block; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.user-popup-item { display: flex; align-items: center; gap: 12px; padding: 9px 12px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #6B5549; cursor: pointer; text-decoration: none; transition: background 100ms ease, color 100ms ease; background: none; border: none; width: 100%; font-family: inherit; text-align: left; }
+.user-popup-item:hover { background: #F3F4F6; color: #1E140D; }
+.user-popup-item.danger { color: #EF4444; }
+.user-popup-item.danger:hover { background: rgba(239,68,68,0.08); color: #EF4444; }
+.u-chevron { transition: transform 150ms ease; flex-shrink: 0; color: #9A8070; }
+.user-row.menu-open .u-chevron { transform: rotate(180deg); }
 </style>
 <link rel="stylesheet" href="ds.css">
 </head>
@@ -198,12 +210,6 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
     </a>
     <div class="nav-divider"></div>
 
-    <a class="nav-item" href="brand-library.html">
-      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
-      </svg>
-      <span class="nav-label">Brand Library</span>
-    </a>
     <a class="nav-item" href="admin.html">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
@@ -211,19 +217,16 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
       <span class="nav-label">Admin</span>
       <span class="nav-badge red">1</span>
     </a>
+    <a class="nav-item" href="brand-library.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
+      </svg>
+      <span class="nav-label">Brand Library</span>
+    </a>
   </nav>
   <div class="sidebar-user">
     <!-- User popup menu -->
     <div class="user-popup" id="user-popup">
-      <a class="user-popup-item" href="signup.html">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        My account
-      </a>
-      <a class="user-popup-item" href="admin.html">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        Workspace settings
-      </a>
-      <div class="user-popup-divider"></div>
       <button class="user-popup-item danger" onclick="signOut()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         Sign out
@@ -235,7 +238,7 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
         <div class="u-email">por.zax@gmail.com</div>
         <div class="u-role">Admin</div>
       </div>
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-muted);flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
+      <svg class="u-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
   </div>
 </div>
@@ -290,6 +293,43 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
 
   <!-- Main chat -->
   <div class="chat-main">
+
+    <!-- Empty state: shown until brand + platform selected -->
+    <div id="ask-empty" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 32px;background:var(--bg-base);gap:24px">
+      <div style="text-align:center;max-width:440px">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" stroke-width="1.5" style="margin-bottom:20px"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        <div style="font-size:28px;font-weight:700;color:#111827;margin-bottom:8px;line-height:1.2">Ask Panya</div>
+        <div style="font-size:16px;font-weight:400;color:#6B7280;line-height:1.6;max-width:440px">Select a brand and platform to get context-aware content suggestions, captions, policy checks, and more.</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:24px;width:100%;max-width:360px">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Brand</div>
+          <select id="empty-brand" onchange="checkEmptyReady()" style="width:100%;padding:10px 14px;background:#FFFFFF;border:1.5px solid #E5E7EB;border-radius:8px;font-family:var(--font-ui);font-size:14px;color:var(--text-primary);outline:none;cursor:pointer;appearance:none;-webkit-appearance:none">
+            <option value="">Select brand…</option>
+            <option value="Bonchon">Bonchon</option>
+            <option value="Haier Thailand">Haier Thailand</option>
+            <option value="Central Retail">Central Retail</option>
+            <option value="MK Restaurant">MK Restaurant</option>
+          </select>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Platform</div>
+          <select id="empty-platform" onchange="checkEmptyReady()" style="width:100%;padding:10px 14px;background:#FFFFFF;border:1.5px solid #E5E7EB;border-radius:8px;font-family:var(--font-ui);font-size:14px;color:var(--text-primary);outline:none;cursor:pointer;appearance:none;-webkit-appearance:none">
+            <option value="">Select platform…</option>
+            <option value="Facebook">Facebook</option>
+            <option value="Instagram">Instagram</option>
+            <option value="TikTok">TikTok</option>
+            <option value="Twitter / X">Twitter / X</option>
+            <option value="YouTube">YouTube</option>
+            <option value="LINE">LINE</option>
+          </select>
+        </div>
+        <button id="empty-start-btn" onclick="startChat()" style="width:100%;padding:12px 16px;background:#F3F4F6;color:#9CA3AF;border:none;border-radius:8px;font-family:var(--font-ui);font-size:14px;font-weight:600;cursor:not-allowed;transition:background 150ms,color 150ms">Start asking →</button>
+      </div>
+    </div>
+
+    <!-- Chat interface: hidden until brand + platform selected -->
+    <div id="ask-chat" style="display:none;flex:1;flex-direction:column;overflow:hidden">
 
     <div class="chat-header">
       <div class="chat-header-title">Bonchon May captions</div>
@@ -456,7 +496,8 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
       <div class="input-hint">Panya uses your Brand Library and Plan context to generate on-brand content.</div>
     </div>
 
-  </div>
+    </div><!-- /ask-chat -->
+  </div><!-- /chat-main -->
 </div>
 
 </div>
@@ -464,6 +505,38 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
 <div id="toast-container"></div>
 <script src="toast.js"></script>
 <script>
+function checkEmptyReady() {
+  var brand = document.getElementById('empty-brand').value;
+  var platform = document.getElementById('empty-platform').value;
+  var btn = document.getElementById('empty-start-btn');
+  if (brand && platform) {
+    btn.style.background = '#6366F1';
+    btn.style.color = '#FFFFFF';
+    btn.style.cursor = 'pointer';
+  } else {
+    btn.style.background = '#F3F4F6';
+    btn.style.color = '#9CA3AF';
+    btn.style.cursor = 'not-allowed';
+  }
+}
+
+function startChat() {
+  var brand = document.getElementById('empty-brand').value;
+  var platform = document.getElementById('empty-platform').value;
+  // Sync context bar
+  var ctxBrand = document.getElementById('ctx-brand');
+  var ctxPlatform = document.getElementById('ctx-platform');
+  if (ctxBrand) { ctxBrand.value = brand; ctxBrand.classList.add('has-value'); }
+  if (ctxPlatform) { ctxPlatform.value = platform; ctxPlatform.classList.add('has-value'); }
+  // Switch screens
+  document.getElementById('ask-empty').style.display = 'none';
+  var chat = document.getElementById('ask-chat');
+  chat.style.display = 'flex';
+  // Focus input
+  var input = document.getElementById('chat-input');
+  if (input) { input.focus(); }
+}
+
 function clearChildren(el) {
   while (el.firstChild) { el.removeChild(el.firstChild); }
 }
@@ -614,5 +687,6 @@ function useInPlan() {
   setTimeout(function() { window.location = 'plans-detail.html'; }, 1600);
 }
 </script>
+<script src="nav.js"></script>
 </body>
 </html>

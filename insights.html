@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -151,6 +151,18 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
 .toast-info .toast-progress    { background: var(--blue); }
 @keyframes slideUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes shrink  { from { width: 100%; } to { width: 0%; } }
+
+/* ── User popup ── */
+.sidebar-user { position: relative; }
+.user-popup { position: absolute; bottom: calc(100% + 8px); left: 12px; right: 12px; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); padding: 4px; z-index: 100; display: none; animation: fadeUp 150ms ease; }
+.user-popup.open { display: block; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.user-popup-item { display: flex; align-items: center; gap: 12px; padding: 9px 12px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #6B5549; cursor: pointer; text-decoration: none; transition: background 100ms ease, color 100ms ease; background: none; border: none; width: 100%; font-family: inherit; text-align: left; }
+.user-popup-item:hover { background: #F3F4F6; color: #1E140D; }
+.user-popup-item.danger { color: #EF4444; }
+.user-popup-item.danger:hover { background: rgba(239,68,68,0.08); color: #EF4444; }
+.u-chevron { transition: transform 150ms ease; flex-shrink: 0; color: #9A8070; }
+.user-row.menu-open .u-chevron { transform: rotate(180deg); }
 </style>
 <link rel="stylesheet" href="ds.css">
 </head>
@@ -199,12 +211,6 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
     </a>
     <div class="nav-divider"></div>
 
-    <a class="nav-item" href="brand-library.html">
-      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
-      </svg>
-      <span class="nav-label">Brand Library</span>
-    </a>
     <a class="nav-item" href="admin.html">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
@@ -212,20 +218,17 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
       <span class="nav-label">Admin</span>
       <span class="nav-badge red">1</span>
     </a>
+    <a class="nav-item" href="brand-library.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
+      </svg>
+      <span class="nav-label">Brand Library</span>
+    </a>
   </nav>
 
   <div class="sidebar-user">
     <!-- User popup menu -->
     <div class="user-popup" id="user-popup">
-      <a class="user-popup-item" href="signup.html">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        My account
-      </a>
-      <a class="user-popup-item" href="admin.html">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        Workspace settings
-      </a>
-      <div class="user-popup-divider"></div>
       <button class="user-popup-item danger" onclick="signOut()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         Sign out
@@ -237,7 +240,7 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
         <div class="u-email">por.zax@gmail.com</div>
         <div class="u-role">Admin</div>
       </div>
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-muted);flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
+      <svg class="u-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
   </div>
 
@@ -274,38 +277,32 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
   </div>
 
   <!-- KPI row -->
+  <div id="brand-filter-banner" style="display:none;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);background:var(--brand-m);border-radius:var(--r-md);margin-bottom:var(--space-5);font-size:var(--text-sm);color:var(--brand);font-weight:600">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <span id="brand-filter-label">Showing data for All Brands</span>
+    <button onclick="resetFilter()" style="margin-left:auto;background:none;border:none;cursor:pointer;font-size:var(--text-xs);color:var(--brand);font-weight:600;padding:0">× Clear filter</button>
+  </div>
+
   <div class="kpi-grid">
     <div class="kpi-card">
       <div class="kpi-label">Total Reach</div>
-      <div class="kpi-value">2.4M</div>
-      <div>
-        <span class="kpi-delta up">↑ 18%</span>
-        <div class="kpi-period">vs. last period</div>
-      </div>
+      <div class="kpi-value" id="kpi-reach">2.4M</div>
+      <div><span class="kpi-delta up" id="kpi-reach-delta">↑ 18%</span><div class="kpi-period">vs. last period</div></div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">Avg Engagement</div>
-      <div class="kpi-value">4.7%</div>
-      <div>
-        <span class="kpi-delta up">↑ 0.8pp</span>
-        <div class="kpi-period">vs. last period</div>
-      </div>
+      <div class="kpi-value" id="kpi-eng">4.7%</div>
+      <div><span class="kpi-delta up" id="kpi-eng-delta">↑ 0.8pp</span><div class="kpi-period">vs. last period</div></div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">Content Score Avg</div>
-      <div class="kpi-value">81</div>
-      <div>
-        <span class="kpi-delta up">↑ 5pts</span>
-        <div class="kpi-period">vs. last period</div>
-      </div>
+      <div class="kpi-value" id="kpi-score">81</div>
+      <div><span class="kpi-delta up" id="kpi-score-delta">↑ 5pts</span><div class="kpi-period">vs. last period</div></div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">Plans Completed</div>
-      <div class="kpi-value">12</div>
-      <div>
-        <span class="kpi-delta neutral">= same</span>
-        <div class="kpi-period">vs. last period</div>
-      </div>
+      <div class="kpi-value" id="kpi-plans">12</div>
+      <div><span class="kpi-delta neutral" id="kpi-plans-delta">= same</span><div class="kpi-period">vs. last period</div></div>
     </div>
   </div>
 
@@ -433,7 +430,7 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr data-brand="bonchon"
             <td>
               <div class="post-info">
                 <div class="post-thumb">🍗</div>
@@ -447,7 +444,7 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
             <td style="font-family:var(--font-mono);font-size:12px">214K</td>
             <td><span class="score-pill hi">94</span></td>
           </tr>
-          <tr>
+          <tr data-brand="haier"
             <td>
               <div class="post-info">
                 <div class="post-thumb">❄️</div>
@@ -461,7 +458,7 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
             <td style="font-family:var(--font-mono);font-size:12px">187K</td>
             <td><span class="score-pill hi">91</span></td>
           </tr>
-          <tr>
+          <tr data-brand="central"
             <td>
               <div class="post-info">
                 <div class="post-thumb">🛍️</div>
@@ -475,7 +472,7 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
             <td style="font-family:var(--font-mono);font-size:12px">156K</td>
             <td><span class="score-pill hi">88</span></td>
           </tr>
-          <tr>
+          <tr data-brand="mk"
             <td>
               <div class="post-info">
                 <div class="post-thumb">🥢</div>
@@ -489,7 +486,7 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
             <td style="font-family:var(--font-mono);font-size:12px">143K</td>
             <td><span class="score-pill md">79</span></td>
           </tr>
-          <tr>
+          <tr data-brand="bonchon"
             <td>
               <div class="post-info">
                 <div class="post-thumb">🍗</div>
@@ -582,10 +579,47 @@ function setRange(btn, range) {
   window.toast('Showing data for ' + range, 'info', 2000);
 }
 
+var BRAND_DATA = {
+  all:     { reach:'2.4M', reachD:'up:↑ 18%',     eng:'4.7%', engD:'up:↑ 0.8pp', score:'81', scoreD:'up:↑ 5pts',   plans:'12', plansD:'neutral:= same', label:'All Brands' },
+  bonchon: { reach:'890K', reachD:'up:↑ 22%',     eng:'5.2%', engD:'up:↑ 1.1pp', score:'84', scoreD:'up:↑ 6pts',   plans:'3',  plansD:'up:↑ 1',        label:'Bonchon' },
+  haier:   { reach:'640K', reachD:'up:↑ 14%',     eng:'3.9%', engD:'down:↓ 0.3pp',score:'78', scoreD:'neutral:= same', plans:'4', plansD:'neutral:= same', label:'Haier Thailand' },
+  central: { reach:'510K', reachD:'down:↓ 5%',    eng:'4.1%', engD:'up:↑ 0.5pp', score:'72', scoreD:'down:↓ 3pts', plans:'2',  plansD:'down:↓ 1',      label:'Central Retail' },
+  mk:      { reach:'360K', reachD:'neutral:— new', eng:'5.8%', engD:'neutral:— new',score:'—', scoreD:'neutral:—',  plans:'1',  plansD:'neutral:— new', label:'MK Restaurant' }
+};
+
+function setDelta(el, val) {
+  var parts = val.split(':');
+  el.className = 'kpi-delta ' + parts[0];
+  el.textContent = parts[1];
+}
+
 function setFilter(chip, brand) {
   document.querySelectorAll('.fchip').forEach(function(c) { c.classList.remove('active'); });
   chip.classList.add('active');
+  var d = BRAND_DATA[brand];
+  document.getElementById('kpi-reach').textContent  = d.reach;
+  document.getElementById('kpi-eng').textContent    = d.eng;
+  document.getElementById('kpi-score').textContent  = d.score;
+  document.getElementById('kpi-plans').textContent  = d.plans;
+  setDelta(document.getElementById('kpi-reach-delta'),  d.reachD);
+  setDelta(document.getElementById('kpi-eng-delta'),    d.engD);
+  setDelta(document.getElementById('kpi-score-delta'),  d.scoreD);
+  setDelta(document.getElementById('kpi-plans-delta'),  d.plansD);
+  var banner = document.getElementById('brand-filter-banner');
+  var isAll = brand === 'all';
+  banner.style.display = isAll ? 'none' : 'flex';
+  document.getElementById('brand-filter-label').textContent = 'Showing data for ' + d.label;
+  // Show/hide table rows by brand
+  document.querySelectorAll('tbody tr[data-brand]').forEach(function(row) {
+    row.style.display = (isAll || row.dataset.brand === brand) ? '' : 'none';
+  });
+}
+
+function resetFilter() {
+  var allChip = document.querySelector('.fchip[onclick*="\'all\'"]');
+  if (allChip) setFilter(allChip, 'all');
 }
 </script>
+<script src="nav.js"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -147,7 +147,7 @@
 .atp-close { background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 20px; line-height: 1; padding: 2px; }
 .atp-body { padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-3); }
 .atp-option { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-4) var(--space-5); border: 1.5px solid var(--border-default); border-radius: var(--r-lg); cursor: pointer; transition: all var(--dur-base); }
-.atp-option:hover { border-color: var(--brand); background: var(--brand-s); }
+.atp-option:hover, .atp-option.selected { border-color: var(--brand); background: var(--brand-s); }
 .atp-option-icon { width: 40px; height: 40px; border-radius: var(--r-md); background: var(--bg-elevated); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
 .atp-option-title { font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); }
 .atp-option-sub { font-size: var(--text-xs); color: var(--text-muted); margin-top: 2px; }
@@ -376,28 +376,19 @@ textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: var(--
     </a>
     <div class="nav-divider"></div>
 
-    <a class="nav-item" href="brand-library.html">
-      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
-      <span class="nav-label">Brand Library</span>
-    </a>
     <a class="nav-item" href="admin.html">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       <span class="nav-label">Admin</span>
       <span class="nav-badge red">1</span>
     </a>
+    <a class="nav-item" href="brand-library.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+      <span class="nav-label">Brand Library</span>
+    </a>
   </nav>
   <div class="sidebar-user">
     <!-- User popup menu -->
     <div class="user-popup" id="user-popup">
-      <a class="user-popup-item" href="signup.html">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        My account
-      </a>
-      <a class="user-popup-item" href="admin.html">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        Workspace settings
-      </a>
-      <div class="user-popup-divider"></div>
       <button class="user-popup-item danger" onclick="signOut()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         Sign out
@@ -409,7 +400,7 @@ textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: var(--
         <div class="u-email">por.zax@gmail.com</div>
         <div class="u-role">Admin</div>
       </div>
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-muted);flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
+      <svg class="u-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
   </div>
 </div>
@@ -781,6 +772,7 @@ textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: var(--
             </div><!-- /results-filled -->
           </div><!-- /col-results -->
           </div><!-- /tool-cols -->
+        </div><!-- /sub-checker-hook (tool-cols) -->
         </div><!-- /sub-checker-hook -->
 
         <!-- ── Policy Check sub-panel ─────────────── -->
@@ -862,6 +854,7 @@ textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: var(--
             </div><!-- /results-filled -->
           </div><!-- /col-results -->
           </div><!-- /tool-cols -->
+        </div><!-- /sub-checker-policy (tool-cols) -->
         </div><!-- /sub-checker-policy -->
 
       </div>
@@ -946,8 +939,11 @@ textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: var(--
             <button class="btn btn-primary btn-sm" onclick="copyHashtags()">Copy Selected</button>
           </div>
         </div>
-      </div>
-    </div>
+      </div><!-- /results-filled -->
+        </div><!-- /col-results -->
+        </div><!-- /tool-cols -->
+      </div><!-- /workspace-body -->
+    </div><!-- /tool-hashtag -->
 
     <!-- ══ IDEA SPARK ═══════════════════════════════ -->
     <div class="tool-panel" id="tool-spark">
@@ -956,7 +952,8 @@ textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: var(--
         <div class="workspace-sub">Describe a brief or theme — get 5 content ideas with formats and hooks, ready to drop into a plan.</div>
       </div>
       <div class="workspace-body">
-        <div>
+        <div class="tool-cols">
+        <div class="col-config">
           <div class="input-grid" style="grid-template-columns:1fr 1fr">
             <div><div class="field-label">Brand</div><select class="tool-select"><option>Bonchon</option><option>Haier Thailand</option></select></div>
             <div><div class="field-label">Platform</div><select class="tool-select"><option>Instagram</option><option>Facebook</option><option>TikTok</option></select></div>
@@ -971,9 +968,15 @@ textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: var(--
               </button>
             </div>
           </div>
-        </div>
+        </div><!-- /col-config -->
 
-        <div>
+        <div class="col-results">
+          <div class="results-empty">
+            <div class="results-empty-icon">⚡</div>
+            <div class="results-empty-text">No ideas yet</div>
+            <div class="results-empty-sub">Fill in the brief and click Spark to generate ideas.</div>
+          </div>
+          <div class="results-filled visible">
           <div class="output-section-label">5 Content Ideas</div>
           <div class="idea-spark-cards">
             <div class="spark-card">
@@ -1022,9 +1025,11 @@ textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: var(--
               <button class="btn btn-sm btn-secondary" style="align-self:center;flex-shrink:0" onclick="useInPlan()">Add to Plan</button>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+          </div><!-- /results-filled -->
+        </div><!-- /col-results -->
+        </div><!-- /tool-cols -->
+      </div><!-- /workspace-body -->
+    </div><!-- /tool-spark -->
 
     <!-- ══ TEXT TOOLS ══════════════════════════════ -->
     <div class="tool-panel" id="tool-text">
@@ -1040,58 +1045,73 @@ textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: var(--
 
         <!-- ── Polish sub-panel ──────────────────── -->
         <div class="subpanel active" id="sub-text-polish">
-          <div class="generate-row" style="align-items:flex-start">
-            <div style="flex:1">
-              <div class="field-label" style="margin-bottom:6px">Original Caption</div>
-              <textarea class="tool-textarea" style="min-height:100px">ไก่ทอดของ Bonchon กรอบมากๆ อร่อยมากๆ ทุกคนต้องลองกิน มาที่สาขาใกล้บ้านคุณได้เลย</textarea>
+          <div class="tool-cols">
+          <div class="col-config">
+            <div class="generate-row" style="align-items:flex-start">
+              <div style="flex:1">
+                <div class="field-label" style="margin-bottom:6px">Original Caption</div>
+                <textarea class="tool-textarea" style="min-height:100px">ไก่ทอดของ Bonchon กรอบมากๆ อร่อยมากๆ ทุกคนต้องลองกิน มาที่สาขาใกล้บ้านคุณได้เลย</textarea>
+              </div>
+              <button class="btn-generate" style="margin-top:22px" onclick="runPolish()">
+                <span class="spark">✎</span>
+                <span>Polish</span>
+              </button>
             </div>
-            <button class="btn-generate" style="margin-top:22px" onclick="runPolish()">
-              <span class="spark">✎</span>
-              <span>Polish</span>
-            </button>
-          </div>
+          </div><!-- /col-config -->
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-            <div class="output-card">
-              <div class="output-card-head" style="background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15)">
-                <span style="font-size:12px;font-weight:700;color:var(--red)">Before</span>
-              </div>
-              <div class="output-card-body" style="color:var(--text-secondary)">
-                ไก่ทอดของ Bonchon กรอบมากๆ อร่อยมากๆ ทุกคนต้องลองกิน มาที่สาขาใกล้บ้านคุณได้เลย
-              </div>
-              <div class="output-card-foot">
-                <div class="breakdown-chips">
-                  <span class="bchip warn">Repetitive มากๆ</span>
-                  <span class="bchip warn">No hook</span>
-                  <span class="bchip warn">Generic CTA</span>
+          <div class="col-results">
+            <div class="results-empty">
+              <div class="results-empty-icon">✎</div>
+              <div class="results-empty-text">No polish yet</div>
+              <div class="results-empty-sub">Paste a caption and click Polish to improve it.</div>
+            </div>
+            <div class="results-filled visible">
+              <div class="output-section-label">Polish Result</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+                <div class="output-card">
+                  <div class="output-card-head" style="background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15)">
+                    <span style="font-size:12px;font-weight:700;color:var(--red)">Before</span>
+                  </div>
+                  <div class="output-card-body" style="color:var(--text-secondary)">
+                    ไก่ทอดของ Bonchon กรอบมากๆ อร่อยมากๆ ทุกคนต้องลองกิน มาที่สาขาใกล้บ้านคุณได้เลย
+                  </div>
+                  <div class="output-card-foot">
+                    <div class="breakdown-chips">
+                      <span class="bchip warn">Repetitive มากๆ</span>
+                      <span class="bchip warn">No hook</span>
+                      <span class="bchip warn">Generic CTA</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="output-card" style="border-color:rgba(233, 107, 56, 0.30)">
+                  <div class="output-card-head" style="background:var(--brand-s);border-color:var(--brand-m)">
+                    <span style="font-size:12px;font-weight:700;color:var(--brand)">After — Polished</span>
+                    <div style="flex:1"></div>
+                    <button class="btn btn-sm btn-ghost" onclick="copyCaption(this)">Copy</button>
+                  </div>
+                  <div class="output-card-body">
+                    กรอบแบบนี้… คิดไม่ออกว่าจะทนได้ยังไง 🍗
+                    Bonchon Crispy Wings — ลองแล้วจะเข้าใจเอง
+                    <span style="color:var(--text-secondary)">สาขาใกล้บ้านคุณ · Link in bio</span>
+                  </div>
+                  <div class="output-card-foot">
+                    <div class="breakdown-chips">
+                      <span class="bchip good">Hook: Curiosity gap</span>
+                      <span class="bchip good">Thanglish natural</span>
+                      <span class="bchip good">CTA clear</span>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="output-card" style="border-color:rgba(233, 107, 56, 0.30)">
-              <div class="output-card-head" style="background:var(--brand-s);border-color:var(--brand-m)">
-                <span style="font-size:12px;font-weight:700;color:var(--brand)">After — Polished</span>
-                <div style="flex:1"></div>
-                <button class="btn btn-sm btn-ghost" onclick="copyCaption(this)">Copy</button>
-              </div>
-              <div class="output-card-body">
-                กรอบแบบนี้… คิดไม่ออกว่าจะทนได้ยังไง 🍗
-                Bonchon Crispy Wings — ลองแล้วจะเข้าใจเอง
-                <span style="color:var(--text-secondary)">สาขาใกล้บ้านคุณ · Link in bio</span>
-              </div>
-              <div class="output-card-foot">
-                <div class="breakdown-chips">
-                  <span class="bchip good">Hook: Curiosity gap</span>
-                  <span class="bchip good">Thanglish natural</span>
-                  <span class="bchip good">CTA clear</span>
-                </div>
-              </div>
-            </div>
-          </div>
+            </div><!-- /results-filled -->
+          </div><!-- /col-results -->
+          </div><!-- /tool-cols -->
         </div><!-- /sub-text-polish -->
 
         <!-- ── Brief Summarizer sub-panel ───────── -->
         <div class="subpanel" id="sub-text-brief">
-          <div>
+          <div class="tool-cols">
+          <div class="col-config">
             <div class="field-label" style="margin-bottom:6px">Paste full brief</div>
             <div class="generate-row">
               <textarea class="tool-textarea" style="min-height:120px">Bonchon Thailand is launching a summer campaign called "Summer Crunch — ฤดูร้อนนี้ต้องกรอบ". Hero products: Crispy Wings and Mango Bingsoo. Target: urban Thai 18–28. Goal: drive lunchtime in-store visits 11am–2pm. Tone: fun, Thanglish. Budget: ฿19,000 across 3 boosted posts. No heavy promo language. Mother's Day May 11 optional. No political/religious refs.</textarea>
@@ -1100,8 +1120,16 @@ textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: var(--
                 <span>Summarise</span>
               </button>
             </div>
-          </div>
+          </div><!-- /col-config -->
 
+          <div class="col-results">
+            <div class="results-empty">
+              <div class="results-empty-icon">≡</div>
+              <div class="results-empty-text">No summary yet</div>
+              <div class="results-empty-sub">Paste a client brief and click Summarise to compress it.</div>
+            </div>
+            <div class="results-filled visible">
+              <div class="output-section-label">Brief Summary</div>
           <div class="output-card">
             <div class="output-card-head">
               <span style="font-size:13px;font-weight:700">Brief Summary · Bonchon Summer Campaign</span>
@@ -1136,6 +1164,9 @@ textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: var(--
               </div>
             </div>
           </div>
+            </div><!-- /results-filled -->
+          </div><!-- /col-results -->
+          </div><!-- /tool-cols -->
         </div><!-- /sub-text-brief -->
 
       </div>
@@ -1150,8 +1181,42 @@ textarea.tool-textarea { resize: vertical; min-height: 80px; line-height: var(--
 var TOOL_NAMES = ['caption','checker','hashtag','spark','text'];
 
 function useInPlan() {
-  window.toast('Content saved to plan — redirecting…', 'success', 2500);
-  setTimeout(function() { window.location = 'plans.html'; }, 1500);
+  document.getElementById('atp-modal').style.display = 'flex';
+}
+
+function atpClose() {
+  document.getElementById('atp-modal').style.display = 'none';
+  atpReset();
+}
+
+function atpReset() {
+  document.getElementById('atp-existing-section').style.display = 'none';
+  document.getElementById('atp-new-section').style.display = 'none';
+  document.querySelectorAll('.atp-option').forEach(function(el) { el.classList.remove('selected'); });
+}
+
+function atpToggleMode(mode) {
+  document.getElementById('atp-existing-section').style.display = mode === 'existing' ? 'block' : 'none';
+  document.getElementById('atp-new-section').style.display = mode === 'new' ? 'block' : 'none';
+  document.querySelectorAll('.atp-option').forEach(function(el) {
+    el.classList.toggle('selected', el.dataset.mode === mode);
+  });
+}
+
+function atpSelectExisting() {
+  var sel = document.getElementById('atp-existing-select');
+  if (!sel.value) { window.toast('Please select a plan.', 'error', 2000); return; }
+  var name = sel.options[sel.selectedIndex].text;
+  atpClose();
+  window.toast('Content added to "' + name + '"', 'success', 2500);
+}
+
+function atpCreateNew() {
+  var name = document.getElementById('atp-new-name').value.trim();
+  if (!name) { window.toast('Please enter a plan name.', 'error', 2000); return; }
+  atpClose();
+  window.toast('New plan "' + name + '" created with content added.', 'success', 2500);
+  setTimeout(function() { window.location = 'plans.html'; }, 1800);
 }
 
 function switchTool(name) {
@@ -1231,5 +1296,49 @@ document.querySelectorAll('.htag').forEach(function(el) {
   });
 });
 </script>
+
+<!-- Add to Plan Modal -->
+<div class="atp-overlay" id="atp-modal" style="display:none" onclick="if(event.target===this)atpClose()">
+  <div class="atp-box">
+    <div class="atp-head">
+      <h3>Add to Plan</h3>
+      <button class="atp-close" onclick="atpClose()">×</button>
+    </div>
+    <div class="atp-body">
+      <div class="atp-option" data-mode="existing" onclick="atpToggleMode('existing')">
+        <div class="atp-option-icon">📋</div>
+        <div>
+          <div class="atp-option-title">Add to existing plan</div>
+          <div class="atp-option-sub">Choose from your active DRAFTING or BRIEF_READY plans</div>
+        </div>
+      </div>
+      <div id="atp-existing-section" style="display:none;padding:0 var(--space-1)">
+        <select id="atp-existing-select" class="input select" style="width:100%;margin-bottom:var(--space-3)">
+          <option value="">Select a plan…</option>
+          <option value="bonchon-may">Bonchon — May 2026 (DRAFTING)</option>
+          <option value="haier-may">Haier Thailand — May 2026 (BRIEF_READY)</option>
+          <option value="central-may">Central Retail — May 2026 (DRAFTING)</option>
+        </select>
+        <button class="btn btn-primary btn-sm" style="width:100%" onclick="atpSelectExisting()">Add to this plan</button>
+      </div>
+
+      <div class="atp-option" data-mode="new" onclick="atpToggleMode('new')">
+        <div class="atp-option-icon">✨</div>
+        <div>
+          <div class="atp-option-title">Create new plan</div>
+          <div class="atp-option-sub">Start a fresh plan and add this content as the first idea</div>
+        </div>
+      </div>
+      <div id="atp-new-section" style="display:none;padding:0 var(--space-1)">
+        <input id="atp-new-name" class="input" type="text" placeholder="Plan name…" style="width:100%;margin-bottom:var(--space-3)">
+        <button class="btn btn-primary btn-sm" style="width:100%" onclick="atpCreateNew()">Create &amp; add</button>
+      </div>
+    </div>
+    <div class="atp-foot">
+      <button class="atp-cancel" onclick="atpClose()">Cancel</button>
+    </div>
+  </div>
+</div>
+<script src="nav.js"></script>
 </body>
 </html>

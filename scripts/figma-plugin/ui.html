@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif; font-size: 13px; color: #1a1a1a; background: #fff; padding: 24px; }
+
+h2 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+.sub { font-size: 12px; color: #6B7280; margin-bottom: 20px; line-height: 1.5; }
+
+.drop-zone {
+  border: 2px dashed #D1D5DB;
+  border-radius: 10px;
+  padding: 32px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  margin-bottom: 16px;
+}
+.drop-zone:hover, .drop-zone.drag-over { border-color: #6366F1; background: #F5F3FF; }
+.drop-zone svg { margin-bottom: 10px; color: #9CA3AF; }
+.drop-zone p { font-size: 13px; color: #6B7280; }
+.drop-zone strong { color: #6366F1; }
+
+.file-list {
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  max-height: 140px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+  display: none;
+}
+.file-list-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 12px;
+  border-bottom: 1px solid #F3F4F6;
+  font-size: 12px;
+  color: #374151;
+}
+.file-list-item:last-child { border-bottom: none; }
+.file-count { font-size: 12px; color: #6B7280; margin-bottom: 12px; display: none; }
+
+.btn {
+  width: 100%; padding: 11px; border: none; border-radius: 8px;
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-primary { background: #6366F1; color: #fff; }
+.btn-primary:hover:not(:disabled) { background: #4F46E5; }
+.btn-primary:disabled { background: #E5E7EB; color: #9CA3AF; cursor: not-allowed; }
+.btn-ghost { background: none; border: 1.5px solid #E5E7EB; color: #6B7280; margin-top: 8px; }
+.btn-ghost:hover { border-color: #9CA3AF; color: #374151; }
+
+.progress-section { display: none; }
+.progress-bar-bg {
+  width: 100%; height: 8px; background: #E5E7EB; border-radius: 99px;
+  margin: 12px 0 8px;
+}
+.progress-bar-fill {
+  height: 100%; background: #6366F1; border-radius: 99px;
+  width: 0%; transition: width 0.2s;
+}
+.progress-label { font-size: 12px; color: #6B7280; margin-bottom: 8px; }
+.log-box {
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  padding: 8px 12px;
+  max-height: 160px;
+  overflow-y: auto;
+  font-size: 11px;
+  font-family: monospace;
+  color: #374151;
+  line-height: 1.6;
+}
+
+.done-section { display: none; text-align: center; padding: 20px 0; }
+.done-icon { font-size: 40px; margin-bottom: 10px; }
+.done-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+.done-sub { font-size: 12px; color: #6B7280; }
+
+.section-badge {
+  display: inline-block; padding: 2px 8px;
+  background: #EEF2FF; color: #6366F1;
+  border-radius: 99px; font-size: 11px; font-weight: 600;
+  margin-left: 6px;
+}
+</style>
+</head>
+<body>
+
+<!-- STEP 1: File picker -->
+<div id="step-pick">
+  <h2>Panya Screenshot Uploader</h2>
+  <p class="sub">Select all PNG screenshots from<br><code>scripts/screenshots/</code> to upload into Figma.</p>
+
+  <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    <p><strong>Click to select screenshots</strong><br>or drag & drop PNG files here</p>
+  </div>
+
+  <input type="file" id="file-input" accept=".png" multiple style="display:none">
+
+  <div class="file-count" id="file-count"></div>
+  <div class="file-list" id="file-list"></div>
+
+  <button class="btn btn-primary" id="start-btn" disabled onclick="startUpload()">Upload to Figma →</button>
+  <button class="btn btn-ghost" onclick="parent.postMessage({pluginMessage:{type:'cancel'}}, '*')">Cancel</button>
+</div>
+
+<!-- STEP 2: Progress -->
+<div id="step-progress" class="progress-section">
+  <h2>Uploading screenshots…</h2>
+  <div class="progress-label" id="progress-label">Starting…</div>
+  <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-fill"></div></div>
+  <div class="log-box" id="log-box"></div>
+</div>
+
+<!-- STEP 3: Done -->
+<div id="step-done" class="done-section">
+  <div class="done-icon">🎉</div>
+  <div class="done-title">All screenshots uploaded!</div>
+  <div class="done-sub" id="done-sub"></div>
+  <br>
+  <button class="btn btn-primary" onclick="parent.postMessage({pluginMessage:{type:'cancel'}}, '*')">Close plugin</button>
+</div>
+
+<script>
+let selectedFiles = [];
+let fileMap = {}; // name → File object
+let totalFiles = 0;
+
+// ─── File selection ───────────────────────────────────────────────────────────
+document.getElementById('file-input').addEventListener('change', function(e) {
+  handleFiles(Array.from(e.target.files));
+});
+
+const dropZone = document.getElementById('drop-zone');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  handleFiles(Array.from(e.dataTransfer.files).filter(f => f.name.endsWith('.png')));
+});
+
+function handleFiles(files) {
+  selectedFiles = files.filter(f => f.name.endsWith('.png'));
+  selectedFiles.sort((a, b) => a.name.localeCompare(b.name));
+
+  fileMap = {};
+  selectedFiles.forEach(f => fileMap[f.name] = f);
+
+  const listEl = document.getElementById('file-list');
+  const countEl = document.getElementById('file-count');
+  const startBtn = document.getElementById('start-btn');
+
+  listEl.innerHTML = selectedFiles.map(f =>
+    `<div class="file-list-item">
+      <span>${f.name}</span>
+      <span style="color:#9CA3AF">${(f.size/1024).toFixed(0)} KB</span>
+    </div>`
+  ).join('');
+
+  countEl.innerHTML = `<strong>${selectedFiles.length}</strong> screenshots selected`;
+  countEl.style.display = 'block';
+  listEl.style.display = selectedFiles.length ? 'block' : 'none';
+  startBtn.disabled = selectedFiles.length === 0;
+}
+
+// ─── Start upload ─────────────────────────────────────────────────────────────
+function startUpload() {
+  totalFiles = selectedFiles.length;
+
+  // Read just names and dimensions, send to plugin
+  // We'll send actual bytes on demand
+  const fileMeta = selectedFiles.map(f => ({ name: f.name }));
+
+  // Read dimensions from PNG headers for all files first
+  Promise.all(selectedFiles.map(f => readPngDimensions(f))).then(dims => {
+    const filesWithDims = selectedFiles.map((f, i) => ({
+      name: f.name,
+      width: dims[i].width,
+      height: dims[i].height,
+    }));
+
+    document.getElementById('step-pick').style.display = 'none';
+    document.getElementById('step-progress').style.display = 'block';
+
+    parent.postMessage({ pluginMessage: { type: 'start', files: filesWithDims } }, '*');
+  });
+}
+
+function readPngDimensions(file) {
+  return new Promise(resolve => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const buf = e.target.result;
+      const view = new DataView(buf);
+      // PNG header: bytes 16-23 = width, height (big-endian uint32)
+      const width  = view.getUint32(16, false);
+      const height = view.getUint32(20, false);
+      resolve({ width, height });
+    };
+    reader.readAsArrayBuffer(file.slice(0, 28)); // only need first 28 bytes
+  });
+}
+
+// ─── Handle messages from plugin main thread ──────────────────────────────────
+window.onmessage = async (event) => {
+  const msg = event.data.pluginMessage;
+  if (!msg) return;
+
+  switch (msg.type) {
+    case 'ready':
+      totalFiles = msg.total;
+      log(`Ready to upload ${totalFiles} screenshots…`);
+      break;
+
+    case 'request-file': {
+      const file = fileMap[msg.name];
+      if (!file) {
+        log(`⚠ File not found: ${msg.name}`);
+        parent.postMessage({ pluginMessage: { type: 'file-data', name: msg.name, bytes: [], width: 1, height: 1 } }, '*');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = e => {
+        const bytes = Array.from(new Uint8Array(e.target.result));
+        // Get dimensions from PNG header
+        const view = new DataView(e.target.result);
+        const width = view.getUint32(16, false);
+        const height = view.getUint32(20, false);
+        parent.postMessage({ pluginMessage: { type: 'file-data', name: msg.name, bytes, width, height } }, '*');
+      };
+      reader.readAsArrayBuffer(file);
+      break;
+    }
+
+    case 'progress': {
+      const pct = Math.round((msg.done / msg.total) * 100);
+      document.getElementById('progress-fill').style.width = pct + '%';
+      document.getElementById('progress-label').textContent = `${msg.done} / ${msg.total} — ${msg.name}`;
+      log(`✓ ${msg.name} <span class="section-badge">${msg.section}</span>`);
+      // Scroll log to bottom
+      const logBox = document.getElementById('log-box');
+      logBox.scrollTop = logBox.scrollHeight;
+      break;
+    }
+
+    case 'done':
+      document.getElementById('step-progress').style.display = 'none';
+      document.getElementById('step-done').style.display = 'block';
+      document.getElementById('done-sub').textContent = `${msg.total} screenshots organized into 8 pages in Figma.`;
+      break;
+  }
+};
+
+function log(html) {
+  const box = document.getElementById('log-box');
+  box.innerHTML += html + '<br>';
+}
+</script>
+</body>
+</html>

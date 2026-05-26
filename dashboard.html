@@ -1,762 +1,833 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Panya — Dashboard</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Noto+Serif+Thai:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<title>Dashboard — Panya</title>
+<link rel="stylesheet" href="ds.css">
+<link rel="stylesheet" href="shared.css">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── Dashboard-specific styles ─────────────────────────── */
 
-html, body {
-  height: 100%; font-family: var(--font-ui);
-  background: var(--bg-base); color: var(--text-primary);
-  font-size: var(--text-base); line-height: var(--leading-relaxed);
-  -webkit-font-smoothing: antialiased;
+/* Page content area */
+.page-content {
+  flex: 1;
+  padding: 21px 32px 32px;
+  background: #F2F2F2;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
 }
 
-.app { display: flex; height: 100vh; overflow: hidden; }
-
-/* ── Sidebar ─────────────────────────────────── */
-.sidebar {
-  width: var(--layout-sidebar-width); min-width: var(--layout-sidebar-width);
-  background: var(--bg-surface); border-right: 1px solid var(--border-default);
-  display: flex; flex-direction: column; height: 100vh; z-index: 20;
+/* ── Header bar ─────────────────────────────────────────── */
+.header-bar {
+  background: #FFFFFF;
+  border-radius: 12px;
+  padding: 23px 20px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
 }
-.sidebar-inner { display: flex; flex-direction: column; height: 100%; padding: var(--space-6) 0; overflow-y: auto; }
-.logo { padding: 0 var(--space-5) var(--space-5); border-bottom: 1px solid var(--border-subtle); margin-bottom: var(--space-5); }
-.logo-text { font-weight: 700; font-family: var(--font-display); font-size: 24px; color: var(--text-primary); letter-spacing: -0.03em; }
-.logo-dot { color: var(--brand); font-style: normal; }
-.nav { flex: 1; padding: 0 var(--space-3); display: flex; flex-direction: column; gap: 2px; }
-.nav-item {
-  display: flex; align-items: center; gap: var(--space-3);
-  padding: 9px 12px; border-radius: var(--r-md);
-  cursor: pointer; text-decoration: none;
-  color: var(--text-secondary); font-size: var(--text-sm); font-weight: 500;
-  transition: background var(--dur-base), color var(--dur-base);
+.header-greeting {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
-.nav-item:hover  { background: var(--bg-elevated); color: var(--text-primary); }
-.nav-item.active { background: var(--brand-m); color: var(--brand); font-weight: 600; box-shadow: inset 3px 0 0 var(--brand); padding-left: 9px; }
-.nav-icon { width: 16px; height: 16px; flex-shrink: 0; }
-.nav-label { flex: 1; }
-.nav-badge { font-size: var(--text-xs); font-weight: 700; font-family: var(--font-mono); padding: 2px 7px; border-radius: var(--r-full); background: var(--amber-m); color: var(--amber); }
-.nav-badge.red { background: var(--red-m); color: var(--red); }
-.nav-divider { height: 1px; background: var(--border-subtle); margin: var(--space-2) var(--space-3); }
-.sidebar-user { border-top: 1px solid var(--border-subtle); padding: var(--space-3) var(--space-3) 0; margin-top: var(--space-2); }
-.user-row { display: flex; align-items: center; gap: var(--space-3); padding: 9px 12px; border-radius: var(--r-md); cursor: pointer; transition: background var(--dur-base); }
-.user-row:hover { background: var(--bg-elevated); }
-.u-avatar { width: 32px; height: 32px; border-radius: var(--r-full); background: var(--brand-m); color: var(--brand); display: flex; align-items: center; justify-content: center; font-size: var(--text-xs); font-weight: 700; flex-shrink: 0; }
-.u-email { font-size: var(--text-xs); font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px; }
-.u-role { font-size: 11px; color: var(--text-muted); }
+.greeting-small { font-size: 12px; font-weight: 400; color: #535862; }
+.greeting-date  { font-size: 16px; font-weight: 500; color: #414651; }
+.header-actions { display: flex; align-items: center; gap: 16px; }
 
-/* ── Main ────────────────────────────────────── */
-.main { flex: 1; overflow-y: auto; padding: var(--space-12) var(--space-12); }
-.inner { max-width: var(--layout-max-width); margin: 0 auto; }
-
-/* ── Page header ─────────────────────────────── */
-.page-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: var(--space-8); }
-.greeting { font-family: var(--font-display); font-size: var(--text-3xl); font-weight: 400; color: var(--text-primary); letter-spacing: -0.03em; line-height: var(--leading-snug); }
-.greeting-date { font-size: var(--text-sm); color: var(--text-secondary); margin-top: var(--space-1); }
-
-/* ── Brand Filter Bar ────────────────────────── */
-.filter-bar { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-8); padding-bottom: var(--space-5); border-bottom: 1px solid var(--border-subtle); }
-.filter-label { font-size: var(--text-xs); color: var(--text-muted); font-weight: 600; white-space: nowrap; text-transform: uppercase; letter-spacing: 0.06em; }
-.filter-chips { display: flex; gap: var(--space-2); flex-wrap: wrap; }
-.fchip {
-  display: inline-flex; align-items: center; gap: var(--space-2);
-  padding: 6px 14px; border-radius: var(--r-full);
-  border: 1.5px solid var(--border-default); background: var(--bg-base);
-  font-family: var(--font-ui); font-size: var(--text-sm); font-weight: 500;
-  color: var(--text-secondary); cursor: pointer; transition: all var(--dur-base);
-  user-select: none;
+/* Quick action buttons — 150×48 pill */
+.qa-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 48px;
+  width: 150px;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  font-family: 'IBM Plex Sans Thai', 'IBM Plex Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 2px solid;
+  white-space: nowrap;
+  text-decoration: none;
+  overflow: hidden;
+  transition: opacity 150ms ease;
+  justify-content: center;
 }
-.fchip:hover { border-color: var(--border-strong); color: var(--text-primary); background: var(--bg-elevated); }
-.fchip.active { background: var(--brand); border-color: var(--brand); color: #fff; font-weight: 600; }
-.fchip.active:hover { background: var(--brand-dark); }
-.fchip-dot { width: 6px; height: 6px; border-radius: var(--r-full); }
-.filterable { transition: opacity var(--dur-slow), transform var(--dur-slow); }
-.filterable.hidden { opacity: 0; pointer-events: none; transform: scale(0.98); position: absolute; }
+.qa-btn:hover { opacity: 0.85; }
+.qa-blue   { background: #F0F9FF; border-color: #B9E6FE; color: #0086C9; }
+.qa-purple { background: #F4F3FF; border-color: #D9D6FE; color: #7A5AF8; }
+.qa-yellow { background: #FEFBE8; border-color: #FEEE95; color: #CA8504; }
 
-/* ── Section ─────────────────────────────────── */
-.section { margin-bottom: var(--space-10); }
-.section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-5); }
-.section-title { font-size: var(--text-xs); font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
-.section-link { font-size: var(--text-sm); font-weight: 500; color: var(--brand); text-decoration: none; cursor: pointer; transition: color var(--dur-base); }
-.section-link:hover { color: var(--brand-dark); text-decoration: underline; }
-.section-count { font-size: var(--text-xs); color: var(--text-muted); transition: opacity var(--dur-slow); }
+/* ── Panels row ─────────────────────────────────────────── */
+.panels-row {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
 
-/* ── Attention items ─────────────────────────── */
-.attention-list { display: flex; flex-direction: column; gap: var(--space-3); position: relative; min-height: 60px; }
+/* ── Left panel ─────────────────────────────────────────── */
+.left-panel {
+  flex: 1;
+  min-width: 0;
+  background: #FFFFFF;
+  border-radius: 12px;
+  height: 749px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Panel header */
+.panel-header {
+  padding: 20px 20px 12px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.panel-title-group {}
+.panel-title  { font-size: 24px; font-weight: 600; color: #181D27; line-height: 1.2; }
+.panel-sub    { font-size: 12px; color: #717680; margin-top: 3px; }
+
+/* Panya สรุปให้ button */
+.panya-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  border: 2px solid #FF956A;
+  background: linear-gradient(-32.64deg, #E96B38 46.62%, #FFAF8E 83.26%);
+  filter: drop-shadow(0 0 2.9px #FFA600);
+  color: #FFFFFF;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'IBM Plex Sans Thai', 'IBM Plex Sans', sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: opacity 150ms ease;
+}
+.panya-btn:hover { opacity: 0.9; }
+.panya-btn img { width: 20px; height: 20px; filter: brightness(0) invert(1); }
+
+/* Stats bar — 4 columns */
+.stats-bar {
+  border-top: 1px solid #E9EAEB;
+  border-bottom: 1px solid #E9EAEB;
+  display: flex;
+  padding: 4px 0;
+  flex-shrink: 0;
+}
+.stat-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 8px;
+  gap: 6px;
+  border-right: 1px solid #E9EAEB;
+}
+.stat-col:last-child { border-right: none; }
+
+/* Score circle */
+.score-circle {
+  width: 84px;
+  height: 84px;
+  border-radius: 9999px;
+  background: #FFFAEB;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.score-num {
+  font-size: 36px;
+  font-weight: 600;
+  color: #F79009;
+  letter-spacing: -0.72px;
+  line-height: 1;
+}
+.stat-big {
+  font-size: 36px;
+  font-weight: 400;
+  letter-spacing: -0.72px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.stat-big.green { color: #17B26A; }
+.stat-big.neutral { color: #535862; }
+.stat-lbl {
+  font-size: 14px;
+  font-weight: 400;
+  color: #717680;
+}
+
+/* Brands section header */
+.brands-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 12px;
+  flex-shrink: 0;
+}
+.brands-title { font-size: 18px; font-weight: 600; color: #535862; }
+.brands-actions { display: flex; align-items: center; gap: 8px; }
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 9999px;
+  background: #FFFFFF;
+  border: 1px solid #D5D7DA;
+  font-size: 16px;
+  font-weight: 600;
+  color: #414651;
+  font-family: 'IBM Plex Sans Thai', 'IBM Plex Sans', sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 150ms ease;
+  text-decoration: none;
+}
+.action-btn:hover { border-color: #535862; }
+
+/* Brands grid */
+.brands-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  padding: 0 20px;
+  overflow-y: auto;
+}
+
+/* Brand card */
+.brand-card {
+  background: #F5F5F5;
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Brand card header row */
+.brand-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FFFFFF;
+  border-radius: 9999px;
+  padding: 2px;
+}
+.brand-identity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 6px;
+}
+.brand-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  object-fit: cover;
+  border: 1px solid rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  flex-shrink: 0;
+  background: #F5F5F5;
+}
+.brand-name { font-size: 16px; font-weight: 600; color: #181D27; }
+.brand-chevron {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #535862;
+  flex-shrink: 0;
+}
+
+/* Brand stats row */
+.brand-stats {
+  display: flex;
+  border-top: 1px solid #E9EAEB;
+  border-bottom: 1px solid #E9EAEB;
+  padding: 4px 0;
+}
+.brand-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 4px;
+  gap: 2px;
+  border-right: 1px solid #E9EAEB;
+}
+.brand-stat:last-child { border-right: none; }
+.bstat-num {
+  font-size: 20px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.bstat-num.green   { color: #17B26A; }
+.bstat-num.red     { color: #D92D20; }
+.bstat-num.neutral { color: #181D27; }
+.bstat-lbl { font-size: 12px; font-weight: 400; color: #717680; }
+
+/* Brand action row */
+.brand-actions { display: flex; gap: 12px; }
+.ba-idea {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 10px;
+  border-radius: 9999px;
+  background: #FEFBE8;
+  border: 2px solid #FEEE95;
+  font-size: 14px;
+  font-weight: 500;
+  color: #CA8504;
+  font-family: 'IBM Plex Sans Thai', 'IBM Plex Sans', sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 150ms;
+}
+.ba-idea:hover { opacity: 0.8; }
+.ba-update {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex: 1;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  border: 2px solid #E9EAEB;
+  font-size: 14px;
+  font-weight: 500;
+  color: #414651;
+  font-family: 'IBM Plex Sans Thai', 'IBM Plex Sans', sans-serif;
+  cursor: pointer;
+  background: transparent;
+  transition: border-color 150ms;
+}
+.ba-update:hover { border-color: #D5D7DA; }
+
+/* "ดูเพิ่มเติม" row */
+.see-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 12px 0;
+  font-size: 16px;
+  color: #535862;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 150ms;
+  margin-top: auto;
+}
+.see-more:hover { color: #181D27; }
+
+/* ── Right panel ─────────────────────────────────────────── */
+.right-panel {
+  width: 258px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 749px;
+}
+.right-panel-head {
+  background: #FEF3F2;
+  padding: 12px 16px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  border-radius: 12px 12px 0 0;
+}
+.attention-badge {
+  background: #D92D20;
+  border-radius: 14px;
+  min-width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #FFFFFF;
+}
+.attention-title { font-size: 18px; font-weight: 600; color: #D92D20; }
+.right-panel-body {
+  background: #FFFFFF;
+  border-radius: 0 0 12px 12px;
+  padding: 24px 20px;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Attention item */
 .attention-item {
-  background: var(--bg-base); border: 1px solid var(--border-default);
-  border-radius: var(--r-lg); padding: var(--space-4) var(--space-5);
-  display: flex; align-items: center; gap: var(--space-4);
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow var(--dur-slow), border-color var(--dur-slow), transform var(--dur-slow);
+  padding: 12px 0;
+  border-bottom: 1px solid #E9EAEB;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
-.attention-item:hover { border-color: var(--border-strong); box-shadow: var(--shadow-md); transform: translateY(-1px); }
-.attention-item.urgent  { border-left: 3px solid var(--red); }
-.attention-item.warning { border-left: 3px solid var(--amber); }
-.attention-item.info    { border-left: 3px solid var(--blue); }
-.attn-icon { font-size: 16px; width: 24px; text-align: center; flex-shrink: 0; }
-.attn-body { flex: 1; min-width: 0; }
-.attn-ctx { font-size: var(--text-xs); color: var(--text-muted); display: flex; align-items: center; gap: var(--space-2); margin-bottom: 3px; }
-.attn-ctx strong { color: var(--text-secondary); font-weight: 600; }
-.attn-reason { font-size: var(--text-sm); font-weight: 500; color: var(--text-primary); line-height: var(--leading-normal); }
-.attn-time { font-size: var(--text-xs); color: var(--text-muted); margin-top: 2px; }
-.all-clear { display: none; padding: var(--space-4) var(--space-5); background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--r-lg); font-size: var(--text-sm); color: var(--text-secondary); align-items: center; gap: var(--space-3); }
-.all-clear.visible { display: flex; }
-
-/* ── Chip ────────────────────────────────────── */
-.chip { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: var(--r-full); background: var(--bg-elevated); color: var(--text-secondary); font-size: var(--text-xs); font-weight: 500; }
-
-/* ── Plans Grid ──────────────────────────────── */
-.plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); position: relative; min-height: 120px; }
-.plan-card {
-  background: var(--bg-base); border: 1px solid var(--border-default);
-  border-radius: var(--r-lg); padding: var(--space-5) var(--space-5);
-  box-shadow: var(--shadow-sm); cursor: pointer;
-  transition: border-color var(--dur-slow), box-shadow var(--dur-slow), transform var(--dur-slow);
+.attention-item:last-child { border-bottom: none; }
+.attn-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
-.plan-card:hover { border-color: var(--border-strong); box-shadow: var(--shadow-md); transform: translateY(-2px); }
-.plan-top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-2); margin-bottom: var(--space-4); }
-.plan-brand { font-size: 15px; font-weight: 600; color: var(--text-primary); line-height: var(--leading-normal); }
-.plan-meta  { font-size: var(--text-xs); color: var(--text-secondary); margin-top: 2px; }
-.plan-foot  { display: flex; align-items: center; justify-content: space-between; padding-top: var(--space-3); border-top: 1px solid var(--border-subtle); font-size: var(--text-sm); color: var(--text-secondary); }
-.plan-updated { font-size: var(--text-xs); color: var(--text-muted); }
-
-/* ── Badges — pill shape ─────────────────────── */
-.badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: var(--r-full); font-size: var(--text-xs); font-weight: 500; white-space: nowrap; flex-shrink: 0; }
-.bdot { width: 5px; height: 5px; border-radius: var(--r-full); flex-shrink: 0; }
-.b-brief  { background: var(--amber-m);  color: var(--amber);  } .b-brief  .bdot { background: var(--amber); }
-.b-draft  { background: var(--blue-m);   color: var(--blue);   } .b-draft  .bdot { background: var(--blue); }
-.b-scored { background: var(--purple-m); color: var(--purple); } .b-scored .bdot { background: var(--purple); }
-.b-prop   { background: var(--brand-m);  color: var(--brand);  } .b-prop   .bdot { background: var(--brand); }
-.b-fb     { background: var(--orange-m); color: var(--orange); } .b-fb     .bdot { background: var(--orange); }
-.b-done   { background: var(--gray-m);   color: var(--gray);   } .b-done   .bdot { background: var(--gray); }
-
-/* ── Score pills ─────────────────────────────── */
-.sc    { font-family: var(--font-mono); font-weight: 700; display: inline-block; padding: 2px 6px; border-radius: var(--r-sm); }
-.sc-ex { color: var(--brand);  background: var(--brand-m); }
-.sc-st { color: var(--amber);  background: var(--amber-m); }
-.sc-av { color: var(--orange); background: var(--orange-m); }
-.sc-wk { color: var(--red);    background: var(--red-m); }
-
-.no-plans { display: none; grid-column: 1/-1; padding: var(--space-8); text-align: center; color: var(--text-muted); font-size: var(--text-sm); }
-.no-plans.visible { display: block; }
-
-/* ── Two-column dashboard layout ─────────────── */
-.dashboard-cols { display: grid; grid-template-columns: 340px 1fr; gap: var(--space-8); align-items: start; margin-bottom: var(--space-10); }
-.left-col { display: flex; flex-direction: column; gap: var(--space-8); }
-.right-col { display: flex; flex-direction: column; gap: var(--space-8); }
-
-/* ── Brand Summary Cards ─────────────────────── */
-.brand-summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-4); }
-.bscard {
-  background: var(--bg-base); border: 1px solid var(--border-default);
-  border-radius: var(--r-lg); padding: var(--space-5);
-  box-shadow: var(--shadow-xs);
-  transition: border-color var(--dur-slow), box-shadow var(--dur-slow), transform var(--dur-slow);
+.attn-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+.dot-red    { background: #D92D20; color: #D92D20; }
+.dot-blue   { background: #0086C9; color: #0086C9; }
+.dot-orange { background: #DC6803; color: #DC6803; }
+.attn-label.red    { color: #D92D20; }
+.attn-label.blue   { color: #0086C9; }
+.attn-label.orange { color: #DC6803; }
+.attn-chevron {
+  width: 20px;
+  height: 20px;
+  color: #717680;
   cursor: pointer;
 }
-.bscard:hover { border-color: var(--border-strong); box-shadow: var(--shadow-md); transform: translateY(-2px); }
-.bscard-head { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-4); }
-.bscard-dot { width: 8px; height: 8px; border-radius: var(--r-full); flex-shrink: 0; }
-.bscard-name { font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); }
-.bscard-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
-.bsm { display: flex; flex-direction: column; gap: 2px; }
-.bsm-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
-.bsm-val { font-size: var(--text-lg); font-weight: 700; color: var(--text-primary); font-family: var(--font-mono); }
-.bsm-val.brand { color: var(--brand); }
-.bsm-sub { font-size: var(--text-xs); color: var(--text-muted); margin-top: 1px; }
 
-/* ── Quick Actions ───────────────────────────── */
-.quick-actions { display: grid; grid-template-columns: 1fr; gap: var(--space-3); }
-.qa-btn {
-  background: var(--bg-base); border: 1px solid var(--border-default);
-  border-radius: var(--r-lg); padding: var(--space-5) var(--space-5);
-  cursor: pointer; font-family: var(--font-ui);
-  display: flex; align-items: center; gap: var(--space-4);
-  text-align: left; box-shadow: var(--shadow-sm);
-  transition: border-color var(--dur-slow), box-shadow var(--dur-slow), transform var(--dur-slow), background var(--dur-base);
+/* Attention tags */
+.attn-tags {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
 }
-.qa-btn:hover { border-color: var(--brand); box-shadow: var(--shadow-md); transform: translateY(-2px); }
-.qa-btn.primary { background: var(--brand); border-color: var(--brand); }
-.qa-btn.primary:hover { background: var(--brand-dark); box-shadow: 0 4px 14px rgba(233,107,56,0.32); transform: translateY(-2px); }
-.qa-icon { width: 40px; height: 40px; border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.qa-icon.teal   { background: var(--brand-m); color: var(--brand); }
-.qa-icon.purple { background: var(--purple-m); color: var(--purple); }
-.qa-icon.blue   { background: var(--blue-m); color: var(--blue); }
-.qa-btn.primary .qa-icon { background: rgba(255,255,255,0.20); color: #fff; }
-.qa-title { font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); }
-.qa-sub   { font-size: var(--text-xs); color: var(--text-muted); margin-top: 2px; }
-.qa-btn.primary .qa-title, .qa-btn.primary .qa-sub { color: #fff; }
-.qa-btn.primary .qa-sub { opacity: 0.8; }
-
-/* ── Activity ────────────────────────────────── */
-.activity-list { display: flex; flex-direction: column; }
-.activity-item { display: flex; align-items: flex-start; gap: var(--space-3); padding: var(--space-3) 0; border-bottom: 1px solid var(--border-subtle); }
-.activity-item:last-child { border-bottom: none; }
-.act-av { width: 32px; height: 32px; border-radius: var(--r-full); display: flex; align-items: center; justify-content: center; font-size: var(--text-xs); font-weight: 700; flex-shrink: 0; margin-top: 2px; }
-.act-text { font-size: var(--text-sm); color: var(--text-primary); line-height: var(--leading-normal); }
-.act-time { font-size: var(--text-xs); color: var(--text-muted); margin-top: 2px; }
-
-/* ── Buttons ─────────────────────────────────── */
-.btn { display: inline-flex; align-items: center; gap: var(--space-2); padding: 0 var(--space-5); height: 40px; border-radius: var(--r-md); font-family: var(--font-ui); font-size: 15px; font-weight: 600; cursor: pointer; border: none; transition: background var(--dur-base), transform var(--dur-base), box-shadow var(--dur-base); white-space: nowrap; text-decoration: none; }
-.btn-sm { height: 32px; padding: 0 var(--space-4); font-size: var(--text-sm); }
-.btn-primary   { background: var(--brand); color: #fff; }
-.btn-primary:hover   { background: var(--brand-dark); transform: translateY(-1px); box-shadow: var(--shadow-sm); }
-.btn-primary:active  { transform: translateY(0); }
-.btn-secondary { background: transparent; color: var(--text-primary); border: 1.5px solid var(--border-default); }
-.btn-secondary:hover { border-color: var(--brand); color: var(--brand); transform: translateY(-1px); }
-.btn-ghost     { background: transparent; color: var(--brand); font-weight: 500; }
-.btn-ghost:hover     { background: var(--brand-m); }
-
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-thumb { background: var(--border-default); border-radius: var(--r-full); }
-::-webkit-scrollbar-track { background: transparent; }
+.attn-tag {
+  background: #FFFFFF;
+  border: 1px solid #D5D7DA;
+  border-radius: 9999px;
+  padding: 3px 8px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #414651;
+}
+.attn-time {
+  font-size: 12px;
+  font-weight: 400;
+  color: #717680;
+}
 </style>
-<link rel="stylesheet" href="ds.css">
 </head>
 <body>
 <div class="app">
 
-<!-- ── Sidebar ──────────────────────────────────── -->
-<aside class="sidebar">
-<div class="sidebar-inner">
+  <!-- ══════════════ SIDEBAR ══════════════ -->
+  <nav class="sidebar">
+    <div class="sidebar-inner">
 
-  <div class="logo">
-    <span class="logo-text">Panya<span class="logo-dot">.</span></span>
-  </div>
-
-  <nav class="nav">
-    <a class="nav-item active" href="dashboard.html">
-      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-        <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
-      </svg>
-      <span class="nav-label">Dashboard</span>
-    </a>
-    <a class="nav-item" href="plans.html">
-      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="3" y="4" width="18" height="18" rx="2"/>
-        <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-      </svg>
-      <span class="nav-label">Plans</span>
-      <span class="nav-badge">2</span>
-    </a>
-    <a class="nav-item" href="content-tools.html">
-      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-      </svg>
-      <span class="nav-label">Content Tools</span>
-    </a>    <a class="nav-item" href="insights.html">
-      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
-      </svg>
-      <span class="nav-label">Insights</span>
-    </a>
-    <a class="nav-item" href="ask-panya.html">
-      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
-      </svg>
-      <span class="nav-label">Ask Panya</span>
-    </a>
-    <div class="nav-divider"></div>
-
-    <a class="nav-item" href="brand-library.html">
-      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
-      </svg>
-      <span class="nav-label">Brand Library</span>
-    </a>
-    <a class="nav-item" href="admin.html">
-      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-      </svg>
-      <span class="nav-label">Admin</span>
-      <span class="nav-badge red">1</span>
-    </a>
-  </nav>
-
-  <div class="sidebar-user">
-    <!-- User popup menu -->
-    <div class="user-popup" id="user-popup">
-      <a class="user-popup-item" href="signup.html">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        My account
-      </a>
-      <a class="user-popup-item" href="admin.html">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        Workspace settings
-      </a>
-      <div class="user-popup-divider"></div>
-      <button class="user-popup-item danger" onclick="signOut()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        Sign out
-      </button>
-    </div>
-    <div class="user-row" onclick="toggleUserMenu()">
-      <div class="u-avatar">P</div>
-      <div style="flex:1;min-width:0">
-        <div class="u-email">por.zax@gmail.com</div>
-        <div class="u-role">Admin</div>
-      </div>
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-muted);flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
-    </div>
-  </div>
-
-</div>
-</aside>
-
-<!-- ── Main ────────────────────────────────────────── -->
-<main class="main">
-<div class="inner">
-
-  <!-- Page header -->
-  <div class="page-header">
-    <div>
-      <h1 class="greeting">Good morning, Patiphan.</h1>
-      <p class="greeting-date">Saturday, 16 May 2026</p>
-    </div>
-  </div>
-
-  <!-- Brand filter bar -->
-  <div class="filter-bar">
-    <span class="filter-label">Brand</span>
-    <div class="filter-chips">
-      <button class="fchip active" data-filter="all" onclick="filterBy('all')">All brands</button>
-      <button class="fchip" data-filter="Bonchon" onclick="filterBy('Bonchon')">
-        <span class="fchip-dot" style="background:var(--teal)"></span>Bonchon
-      </button>
-      <button class="fchip" data-filter="Haier Thailand" onclick="filterBy('Haier Thailand')">
-        <span class="fchip-dot" style="background:var(--blue)"></span>Haier Thailand
-      </button>
-      <button class="fchip" data-filter="Central Retail" onclick="filterBy('Central Retail')">
-        <span class="fchip-dot" style="background:var(--purple)"></span>Central Retail
-      </button>
-      <button class="fchip" data-filter="MK Restaurant" onclick="filterBy('MK Restaurant')">
-        <span class="fchip-dot" style="background:var(--amber)"></span>MK Restaurant
-      </button>
-    </div>
-  </div>
-
-  <!-- 2-column layout -->
-  <div class="dashboard-cols">
-
-    <!-- LEFT: Needs Attention + Quick Actions -->
-    <div class="left-col">
-
-      <!-- Needs Attention -->
-      <div class="section" style="margin-bottom:0">
-        <div class="section-head">
-          <span class="section-title">Needs Attention</span>
-          <span class="section-count" id="attn-count"></span>
-        </div>
-        <div class="attention-list" id="attn-list">
-
-          <div class="attention-item urgent" data-brand="Bonchon">
-            <div class="attn-icon">⚡</div>
-            <div class="attn-body">
-              <div class="attn-ctx">
-                <strong>Bonchon</strong><span class="chip">Instagram</span>· May 2026
-              </div>
-              <div class="attn-reason">Client feedback received — 3 ideas need revision</div>
-              <div class="attn-time">3 days ago</div>
-            </div>
-            <button class="btn btn-sm btn-primary" onclick="window.location='plans-detail.html'">See Feedback</button>
-          </div>
-
-          <div class="attention-item warning" data-brand="Haier Thailand">
-            <div class="attn-icon">⚠️</div>
-            <div class="attn-body">
-              <div class="attn-ctx">
-                <strong>Haier Thailand</strong><span class="chip">Facebook</span>· May 2026
-              </div>
-              <div class="attn-reason">Brief ready but no ideas drafted — 4 days since creation</div>
-              <div class="attn-time">4 days ago</div>
-            </div>
-            <button class="btn btn-sm btn-secondary" onclick="window.location='plans-new.html'">Draft</button>
-          </div>
-
-          <div class="attention-item info" data-brand="Central Retail">
-            <div class="attn-icon">ℹ️</div>
-            <div class="attn-body">
-              <div class="attn-ctx">
-                <strong>Central Retail</strong><span class="chip">TikTok</span>· May 2026
-              </div>
-              <div class="attn-reason">Plan proposed 6 days ago — no client response yet</div>
-              <div class="attn-time">6 days ago</div>
-            </div>
-            <button class="btn btn-sm btn-ghost" onclick="followUp()">Follow Up</button>
-          </div>
-
-          <div class="all-clear" id="attn-clear">
-            <span style="font-size:18px">✓</span>
-            <span>No pending items for this brand.</span>
-          </div>
-
-        </div>
+      <!-- Logo -->
+      <div class="logo">
+        <a href="dashboard.html" class="logo-link">
+          <img src="assets/logo-normal.svg" alt="Panya" height="28">
+        </a>
       </div>
 
-      <!-- Quick Actions -->
-      <div class="section" style="margin-bottom:0">
-        <div class="section-head">
-          <span class="section-title">Quick Actions</span>
+      <!-- Nav section label -->
+      <div class="nav-section-label">เครื่องมือ</div>
+
+      <!-- Nav -->
+      <div class="nav">
+        <a href="dashboard.html" class="nav-item active">
+          <span class="nav-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+          </span>
+          <span class="nav-label">หน้าหลัก</span>
+        </a>
+        <a href="plans.html" class="nav-item">
+          <span class="nav-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="m9 16 2 2 4-4"/></svg>
+          </span>
+          <span class="nav-label">แผนคอนเทนต์</span>
+          <span class="nav-badge">5</span>
+        </a>
+        <a href="content-tools.html" class="nav-item">
+          <span class="nav-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+          </span>
+          <span class="nav-label">Content Tools</span>
+          <span class="nav-badge">NEW</span>
+        </a>
+        <a href="ask-panya.html" class="nav-item">
+          <span class="nav-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+          </span>
+          <span class="nav-label">Ask Panya</span>
+        </a>
+
+        <div class="nav-divider"></div>
+
+        <a href="brand-library.html" class="nav-item">
+          <span class="nav-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 6 4 14"/><path d="M12 6v14"/><path d="M8 8v12"/><path d="M4 4v16"/></svg>
+          </span>
+          <span class="nav-label">Brand Library</span>
+        </a>
+        <a href="insights.html" class="nav-item">
+          <span class="nav-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>
+          </span>
+          <span class="nav-label">Insights</span>
+        </a>
+
+        <div class="nav-divider"></div>
+
+        <a href="admin.html" class="nav-item">
+          <span class="nav-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+          </span>
+          <span class="nav-label">Admin</span>
+        </a>
+      </div>
+
+      <!-- User row -->
+      <div class="sidebar-user">
+        <div class="user-row" onclick="toggleUserMenu()">
+          <div class="u-avatar">P</div>
+          <div class="u-info">
+            <div class="u-email">por.zax@gmail.com</div>
+            <div class="u-role">Admin</div>
+          </div>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#717680" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
         </div>
-        <div class="quick-actions">
-          <button class="qa-btn primary" onclick="window.location='plans-new.html'">
-            <div class="qa-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-              </svg>
-            </div>
-            <div>
-              <div class="qa-title">New Plan</div>
-              <div class="qa-sub">Start a monthly content plan</div>
-            </div>
-          </button>
-          <button class="qa-btn">
-            <div class="qa-icon purple">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-              </svg>
-            </div>
-            <div>
-              <div class="qa-title">Score a Caption</div>
-              <div class="qa-sub">Evaluate with AI scoring</div>
-            </div>
-          </button>
-          <button class="qa-btn">
-            <div class="qa-icon blue">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M9 18h6M10 22h4M12 2a7 7 0 017 7c0 2.38-1.19 4.47-3 5.74V17H8v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 017-7z"/>
-              </svg>
-            </div>
-            <div>
-              <div class="qa-title">Generate Ideas</div>
-              <div class="qa-sub">Ideas from trends &amp; topics</div>
-            </div>
+        <div class="user-popup" id="userPopup">
+          <a href="#" class="user-popup-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            My account
+          </a>
+          <a href="admin.html" class="user-popup-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            Workspace settings
+          </a>
+          <div class="user-popup-divider"></div>
+          <button class="user-popup-item danger" onclick="signOut()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+            Sign out
           </button>
         </div>
       </div>
 
-    </div><!-- /left-col -->
-
-    <!-- RIGHT: Brand Summary + Active Plans -->
-    <div class="right-col">
-
-      <!-- Overall Brand Summary -->
-      <div class="section" style="margin-bottom:0">
-        <div class="section-head">
-          <span class="section-title">Overall Summary</span>
-        </div>
-        <div class="brand-summary-grid" id="brand-summary">
-
-          <div class="bscard" data-brand="Bonchon" onclick="window.location='plans.html'">
-            <div class="bscard-head">
-              <span class="bscard-dot" style="background:var(--brand)"></span>
-              <span class="bscard-name">Bonchon</span>
-            </div>
-            <div class="bscard-metrics">
-              <div class="bsm">
-                <div class="bsm-label">Brand Score</div>
-                <div class="bsm-val brand">84</div>
-              </div>
-              <div class="bsm">
-                <div class="bsm-label">Active Plans</div>
-                <div class="bsm-val">2</div>
-              </div>
-              <div class="bsm">
-                <div class="bsm-label">AVG Score</div>
-                <div class="bsm-val">84</div>
-              </div>
-              <div class="bsm">
-                <div class="bsm-label">Last Updated</div>
-                <div class="bsm-sub" style="font-size:var(--text-sm);font-weight:600;color:var(--text-primary);margin-top:4px">Yesterday</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="bscard" data-brand="Haier Thailand" onclick="window.location='plans.html'">
-            <div class="bscard-head">
-              <span class="bscard-dot" style="background:var(--blue)"></span>
-              <span class="bscard-name">Haier Thailand</span>
-            </div>
-            <div class="bscard-metrics">
-              <div class="bsm">
-                <div class="bsm-label">Brand Score</div>
-                <div class="bsm-val brand">78</div>
-              </div>
-              <div class="bsm">
-                <div class="bsm-label">Active Plans</div>
-                <div class="bsm-val">2</div>
-              </div>
-              <div class="bsm">
-                <div class="bsm-label">AVG Score</div>
-                <div class="bsm-val">81</div>
-              </div>
-              <div class="bsm">
-                <div class="bsm-label">Last Updated</div>
-                <div class="bsm-sub" style="font-size:var(--text-sm);font-weight:600;color:var(--text-primary);margin-top:4px">4 days ago</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="bscard" data-brand="Central Retail" onclick="window.location='plans.html'">
-            <div class="bscard-head">
-              <span class="bscard-dot" style="background:var(--purple)"></span>
-              <span class="bscard-name">Central Retail</span>
-            </div>
-            <div class="bscard-metrics">
-              <div class="bsm">
-                <div class="bsm-label">Brand Score</div>
-                <div class="bsm-val brand">72</div>
-              </div>
-              <div class="bsm">
-                <div class="bsm-label">Active Plans</div>
-                <div class="bsm-val">1</div>
-              </div>
-              <div class="bsm">
-                <div class="bsm-label">AVG Score</div>
-                <div class="bsm-val">72</div>
-              </div>
-              <div class="bsm">
-                <div class="bsm-label">Last Updated</div>
-                <div class="bsm-sub" style="font-size:var(--text-sm);font-weight:600;color:var(--text-primary);margin-top:4px">6 days ago</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="bscard" data-brand="MK Restaurant" onclick="window.location='plans.html'">
-            <div class="bscard-head">
-              <span class="bscard-dot" style="background:var(--amber)"></span>
-              <span class="bscard-name">MK Restaurant</span>
-            </div>
-            <div class="bscard-metrics">
-              <div class="bsm">
-                <div class="bsm-label">Brand Score</div>
-                <div class="bsm-val" style="color:var(--text-muted)">—</div>
-              </div>
-              <div class="bsm">
-                <div class="bsm-label">Active Plans</div>
-                <div class="bsm-val">1</div>
-              </div>
-              <div class="bsm">
-                <div class="bsm-label">AVG Score</div>
-                <div class="bsm-val" style="color:var(--text-muted)">—</div>
-              </div>
-              <div class="bsm">
-                <div class="bsm-label">Last Updated</div>
-                <div class="bsm-sub" style="font-size:var(--text-sm);font-weight:600;color:var(--text-primary);margin-top:4px">2 hours ago</div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- Active Plans -->
-      <div class="section" style="margin-bottom:0">
-        <div class="section-head">
-          <span class="section-title">Active Plans</span>
-          <a class="section-link" href="plans.html">View all →</a>
-        </div>
-        <div class="plans-grid" id="plans-grid" onclick="if(event.target.closest('.plan-card')){window.location='plans-detail.html'}">
-
-          <div class="plan-card" data-brand="Bonchon">
-            <div class="plan-top">
-              <div>
-                <div class="plan-brand">Bonchon</div>
-                <div class="plan-meta">Instagram · May 2026</div>
-              </div>
-              <span class="badge b-fb"><span class="bdot"></span>Feedback Pending</span>
-            </div>
-            <div class="plan-foot">
-              <span>6 ideas · 3 approved</span>
-              <span class="plan-updated">3 days ago</span>
-            </div>
-          </div>
-
-          <div class="plan-card" data-brand="Haier Thailand">
-            <div class="plan-top">
-              <div>
-                <div class="plan-brand">Haier Thailand</div>
-                <div class="plan-meta">Facebook · May 2026</div>
-              </div>
-              <span class="badge b-brief"><span class="bdot"></span>Brief Ready</span>
-            </div>
-            <div class="plan-foot">
-              <span>0 ideas drafted</span>
-              <span class="plan-updated">4 days ago</span>
-            </div>
-          </div>
-
-          <div class="plan-card" data-brand="MK Restaurant">
-            <div class="plan-top">
-              <div>
-                <div class="plan-brand">MK Restaurant</div>
-                <div class="plan-meta">Instagram · May 2026</div>
-              </div>
-              <span class="badge b-draft"><span class="bdot"></span>Drafting</span>
-            </div>
-            <div class="plan-foot">
-              <span>5 / 8 ideas drafted</span>
-              <span class="plan-updated">2 hours ago</span>
-            </div>
-          </div>
-
-          <div class="plan-card" data-brand="Central Retail">
-            <div class="plan-top">
-              <div>
-                <div class="plan-brand">Central Retail</div>
-                <div class="plan-meta">TikTok · May 2026</div>
-              </div>
-              <span class="badge b-prop"><span class="bdot"></span>Proposed</span>
-            </div>
-            <div class="plan-foot">
-              <span>10 ideas · AVG <span class="sc sc-st">72</span></span>
-              <span class="plan-updated">6 days ago</span>
-            </div>
-          </div>
-
-          <div class="plan-card" data-brand="Bonchon">
-            <div class="plan-top">
-              <div>
-                <div class="plan-brand">Bonchon</div>
-                <div class="plan-meta">Facebook · April 2026</div>
-              </div>
-              <span class="badge b-scored"><span class="bdot"></span>Scored</span>
-            </div>
-            <div class="plan-foot">
-              <span>8 ideas · AVG <span class="sc sc-ex">84</span></span>
-              <span class="plan-updated">Yesterday</span>
-            </div>
-          </div>
-
-          <div class="plan-card" data-brand="Haier Thailand" style="opacity:.65">
-            <div class="plan-top">
-              <div>
-                <div class="plan-brand">Haier Thailand</div>
-                <div class="plan-meta">Instagram · April 2026</div>
-              </div>
-              <span class="badge b-done"><span class="bdot"></span>Complete</span>
-            </div>
-            <div class="plan-foot">
-              <span>12 ideas · AVG <span class="sc sc-ex">81</span></span>
-              <span class="plan-updated">May 2</span>
-            </div>
-          </div>
-
-          <div class="no-plans" id="no-plans">No active plans for this brand.</div>
-
-        </div>
-      </div>
-
-    </div><!-- /right-col -->
-
-  </div><!-- /dashboard-cols -->
-
-  <!-- Recent Activity — full width below -->
-  <div class="section">
-    <div class="section-head">
-      <span class="section-title">Recent Activity</span>
     </div>
-    <div class="activity-list">
-      <div class="activity-item">
-        <div class="act-av" style="background:var(--brand-m);color:var(--brand)">P</div>
-        <div>
-          <div class="act-text">You scored 3 captions for <strong>Bonchon Instagram</strong></div>
-          <div class="act-time">2 hours ago</div>
-        </div>
-      </div>
-      <div class="activity-item">
-        <div class="act-av" style="background:var(--purple-m);color:var(--purple)">A</div>
-        <div>
-          <div class="act-text">Aom proposed May plan for <strong>Central Retail TikTok</strong></div>
-          <div class="act-time">5 hours ago</div>
-        </div>
-      </div>
-      <div class="activity-item">
-        <div class="act-av" style="background:var(--brand-m);color:var(--brand)">P</div>
-        <div>
-          <div class="act-text">You uploaded 45 posts to <strong>Haier Thailand Facebook</strong> — data health updated to 78%</div>
-          <div class="act-time">Yesterday</div>
-        </div>
-      </div>
-      <div class="activity-item">
-        <div class="act-av" style="background:var(--orange-m);color:var(--orange)">B</div>
-        <div>
-          <div class="act-text">Client feedback received on <strong>Bonchon Instagram</strong> — 3 ideas need revision</div>
-          <div class="act-time">Yesterday</div>
-        </div>
-      </div>
-      <div class="activity-item">
-        <div class="act-av" style="background:var(--purple-m);color:var(--purple)">A</div>
-        <div>
-          <div class="act-text">Aom created May plan for <strong>MK Restaurant Instagram</strong></div>
-          <div class="act-time">2 days ago</div>
-        </div>
-      </div>
-    </div>
-  </div>
+  </nav><!-- /sidebar -->
 
-</div>
-</main>
-</div>
+  <!-- ══════════════ PAGE CONTENT ══════════════ -->
+  <div class="page-content">
+
+    <!-- Header bar -->
+    <div class="header-bar">
+      <div class="header-greeting">
+        <span class="greeting-small">สวัสดีตอนเช้า, ปฏิภาณ</span>
+        <span class="greeting-date">วันจันทร์ที่ 26 พฤษภาคม 2568</span>
+      </div>
+      <div class="header-actions">
+        <a href="plans-new.html" class="qa-btn qa-blue">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/><line x1="11" x2="17" y1="11" y2="11"/><line x1="14" x2="14" y1="8" y2="14"/></svg>
+          สร้างแผนใหม่
+        </a>
+        <a href="content-tools.html" class="qa-btn qa-purple">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          แต่งแคปชัน
+        </a>
+        <a href="ask-panya.html" class="qa-btn qa-yellow">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+          ขอไอเดียใหม่
+        </a>
+      </div>
+    </div><!-- /header-bar -->
+
+    <!-- Panels row -->
+    <div class="panels-row">
+
+      <!-- ── LEFT PANEL ── -->
+      <div class="left-panel">
+
+        <!-- Panel header -->
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <div class="panel-title">ภาพรวมปัจจุบัน</div>
+            <div class="panel-sub">อัปเดตล่าสุด 26 พ.ค. 2568</div>
+          </div>
+          <button class="panya-btn">
+            <img src="assets/logo-icon-only.svg" alt="">
+            Panya สรุปให้
+          </button>
+        </div>
+
+        <!-- Stats bar -->
+        <div class="stats-bar">
+          <!-- AVG Score -->
+          <div class="stat-col">
+            <div class="score-circle">
+              <span class="score-num">72</span>
+            </div>
+            <span class="stat-lbl">คะแนนเฉลี่ย</span>
+          </div>
+          <!-- Growth -->
+          <div class="stat-col">
+            <div class="stat-big green">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
+              +12%
+            </div>
+            <span class="stat-lbl">เพิ่มขึ้น (MoM)</span>
+          </div>
+          <!-- Brands -->
+          <div class="stat-col">
+            <div class="stat-big neutral">3</div>
+            <span class="stat-lbl">แบรนด์ทั้งหมด</span>
+          </div>
+          <!-- Campaigns -->
+          <div class="stat-col">
+            <div class="stat-big neutral">8</div>
+            <span class="stat-lbl">แคมเปญทั้งหมด</span>
+          </div>
+        </div><!-- /stats-bar -->
+
+        <!-- Brands section header -->
+        <div class="brands-header">
+          <span class="brands-title">แบรนด์ทั้งหมด</span>
+          <div class="brands-actions">
+            <button class="action-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="16"/><line x1="8" x2="16" y1="12" y2="12"/></svg>
+              เพิ่มแบรนด์
+            </button>
+            <button class="action-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+              จัดการแบรนด์
+            </button>
+          </div>
+        </div>
+
+        <!-- Brand cards grid -->
+        <div class="brands-grid">
+
+          <!-- Brand 1: สีเขียวดี -->
+          <div class="brand-card">
+            <div class="brand-card-head">
+              <div class="brand-identity">
+                <div class="brand-avatar" style="background:#D1FAE5; color:#065F46;">ส</div>
+                <span class="brand-name">สีเขียวดี</span>
+              </div>
+              <div class="brand-chevron">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+              </div>
+            </div>
+            <div class="brand-stats">
+              <div class="brand-stat">
+                <div class="bstat-num green">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
+                  82
+                </div>
+                <div class="bstat-lbl">Content Score</div>
+              </div>
+              <div class="brand-stat">
+                <div class="bstat-num neutral">3</div>
+                <div class="bstat-lbl">แคมเปญ</div>
+              </div>
+            </div>
+            <div class="brand-actions">
+              <button class="ba-idea">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+                ไอเดียใหม่
+              </button>
+              <button class="ba-update">อัพเดทข้อมูล</button>
+            </div>
+          </div>
+
+          <!-- Brand 2: ออร์แกนิค ฟาร์ม -->
+          <div class="brand-card">
+            <div class="brand-card-head">
+              <div class="brand-identity">
+                <div class="brand-avatar" style="background:#FEF3C7; color:#92400E;">อ</div>
+                <span class="brand-name">ออร์แกนิค ฟาร์ม</span>
+              </div>
+              <div class="brand-chevron">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+              </div>
+            </div>
+            <div class="brand-stats">
+              <div class="brand-stat">
+                <div class="bstat-num red">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m19 12-7 7-7-7"/><path d="M12 5v14"/></svg>
+                  44
+                </div>
+                <div class="bstat-lbl">Content Score</div>
+              </div>
+              <div class="brand-stat">
+                <div class="bstat-num neutral">2</div>
+                <div class="bstat-lbl">แคมเปญ</div>
+              </div>
+            </div>
+            <div class="brand-actions">
+              <button class="ba-idea">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+                ไอเดียใหม่
+              </button>
+              <button class="ba-update">อัพเดทข้อมูล</button>
+            </div>
+          </div>
+
+          <!-- Brand 3: เทคโนฟู้ด -->
+          <div class="brand-card">
+            <div class="brand-card-head">
+              <div class="brand-identity">
+                <div class="brand-avatar" style="background:#EDE9FE; color:#5B21B6;">ท</div>
+                <span class="brand-name">เทคโนฟู้ด</span>
+              </div>
+              <div class="brand-chevron">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+              </div>
+            </div>
+            <div class="brand-stats">
+              <div class="brand-stat">
+                <div class="bstat-num neutral">68</div>
+                <div class="bstat-lbl">Content Score</div>
+              </div>
+              <div class="brand-stat">
+                <div class="bstat-num neutral">3</div>
+                <div class="bstat-lbl">แคมเปญ</div>
+              </div>
+            </div>
+            <div class="brand-actions">
+              <button class="ba-idea">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+                ไอเดียใหม่
+              </button>
+              <button class="ba-update">อัพเดทข้อมูล</button>
+            </div>
+          </div>
+
+        </div><!-- /brands-grid -->
+
+        <!-- See more -->
+        <div class="see-more">
+          ดูเพิ่มเติม
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+
+      </div><!-- /left-panel -->
+
+      <!-- ── RIGHT PANEL ── -->
+      <div class="right-panel">
+        <div class="right-panel-head">
+          <div class="attention-badge">3</div>
+          <div class="attention-title">ต้องดำเนินการ</div>
+        </div>
+        <div class="right-panel-body">
+
+          <!-- Item 1 -->
+          <div class="attention-item">
+            <div class="attn-status-row">
+              <div class="attn-status">
+                <div class="status-dot dot-red"></div>
+                <span class="attn-label red">ได้รับฟีดแบ็กแล้ว</span>
+              </div>
+              <svg class="attn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </div>
+            <div class="attn-tags">
+              <span class="attn-tag">สีเขียวดี</span>
+              <span class="attn-tag">แคมเปญ Q2</span>
+              <span class="attn-tag">Instagram</span>
+            </div>
+            <div class="attn-time">อัปเดตล่าสุด 2 ชั่วโมงที่แล้ว</div>
+          </div>
+
+          <!-- Item 2 -->
+          <div class="attention-item">
+            <div class="attn-status-row">
+              <div class="attn-status">
+                <div class="status-dot dot-blue"></div>
+                <span class="attn-label blue">รอรีวิว</span>
+              </div>
+              <svg class="attn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </div>
+            <div class="attn-tags">
+              <span class="attn-tag">ออร์แกนิค ฟาร์ม</span>
+              <span class="attn-tag">บล็อกโพสต์</span>
+            </div>
+            <div class="attn-time">อัปเดตล่าสุด 1 วันที่แล้ว</div>
+          </div>
+
+          <!-- Item 3 -->
+          <div class="attention-item">
+            <div class="attn-status-row">
+              <div class="attn-status">
+                <div class="status-dot dot-orange"></div>
+                <span class="attn-label orange">กำลังแพลน</span>
+              </div>
+              <svg class="attn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </div>
+            <div class="attn-tags">
+              <span class="attn-tag">เทคโนฟู้ด</span>
+              <span class="attn-tag">TikTok</span>
+              <span class="attn-tag">เดือนมิถุนายน</span>
+            </div>
+            <div class="attn-time">อัปเดตล่าสุด 3 วันที่แล้ว</div>
+          </div>
+
+        </div>
+      </div><!-- /right-panel -->
+
+    </div><!-- /panels-row -->
+  </div><!-- /page-content -->
+</div><!-- /app -->
 
 <script>
-let current = 'all';
-
-function filterBy(brand) {
-  current = brand;
-
-  // Update chips
-  document.querySelectorAll('.fchip').forEach(c => {
-    c.classList.toggle('active', c.dataset.filter === brand);
-  });
-
-  // Filter attention items
-  const attnItems = document.querySelectorAll('#attn-list .attention-item[data-brand]');
-  let visibleAttn = 0;
-  attnItems.forEach(item => {
-    const show = brand === 'all' || item.dataset.brand === brand;
-    item.style.display = show ? '' : 'none';
-    if (show) visibleAttn++;
-  });
-
-  // Toggle all-clear for attention
-  document.getElementById('attn-clear').classList.toggle('visible', visibleAttn === 0);
-
-  // Update attention count label
-  const attnCount = document.getElementById('attn-count');
-  attnCount.textContent = brand === 'all' ? '' : `${visibleAttn} item${visibleAttn !== 1 ? 's' : ''}`;
-
-  // Filter brand summary cards
-  document.querySelectorAll('#brand-summary .bscard[data-brand]').forEach(card => {
-    card.style.display = (brand === 'all' || card.dataset.brand === brand) ? '' : 'none';
-  });
-
-  // Filter plan cards
-  const planCards = document.querySelectorAll('#plans-grid .plan-card[data-brand]');
-  let visiblePlans = 0;
-  planCards.forEach(card => {
-    const show = brand === 'all' || card.dataset.brand === brand;
-    card.style.display = show ? '' : 'none';
-    if (show) visiblePlans++;
-  });
-
-  // Toggle no-plans
-  document.getElementById('no-plans').classList.toggle('visible', visiblePlans === 0);
+function toggleUserMenu() {
+  const popup = document.getElementById('userPopup');
+  popup.classList.toggle('open');
 }
-
-function followUp() {
-  window.toast('Reminder sent to client — Central Retail TikTok plan', 'success', 2800);
+function signOut() {
+  window.location.href = 'signin.html';
 }
+document.addEventListener('click', function(e) {
+  const popup = document.getElementById('userPopup');
+  const userRow = document.querySelector('.user-row');
+  if (popup && popup.classList.contains('open') && !popup.contains(e.target) && !userRow.contains(e.target)) {
+    popup.classList.remove('open');
+  }
+});
 </script>
-<div id="toast-container"></div>
-<script src="toast.js"></script>
 </body>
 </html>

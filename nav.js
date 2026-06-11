@@ -2,7 +2,7 @@
   var isOpen = false;
 
   window.toggleUserMenu = function () {
-    var popup = document.getElementById('user-popup');
+    var popup = document.getElementById('userPopup');
     var row = document.querySelector('.user-row');
     if (!popup) return;
     isOpen = !isOpen;
@@ -17,7 +17,7 @@
 
   document.addEventListener('click', function (e) {
     if (!isOpen) return;
-    var popup = document.getElementById('user-popup');
+    var popup = document.getElementById('userPopup');
     var row = document.querySelector('.user-row');
     if (!popup) return;
     if (popup.contains(e.target) || (row && row.contains(e.target))) return;

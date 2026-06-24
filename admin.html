@@ -289,6 +289,7 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
     <div class="tab" onclick="switchTab('integrations', this)">Integrations</div>
     <div class="tab" onclick="switchTab('security', this)">Security</div>
     <div class="tab" onclick="switchTab('ai', this)">AI &amp; Content</div>
+    <div class="tab" onclick="switchTab('notifications', this)">Notifications</div>
   </div>
 
   <!-- General tab -->
@@ -698,6 +699,20 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
     </div>
   </div>
 
+  <!-- Notifications tab -->
+  <div class="tab-panel" id="tab-notifications">
+    <div class="section">
+      <div class="section-head"><span class="section-title">Notification Preferences</span></div>
+      <table class="data-table">
+        <thead><tr><th>Event</th><th style="text-align:center">Email</th><th style="text-align:center">In-app</th></tr></thead>
+        <tbody id="notif-body"></tbody>
+      </table>
+      <div style="padding:var(--space-4) var(--space-6)">
+        <button class="btn-sm primary" onclick="saveNotif()">Save preferences</button>
+      </div>
+    </div>
+  </div>
+
   <!-- AI & Content tab -->
   <div class="tab-panel" id="tab-ai">
     <div class="section">
@@ -909,6 +924,40 @@ function logout() {
   };
   document.getElementById('confirm-modal').style.display = 'flex';
 }
+
+// ── Notifications ────────────────────────────
+var NOTIF_EVENTS = [
+  ['plan_approval', 'Plan approvals'],
+  ['brief_submit',  'Brief submissions'],
+  ['key_expiry',    'API key expiry warnings'],
+  ['credit_threshold','AI credit threshold reached'],
+  ['weekly_digest', 'Weekly digest'],
+  ['member_joined', 'New member joined']
+];
+function renderNotif() {
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem('panya_admin_notif') || '{}'); } catch (e) {}
+  var html = NOTIF_EVENTS.map(function(ev) {
+    var key = ev[0], s = saved[key] || {};
+    var em = s.email !== false ? 'checked' : '';
+    var ia = s.inapp !== false ? 'checked' : '';
+    return '<tr><td>' + ev[1] + '</td>' +
+      '<td style="text-align:center"><input type="checkbox" data-ev="' + key + '" data-ch="email" ' + em + '></td>' +
+      '<td style="text-align:center"><input type="checkbox" data-ev="' + key + '" data-ch="inapp" ' + ia + '></td></tr>';
+  }).join('');
+  document.getElementById('notif-body').innerHTML = html;
+}
+function saveNotif() {
+  var data = {};
+  document.querySelectorAll('#notif-body input[type=checkbox]').forEach(function(cb) {
+    var ev = cb.getAttribute('data-ev'), ch = cb.getAttribute('data-ch');
+    data[ev] = data[ev] || {};
+    data[ev][ch] = cb.checked;
+  });
+  localStorage.setItem('panya_admin_notif', JSON.stringify(data));
+  window.toast('Notification preferences saved', 'success', 2500);
+}
+document.addEventListener('DOMContentLoaded', renderNotif);
 
 document.addEventListener('click', function(e) {
   var popup = document.getElementById('user-popup');

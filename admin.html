@@ -288,6 +288,7 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
     <div class="tab" onclick="switchTab('billing', this)">Billing</div>
     <div class="tab" onclick="switchTab('integrations', this)">Integrations</div>
     <div class="tab" onclick="switchTab('security', this)">Security</div>
+    <div class="tab" onclick="switchTab('ai', this)">AI &amp; Content</div>
   </div>
 
   <!-- General tab -->
@@ -697,6 +698,49 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
     </div>
   </div>
 
+  <!-- AI & Content tab -->
+  <div class="tab-panel" id="tab-ai">
+    <div class="section">
+      <div class="section-head"><span class="section-title">AI &amp; Content Defaults</span></div>
+      <div style="padding:var(--space-6)">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-bottom:var(--space-5)">
+          <div>
+            <label class="modal-label" for="ai-model">Default AI model</label>
+            <select class="modal-select" id="ai-model">
+              <option value="gpt-4o">OpenAI GPT-4o</option>
+              <option value="gpt-4o-mini">GPT-4o mini</option>
+            </select>
+          </div>
+          <div>
+            <label class="modal-label" for="ai-lang">Default output language</label>
+            <select class="modal-select" id="ai-lang">
+              <option value="th">Thai-first</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+          <div>
+            <label class="modal-label" for="ai-tone">Default tone</label>
+            <select class="modal-select" id="ai-tone">
+              <option>Playful</option><option>Professional</option><option>Bold</option>
+            </select>
+          </div>
+          <div>
+            <label class="modal-label" for="ai-cap">Max AI credits / user / month</label>
+            <input class="modal-input" id="ai-cap" type="number" value="1000">
+          </div>
+        </div>
+        <div style="margin-bottom:var(--space-5)">
+          <label class="modal-label" for="ai-banned">Banned words / guardrails (comma-separated)</label>
+          <input class="modal-input" id="ai-banned" placeholder="e.g. ถูกที่สุด, รับประกัน100%">
+        </div>
+        <label style="display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-5);font-size:var(--text-sm)">
+          <input type="checkbox" id="ai-translate" checked> Auto-translate generated content
+        </label>
+        <button class="btn-sm primary" onclick="saveAI()">Save changes</button>
+      </div>
+    </div>
+  </div>
+
 </div>
 </main>
 
@@ -779,6 +823,18 @@ function loadGeneral() {
 }
 document.addEventListener('DOMContentLoaded', loadGeneral);
 
+function saveAI() {
+  var data = {
+    model: document.getElementById('ai-model').value,
+    lang:  document.getElementById('ai-lang').value,
+    tone:  document.getElementById('ai-tone').value,
+    cap:   document.getElementById('ai-cap').value,
+    banned:document.getElementById('ai-banned').value,
+    translate: document.getElementById('ai-translate').checked
+  };
+  localStorage.setItem('panya_admin_ai', JSON.stringify(data));
+  window.toast('AI & content defaults saved', 'success', 2500);
+}
 function dismissAlert() {
   var banner = document.getElementById('alert-banner');
   if (banner) {

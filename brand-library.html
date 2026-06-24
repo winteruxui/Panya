@@ -1397,6 +1397,34 @@ function decorateEvalEntry(brand, id, res) {
     actions.appendChild(pin);
   }
 }
+function pinAsSample(brand, id) {
+  var entry = document.querySelector('.eval-entry[data-brand="' + brand + '"][data-id="' + id + '"]');
+  if (!entry) return;
+  var caption = entry.querySelector('.eval-caption').textContent;
+  var platform = entry.querySelector('.eval-chips .chip').textContent;
+  var res = getEvalResults(brand, id) || {};
+  var panel = entry.closest('.brand-detail-panel');
+  var sampleSection = null;
+  panel.querySelectorAll('.brand-section-title').forEach(function(t) {
+    if (t.textContent.trim() === 'Sample Captions') sampleSection = t.parentNode;
+  });
+  if (!sampleSection) return;
+  var div = document.createElement('div');
+  div.className = 'caption-sample';
+  div.innerHTML = caption +
+    '<div class="caption-meta"><span class="chip">' + platform + '</span>' +
+    '<span class="score-pill ex">Real: ' + (res.er || '0') + '% ER</span></div>';
+  sampleSection.appendChild(div);
+  toast('Pinned to Sample Captions', 'success');
+}
+function restoreEvalResults() {
+  document.querySelectorAll('.eval-entry').forEach(function(entry) {
+    var brand = entry.getAttribute('data-brand'), id = entry.getAttribute('data-id');
+    var res = getEvalResults(brand, id);
+    if (res) decorateEvalEntry(brand, id, res);
+  });
+}
+document.addEventListener('DOMContentLoaded', restoreEvalResults);
 </script>
 <script src="nav.js"></script>
 <div class="eval-drawer-overlay" id="eval-drawer" onclick="if(event.target===this)closeEvalDetails()">

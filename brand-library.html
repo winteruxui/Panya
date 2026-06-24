@@ -1322,7 +1322,115 @@ function updateColorPreview(input, idx) {
     prev.style.background = input.value;
   }
 }
+
+var _evalCtx = { brand: null, id: null, verdict: null };
+function evalKey(brand) { return 'panya_eval_results_' + brand; }
+function getEvalResults(brand, id) {
+  try { return (JSON.parse(localStorage.getItem(evalKey(brand)) || '{}'))[id] || null; } catch (e) { return null; }
+}
+function openEvalDetails(brand, id) {
+  _evalCtx = { brand: brand, id: id, verdict: null };
+  ['ev-reach','ev-likes','ev-comments','ev-shares','ev-er','ev-note'].forEach(function(f){ document.getElementById(f).value = ''; });
+  document.querySelectorAll('#ev-verdict .eval-verdict-btn').forEach(function(b){ b.classList.remove('active'); });
+  var saved = getEvalResults(brand, id);
+  if (saved) {
+    document.getElementById('ev-reach').value = saved.reach || '';
+    document.getElementById('ev-likes').value = saved.likes || '';
+    document.getElementById('ev-comments').value = saved.comments || '';
+    document.getElementById('ev-shares').value = saved.shares || '';
+    document.getElementById('ev-er').value = saved.er || '';
+    document.getElementById('ev-note').value = saved.note || '';
+    if (saved.verdict) {
+      _evalCtx.verdict = saved.verdict;
+      var btn = document.querySelector('#ev-verdict .eval-verdict-btn[data-v="' + saved.verdict + '"]');
+      if (btn) btn.classList.add('active');
+    }
+  }
+  document.getElementById('eval-drawer').classList.add('open');
+}
+function closeEvalDetails() { document.getElementById('eval-drawer').classList.remove('open'); }
+function selectVerdict(btn) {
+  document.querySelectorAll('#ev-verdict .eval-verdict-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  _evalCtx.verdict = btn.getAttribute('data-v');
+}
+function saveEvalDetails() {
+  var brand = _evalCtx.brand, id = _evalCtx.id;
+  if (!brand || !id) return;
+  var all = {};
+  try { all = JSON.parse(localStorage.getItem(evalKey(brand)) || '{}'); } catch (e) {}
+  all[id] = {
+    reach: document.getElementById('ev-reach').value,
+    likes: document.getElementById('ev-likes').value,
+    comments: document.getElementById('ev-comments').value,
+    shares: document.getElementById('ev-shares').value,
+    er: document.getElementById('ev-er').value,
+    note: document.getElementById('ev-note').value,
+    verdict: _evalCtx.verdict
+  };
+  localStorage.setItem(evalKey(brand), JSON.stringify(all));
+  decorateEvalEntry(brand, id, all[id]);
+  closeEvalDetails();
+  toast('Results saved', 'success');
+}
+function decorateEvalEntry(brand, id, res) {
+  var entry = document.querySelector('.eval-entry[data-brand="' + brand + '"][data-id="' + id + '"]');
+  if (!entry) return;
+  var actions = entry.querySelector('.eval-actions');
+  actions.setAttribute('data-results', '1');
+  // Remove any previously-added decorations so re-saving doesn't duplicate them
+  actions.querySelectorAll('.eval-results-badge, .eval-delta, .eval-pin').forEach(function(n){ n.remove(); });
+  var badge = document.createElement('span');
+  badge.className = 'eval-results-badge';
+  badge.textContent = 'Results added ✓';
+  actions.appendChild(badge);
+  var er = parseFloat(res.er || '0');
+  var delta = document.createElement('span');
+  delta.className = 'eval-delta';
+  delta.textContent = 'Real ER: ' + (res.er || '0') + '% · ' + (er >= 8 ? 'High' : er >= 4 ? 'Mid' : 'Low');
+  actions.appendChild(delta);
+  if (res.verdict === 'win') {
+    var pin = document.createElement('button');
+    pin.className = 'btn btn-sm btn-ghost eval-pin';
+    pin.textContent = '📌 Pin as Sample';
+    pin.onclick = function() { pinAsSample(brand, id); };
+    actions.appendChild(pin);
+  }
+}
 </script>
 <script src="nav.js"></script>
+<div class="eval-drawer-overlay" id="eval-drawer" onclick="if(event.target===this)closeEvalDetails()">
+  <div class="eval-drawer-box">
+    <div class="eval-drawer-head">
+      <h3>Add published results</h3>
+      <button class="modal-close" onclick="closeEvalDetails()">×</button>
+    </div>
+    <div class="eval-drawer-body">
+      <div class="eval-metric-grid">
+        <div><label class="modal-label">Reach</label><input class="modal-input" id="ev-reach" type="number" placeholder="0"></div>
+        <div><label class="modal-label">Likes</label><input class="modal-input" id="ev-likes" type="number" placeholder="0"></div>
+        <div><label class="modal-label">Comments</label><input class="modal-input" id="ev-comments" type="number" placeholder="0"></div>
+        <div><label class="modal-label">Shares</label><input class="modal-input" id="ev-shares" type="number" placeholder="0"></div>
+        <div><label class="modal-label">Engagement rate %</label><input class="modal-input" id="ev-er" type="number" placeholder="0"></div>
+      </div>
+      <div>
+        <label class="modal-label">Verdict</label>
+        <div class="eval-verdict-row" id="ev-verdict">
+          <button class="eval-verdict-btn" data-v="win" onclick="selectVerdict(this)">🏆 Win</button>
+          <button class="eval-verdict-btn" data-v="neutral" onclick="selectVerdict(this)">⚪ Neutral</button>
+          <button class="eval-verdict-btn" data-v="under" onclick="selectVerdict(this)">⚠️ Under</button>
+        </div>
+      </div>
+      <div>
+        <label class="modal-label">Why did it work / flop?</label>
+        <textarea class="drawer-textarea" id="ev-note" placeholder="e.g. promo timing nailed it"></textarea>
+      </div>
+    </div>
+    <div class="eval-drawer-foot">
+      <button class="btn btn-sm btn-ghost" onclick="closeEvalDetails()">Cancel</button>
+      <button class="btn btn-sm btn-primary" onclick="saveEvalDetails()">Save results</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

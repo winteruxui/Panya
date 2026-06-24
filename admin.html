@@ -290,6 +290,7 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
     <div class="tab" onclick="switchTab('security', this)">Security</div>
     <div class="tab" onclick="switchTab('ai', this)">AI &amp; Content</div>
     <div class="tab" onclick="switchTab('notifications', this)">Notifications</div>
+    <div class="tab" onclick="switchTab('audit', this)">Audit Log</div>
   </div>
 
   <!-- General tab -->
@@ -772,6 +773,30 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
     </div>
   </div>
 
+  <!-- Audit Log tab -->
+  <div class="tab-panel" id="tab-audit">
+    <div class="section">
+      <div class="section-head">
+        <span class="section-title">Audit Log</span>
+        <div style="display:flex;gap:var(--space-2)">
+          <select class="btn-sm" id="audit-member" onchange="filterAudit()">
+            <option value="">All members</option>
+            <option>Patiphan S.</option><option>Nattaya K.</option>
+            <option>Wilasinee R.</option><option>Somchai P.</option>
+          </select>
+          <select class="btn-sm" id="audit-action" onchange="filterAudit()">
+            <option value="">All actions</option>
+            <option>plan</option><option>brand</option><option>member</option><option>billing</option>
+          </select>
+        </div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Time</th><th>Member</th><th>Action</th><th>Target</th></tr></thead>
+        <tbody id="audit-body"></tbody>
+      </table>
+    </div>
+  </div>
+
 </div>
 </main>
 
@@ -974,6 +999,31 @@ function saveNotif() {
   window.toast('Notification preferences saved', 'success', 2500);
 }
 document.addEventListener('DOMContentLoaded', renderNotif);
+
+var AUDIT_ROWS = [
+  ['Just now', 'System', 'billing', 'OpenAI key expiry warning (3 days)'],
+  ['2 hours ago', 'Patiphan S.', 'plan', 'Created "Bonchon May 2026"'],
+  ['Yesterday, 4:12 PM', 'Nattaya K.', 'plan', 'Submitted Haier Jun brief for review'],
+  ['14 May, 11:30 AM', 'Patiphan S.', 'brand', 'Added MK Restaurant to Brand Library'],
+  ['13 May, 3:00 PM', 'System', 'plan', 'Central Retail Apr plan marked complete'],
+  ['12 May, 9:15 AM', 'Somchai P.', 'member', 'Joined workspace as Viewer'],
+  ['10 May, 2:40 PM', 'Wilasinee R.', 'billing', 'Updated Pro plan payment method']
+];
+function renderAudit() {
+  var m = document.getElementById('audit-member').value;
+  var a = document.getElementById('audit-action').value;
+  var html = AUDIT_ROWS.filter(function(r) {
+    return (!m || r[1] === m) && (!a || r[2] === a);
+  }).map(function(r) {
+    return '<tr><td style="color:var(--text-muted);font-size:12px">' + r[0] + '</td>' +
+      '<td>' + r[1] + '</td>' +
+      '<td><span class="role-badge role-editor">' + r[2] + '</span></td>' +
+      '<td style="font-size:13px">' + r[3] + '</td></tr>';
+  }).join('');
+  document.getElementById('audit-body').innerHTML = html || '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:var(--space-6)">No matching entries</td></tr>';
+}
+function filterAudit() { renderAudit(); }
+document.addEventListener('DOMContentLoaded', renderAudit);
 
 document.addEventListener('click', function(e) {
   var popup = document.getElementById('user-popup');

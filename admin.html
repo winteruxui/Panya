@@ -284,7 +284,7 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
   <div class="tab-bar">
     <div class="tab active" onclick="switchTab('general', this)">General</div>
     <div class="tab" onclick="switchTab('overview', this)">Overview</div>
-    <div class="tab" onclick="switchTab('team', this)">Team</div>
+    <div class="tab" onclick="switchTab('team', this)">Team &amp; Roles</div>
     <div class="tab" onclick="switchTab('billing', this)">Billing</div>
     <div class="tab" onclick="switchTab('integrations', this)">Integrations</div>
     <div class="tab" onclick="switchTab('security', this)">Security</div>
@@ -504,6 +504,22 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
           </tr>
         </tbody>
       </table>
+    </div>
+    <div class="section">
+      <div class="section-head"><span class="section-title">Roles &amp; Permissions</span></div>
+      <table class="data-table">
+        <thead><tr><th>Capability</th><th style="text-align:center">Admin</th><th style="text-align:center">Editor</th><th style="text-align:center">Viewer</th></tr></thead>
+        <tbody>
+          <tr><td>Create &amp; edit plans</td><td style="text-align:center"><input type="checkbox" checked disabled></td><td style="text-align:center"><input type="checkbox" checked></td><td style="text-align:center"><input type="checkbox"></td></tr>
+          <tr><td>Edit brands</td><td style="text-align:center"><input type="checkbox" checked disabled></td><td style="text-align:center"><input type="checkbox" checked></td><td style="text-align:center"><input type="checkbox"></td></tr>
+          <tr><td>Manage billing</td><td style="text-align:center"><input type="checkbox" checked disabled></td><td style="text-align:center"><input type="checkbox"></td><td style="text-align:center"><input type="checkbox"></td></tr>
+          <tr><td>Invite members</td><td style="text-align:center"><input type="checkbox" checked disabled></td><td style="text-align:center"><input type="checkbox"></td><td style="text-align:center"><input type="checkbox"></td></tr>
+          <tr><td>View insights</td><td style="text-align:center"><input type="checkbox" checked disabled></td><td style="text-align:center"><input type="checkbox" checked></td><td style="text-align:center"><input type="checkbox" checked></td></tr>
+        </tbody>
+      </table>
+      <div style="padding:var(--space-4) var(--space-6)">
+        <button class="btn-sm primary" onclick="window.toast('Role permissions saved','success',2500)">Save roles</button>
+      </div>
     </div>
   </div>
 

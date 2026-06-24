@@ -262,6 +262,87 @@
 .legend-item { display: flex; align-items: center; gap: 5px; font-size: var(--text-xs); color: var(--text-secondary); }
 .legend-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
 
+/* ── Calendar Management ─────────────────────────────────── */
+.cal-cell { position: relative; }
+
+.cal-add-btn {
+  position: absolute; top: 4px; right: 4px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: none; border: 1.5px dashed var(--border-default);
+  color: var(--text-muted); display: none;
+  align-items: center; justify-content: center;
+  cursor: pointer; padding: 0;
+  transition: all 100ms;
+}
+.cal-cell:hover .cal-add-btn { display: flex; }
+.cal-add-btn:hover { background: var(--brand); border-color: var(--brand); color: white; border-style: solid; }
+
+.cal-post { position: relative; display: flex; align-items: center; }
+.cal-post-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; }
+.cal-post-actions {
+  position: absolute; right: 1px; top: 50%; transform: translateY(-50%);
+  display: none; align-items: center; gap: 1px;
+}
+.cal-post:hover .cal-post-actions { display: flex; }
+.cal-post-btn {
+  width: 14px; height: 14px;
+  display: flex; align-items: center; justify-content: center;
+  background: none; border: none; cursor: pointer;
+  border-radius: 2px; padding: 0; font-size: 11px;
+  opacity: 0.5; transition: opacity 80ms, background 80ms;
+  font-family: var(--font-ui); color: inherit;
+}
+.cal-post-btn:hover { opacity: 1; background: rgba(0,0,0,0.08); }
+.cal-post-btn.del:hover { color: var(--red); background: var(--red-m); }
+.cal-post-btn.move:hover { color: var(--brand); background: var(--brand-m); }
+
+.cal-move-banner {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--brand-m); border: 1px solid rgba(233,107,56,0.3);
+  border-radius: var(--r-md); padding: 10px 16px; margin-bottom: 12px;
+  font-size: 13px; color: var(--brand); font-weight: 500;
+}
+.cal-cell-selectable:not(.cal-source-cell) { cursor: crosshair; }
+.cal-cell-selectable:not(.cal-source-cell):hover {
+  background: rgba(233,107,56,0.06);
+  outline: 2px solid rgba(233,107,56,0.2); outline-offset: -2px;
+}
+.cal-source-cell { opacity: 0.4; }
+
+.cal-add-picker {
+  position: fixed; z-index: 400;
+  background: white; border: 1px solid var(--border-default);
+  border-radius: var(--r-lg);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.13);
+  min-width: 196px; max-height: 240px; overflow-y: auto;
+}
+.cal-picker-header {
+  padding: 7px 12px; font-size: 10px; font-weight: 700;
+  color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em;
+  background: var(--bg-elevated); border-bottom: 1px solid var(--border-subtle);
+  position: sticky; top: 0;
+}
+.cal-picker-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 12px; cursor: pointer;
+  font-size: 12px; color: var(--text-primary);
+  transition: background 80ms;
+}
+.cal-picker-item:hover { background: var(--brand-m); }
+.cal-picker-type {
+  font-size: 10px; font-weight: 600;
+  padding: 1px 6px; border-radius: var(--r-full); flex-shrink: 0;
+}
+
+.cal-more-btn {
+  display: block; width: 100%; padding: 1px 4px; margin-top: 2px;
+  border-radius: var(--r-sm); font-size: 10px; font-weight: 600;
+  background: var(--bg-elevated); color: var(--text-muted);
+  cursor: pointer; border: none; text-align: left;
+  transition: background 80ms; font-family: var(--font-ui);
+}
+.cal-more-btn:hover { background: var(--border-subtle); color: var(--text-secondary); }
+
 /* Attention banner */
 .attention-banner {
   display: flex; align-items: center; gap: var(--space-3);
@@ -283,7 +364,7 @@
 <div class="sidebar-inner">
 
   <div class="logo">
-    <a href="dashboard.html" class="logo-link">
+    <a href="index.html" class="logo-link">
       <img src="assets/logo-normal.svg" alt="Panya" height="28">
     </a>
   </div>
@@ -291,7 +372,7 @@
   <div class="nav-section-label">เครื่องมือ</div>
 
   <div class="nav">
-    <a href="dashboard.html" class="nav-item">
+    <a href="index.html" class="nav-item">
       <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span>
       <span class="nav-label">แดชบอร์ด</span>
     </a>
@@ -466,50 +547,14 @@
               <span class="legend-item" style="opacity:.6"><span class="legend-dot" style="background:var(--amber)"></span>🚀 Boosted</span>
             </div>
           </div>
-          <div class="calendar-grid">
-            <div class="cal-day-name">Sun</div><div class="cal-day-name">Mon</div><div class="cal-day-name">Tue</div><div class="cal-day-name">Wed</div><div class="cal-day-name">Thu</div><div class="cal-day-name">Fri</div><div class="cal-day-name">Sat</div>
-            <div class="cal-cell other-month"><div class="cal-num">26</div></div>
-            <div class="cal-cell other-month"><div class="cal-num">27</div></div>
-            <div class="cal-cell other-month"><div class="cal-num">28</div></div>
-            <div class="cal-cell other-month"><div class="cal-num">29</div></div>
-            <div class="cal-cell other-month"><div class="cal-num">30</div></div>
-            <div class="cal-cell"><div class="cal-num">1</div></div>
-            <div class="cal-cell"><div class="cal-num">2</div></div>
-            <div class="cal-cell"><div class="cal-num">3</div></div>
-            <div class="cal-cell"><div class="cal-num">4</div></div>
-            <div class="cal-cell"><div class="cal-num">5</div><div class="cal-post post-reel">#1 ASMR Wing</div></div>
-            <div class="cal-cell"><div class="cal-num">6</div></div>
-            <div class="cal-cell"><div class="cal-num">7</div></div>
-            <div class="cal-cell"><div class="cal-num">8</div><div class="cal-post post-carousel">#2 Crunch Playlist</div></div>
-            <div class="cal-cell"><div class="cal-num">9</div></div>
-            <div class="cal-cell"><div class="cal-num">10</div></div>
-            <div class="cal-cell"><div class="cal-num">11</div><div class="cal-post post-story">#3 Mother's Day 🚀</div></div>
-            <div class="cal-cell"><div class="cal-num">12</div></div>
-            <div class="cal-cell"><div class="cal-num">13</div></div>
-            <div class="cal-cell"><div class="cal-num">14</div><div class="cal-post post-reel">#4 Mango Reveal 🚀</div></div>
-            <div class="cal-cell"><div class="cal-num">15</div></div>
-            <div class="cal-cell"><div class="cal-num today">16</div></div>
-            <div class="cal-cell"><div class="cal-num">17</div></div>
-            <div class="cal-cell"><div class="cal-num">18</div></div>
-            <div class="cal-cell"><div class="cal-num">19</div><div class="cal-post post-story">#6 Promo 🚀</div></div>
-            <div class="cal-cell"><div class="cal-num">20</div><div class="cal-post post-reel">#5 UGC Reel</div></div>
-            <div class="cal-cell"><div class="cal-num">21</div></div>
-            <div class="cal-cell"><div class="cal-num">22</div><div class="cal-post post-story">#6 Promo</div></div>
-            <div class="cal-cell"><div class="cal-num">23</div></div>
-            <div class="cal-cell"><div class="cal-num">24</div></div>
-            <div class="cal-cell"><div class="cal-num">25</div><div class="cal-post post-story">#6 Promo</div></div>
-            <div class="cal-cell"><div class="cal-num">26</div></div>
-            <div class="cal-cell"><div class="cal-num">27</div></div>
-            <div class="cal-cell"><div class="cal-num">28</div><div class="cal-post post-story">#6 Promo</div></div>
-            <div class="cal-cell"><div class="cal-num">29</div></div>
-            <div class="cal-cell"><div class="cal-num">30</div></div>
-            <div class="cal-cell"><div class="cal-num">31</div></div>
-            <div class="cal-cell other-month"><div class="cal-num">1</div></div>
-            <div class="cal-cell other-month"><div class="cal-num">2</div></div>
-            <div class="cal-cell other-month"><div class="cal-num">3</div></div>
-            <div class="cal-cell other-month"><div class="cal-num">4</div></div>
-            <div class="cal-cell other-month"><div class="cal-num">5</div></div>
-            <div class="cal-cell other-month"><div class="cal-num">6</div></div>
+          <div id="cal-grid" class="calendar-grid">
+            <div class="cal-day-name">Sun</div>
+            <div class="cal-day-name">Mon</div>
+            <div class="cal-day-name">Tue</div>
+            <div class="cal-day-name">Wed</div>
+            <div class="cal-day-name">Thu</div>
+            <div class="cal-day-name">Fri</div>
+            <div class="cal-day-name">Sat</div>
           </div>
         </div>
       </div>
@@ -1235,6 +1280,284 @@ function vote(chip, type) {
   });
   chip.classList.add('v-' + type);
 }
+
+/* ── Calendar Management ─────────────────────────── */
+
+var CAL_ITEMS = {
+  1: { label: '#1 ASMR Wing',        type: 'reel',     boosted: false },
+  2: { label: '#2 Crunch Playlist',  type: 'carousel', boosted: false },
+  3: { label: "#3 Mother's Day",     type: 'story',    boosted: true  },
+  4: { label: '#4 Mango Reveal',     type: 'reel',     boosted: true  },
+  5: { label: '#5 UGC Reel',         type: 'reel',     boosted: false },
+  6: { label: '#6 Promo',            type: 'story',    boosted: true  },
+};
+
+var calSchedule = {
+  5:  [1],
+  8:  [2],
+  11: [3],
+  14: [4],
+  19: [6],
+  20: [5],
+  22: [6],
+  25: [6],
+  28: [6],
+};
+
+var CAL_DAYS = [
+  [26,0],[27,0],[28,0],[29,0],[30,0],[1,1],[2,1],
+  [3,1],[4,1],[5,1],[6,1],[7,1],[8,1],[9,1],
+  [10,1],[11,1],[12,1],[13,1],[14,1],[15,1],[16,1],
+  [17,1],[18,1],[19,1],[20,1],[21,1],[22,1],[23,1],
+  [24,1],[25,1],[26,1],[27,1],[28,1],[29,1],[30,1],
+  [31,1],[1,0],[2,0],[3,0],[4,0],[5,0],[6,0]
+];
+
+var MAX_CAL_VISIBLE = 2;
+var calMoveState = null;
+var calOpenPicker = null;
+
+function calTypeClass(type) {
+  return type === 'reel' ? 'post-reel' : type === 'carousel' ? 'post-carousel' : 'post-story';
+}
+
+function renderCalendar() {
+  var grid = document.getElementById('cal-grid');
+  if (!grid) return;
+  var children = Array.prototype.slice.call(grid.children);
+  children.slice(7).forEach(function(c) { c.remove(); });
+
+  CAL_DAYS.forEach(function(entry) {
+    var day = entry[0], isCurrent = entry[1];
+    var cell = document.createElement('div');
+    cell.className = 'cal-cell' + (isCurrent ? '' : ' other-month');
+
+    if (calMoveState && isCurrent) {
+      cell.classList.add('cal-cell-selectable');
+      if (calMoveState.day === day) cell.classList.add('cal-source-cell');
+    }
+
+    var numDiv = document.createElement('div');
+    numDiv.className = 'cal-num' + (isCurrent && day === 16 ? ' today' : '');
+    numDiv.textContent = day;
+    cell.appendChild(numDiv);
+
+    if (isCurrent) {
+      var items = calSchedule[day] || [];
+      var visible = items.slice(0, MAX_CAL_VISIBLE);
+      var overflow = items.length - MAX_CAL_VISIBLE;
+
+      visible.forEach(function(contentId, idx) {
+        var item = CAL_ITEMS[contentId];
+        if (item) cell.appendChild(makeCalPost(day, idx, contentId, item));
+      });
+
+      if (overflow > 0) {
+        var moreBtn = document.createElement('button');
+        moreBtn.className = 'cal-more-btn';
+        moreBtn.textContent = '+' + overflow + ' more';
+        (function(d, btn) {
+          btn.onclick = function(e) { e.stopPropagation(); toggleOverflow(d, cell, btn); };
+        })(day, moreBtn);
+        cell.appendChild(moreBtn);
+      }
+
+      if (!calMoveState) {
+        var addBtn = document.createElement('button');
+        addBtn.className = 'cal-add-btn';
+        addBtn.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
+        addBtn.title = 'Add content to May ' + day;
+        (function(d, c) {
+          addBtn.onclick = function(e) { e.stopPropagation(); openCalPicker(d, c, addBtn); };
+        })(day, cell);
+        cell.appendChild(addBtn);
+      }
+
+      if (calMoveState && !cell.classList.contains('cal-source-cell')) {
+        (function(d) {
+          cell.addEventListener('click', function() { completeMoveMode(d); });
+        })(day);
+      }
+    }
+
+    grid.appendChild(cell);
+  });
+}
+
+function makeCalPost(day, idx, contentId, item) {
+  var post = document.createElement('div');
+  post.className = 'cal-post ' + calTypeClass(item.type);
+  if (calMoveState && calMoveState.day === day && calMoveState.idx === idx) {
+    post.style.opacity = '0.3';
+    post.style.pointerEvents = 'none';
+  }
+
+  var label = document.createElement('span');
+  label.className = 'cal-post-label';
+  label.textContent = item.label + (item.boosted ? ' 🚀' : '');
+  post.appendChild(label);
+
+  if (!calMoveState) {
+    var actions = document.createElement('span');
+    actions.className = 'cal-post-actions';
+
+    var moveBtn = document.createElement('button');
+    moveBtn.className = 'cal-post-btn move';
+    moveBtn.title = 'Move to another date';
+    moveBtn.innerHTML = '<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>';
+    (function(d, i, cid) {
+      moveBtn.onclick = function(e) { e.stopPropagation(); startCalMove(d, i, cid); };
+    })(day, idx, contentId);
+
+    var delBtn = document.createElement('button');
+    delBtn.className = 'cal-post-btn del';
+    delBtn.title = 'Remove from this day';
+    delBtn.textContent = '×';
+    (function(d, i) {
+      delBtn.onclick = function(e) { e.stopPropagation(); removeFromDay(d, i); };
+    })(day, idx);
+
+    actions.appendChild(moveBtn);
+    actions.appendChild(delBtn);
+    post.appendChild(actions);
+  }
+
+  return post;
+}
+
+function removeFromDay(day, idx) {
+  if (!calSchedule[day]) return;
+  calSchedule[day].splice(idx, 1);
+  if (calSchedule[day].length === 0) delete calSchedule[day];
+  closeCalPicker();
+  renderCalendar();
+}
+
+function startCalMove(day, idx, contentId) {
+  closeCalPicker();
+  calMoveState = { day: day, idx: idx, contentId: contentId };
+  renderCalendar();
+  var item = CAL_ITEMS[contentId];
+  var existing = document.getElementById('cal-move-banner');
+  if (existing) existing.remove();
+  var banner = document.createElement('div');
+  banner.id = 'cal-move-banner';
+  banner.className = 'cal-move-banner';
+  banner.innerHTML =
+    '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>' +
+    ' Moving <strong>' + item.label + '</strong> — click any date to place it' +
+    '<button onclick="cancelCalMove()" style="margin-left:auto;background:none;border:1px solid rgba(233,107,56,0.4);border-radius:var(--r-full);padding:3px 10px;font-size:12px;color:var(--brand);cursor:pointer;font-family:var(--font-ui)">Cancel</button>';
+  var calWrap = document.querySelector('#ov-cal-view .calendar-wrap');
+  if (calWrap) calWrap.parentNode.insertBefore(banner, calWrap);
+}
+
+function completeMoveMode(targetDay) {
+  if (!calMoveState) return;
+  var src = calMoveState.day, idx = calMoveState.idx, cid = calMoveState.contentId;
+  if (calSchedule[src]) {
+    calSchedule[src].splice(idx, 1);
+    if (calSchedule[src].length === 0) delete calSchedule[src];
+  }
+  if (!calSchedule[targetDay]) calSchedule[targetDay] = [];
+  calSchedule[targetDay].push(cid);
+  calMoveState = null;
+  var b = document.getElementById('cal-move-banner');
+  if (b) b.remove();
+  renderCalendar();
+}
+
+function cancelCalMove() {
+  calMoveState = null;
+  var b = document.getElementById('cal-move-banner');
+  if (b) b.remove();
+  renderCalendar();
+}
+
+function openCalPicker(day, cell, triggerBtn) {
+  closeCalPicker();
+  var rect = triggerBtn.getBoundingClientRect();
+  var picker = document.createElement('div');
+  picker.className = 'cal-add-picker';
+  picker.style.top = (rect.bottom + 4) + 'px';
+  picker.style.left = rect.left + 'px';
+
+  var header = document.createElement('div');
+  header.className = 'cal-picker-header';
+  header.textContent = 'Add to May ' + day;
+  picker.appendChild(header);
+
+  Object.keys(CAL_ITEMS).forEach(function(id) {
+    var item = CAL_ITEMS[id];
+    var row = document.createElement('div');
+    row.className = 'cal-picker-item';
+
+    var lbl = document.createElement('span');
+    lbl.style.flex = '1';
+    lbl.textContent = item.label;
+
+    var typeChip = document.createElement('span');
+    typeChip.className = 'cal-picker-type ' + calTypeClass(item.type);
+    typeChip.textContent = item.type.charAt(0).toUpperCase() + item.type.slice(1);
+
+    row.appendChild(lbl);
+    row.appendChild(typeChip);
+    (function(d, cid) {
+      row.onclick = function(e) { e.stopPropagation(); addToDay(d, cid); };
+    })(day, parseInt(id));
+    picker.appendChild(row);
+  });
+
+  document.body.appendChild(picker);
+  calOpenPicker = picker;
+
+  var pr = picker.getBoundingClientRect();
+  if (pr.right > window.innerWidth - 8) {
+    picker.style.left = (window.innerWidth - pr.width - 8) + 'px';
+  }
+  if (pr.bottom > window.innerHeight - 8) {
+    picker.style.top = (rect.top - pr.height - 4) + 'px';
+  }
+
+  setTimeout(function() {
+    document.addEventListener('click', closeCalPicker, { once: true });
+  }, 0);
+}
+
+function closeCalPicker() {
+  if (calOpenPicker) { calOpenPicker.remove(); calOpenPicker = null; }
+}
+
+function addToDay(day, contentId) {
+  if (!calSchedule[day]) calSchedule[day] = [];
+  calSchedule[day].push(contentId);
+  closeCalPicker();
+  renderCalendar();
+}
+
+function toggleOverflow(day, cell, moreBtn) {
+  var existing = cell.querySelector('.cal-overflow-wrap');
+  if (existing) {
+    existing.remove();
+    var n = (calSchedule[day] || []).length - MAX_CAL_VISIBLE;
+    moreBtn.textContent = '+' + n + ' more';
+    return;
+  }
+  var items = calSchedule[day] || [];
+  var wrap = document.createElement('div');
+  wrap.className = 'cal-overflow-wrap';
+  items.slice(MAX_CAL_VISIBLE).forEach(function(contentId, i) {
+    var item = CAL_ITEMS[contentId];
+    if (item) wrap.appendChild(makeCalPost(day, MAX_CAL_VISIBLE + i, contentId, item));
+  });
+  moreBtn.insertAdjacentElement('afterend', wrap);
+  moreBtn.textContent = 'Show less ↑';
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') { cancelCalMove(); closeCalPicker(); }
+});
+
+renderCalendar();
 </script>
 
 <script src="nav.js"></script>

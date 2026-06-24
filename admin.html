@@ -902,7 +902,11 @@ function dismissAlert() {
 
 function renewKey() {
   window.toast('Opening API key settings…', 'info', 2000);
-  setTimeout(function() { switchTab('integrations', document.querySelectorAll('.tab')[3]); }, 800);
+  setTimeout(function() {
+    var tabs = document.querySelectorAll('.tab');
+    var target = Array.prototype.find.call(tabs, function(t) { return /switchTab\('integrations'/.test(t.getAttribute('onclick') || ''); });
+    if (target) switchTab('integrations', target);
+  }, 800);
 }
 
 // ── Invite modal ──────────────────────────────

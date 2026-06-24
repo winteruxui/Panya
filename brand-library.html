@@ -172,6 +172,38 @@
 .score-pill.st { background: var(--purple-m); color: var(--purple); }
 .score-pill.av { background: var(--bg-elevated); color: var(--text-secondary); }
 
+/* ── Evaluation Log ─────────────────────────────── */
+.eval-entry {
+  background: var(--bg-surface); border: 1px solid var(--border-default);
+  border-radius: var(--r-lg); padding: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-3); box-shadow: var(--shadow-xs);
+}
+.eval-entry-head { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-3); }
+.eval-chips { display: flex; gap: var(--space-2); }
+.eval-date { margin-left: auto; font-size: var(--text-xs); color: var(--text-muted); }
+.eval-scores { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-3); }
+.eval-overall { font-family: var(--font-mono); font-size: var(--text-2xl); font-weight: 700; color: var(--brand); }
+.eval-sub { display: flex; gap: var(--space-3); }
+.eval-sub-item { text-align: center; }
+.eval-sub-val { font-family: var(--font-mono); font-size: var(--text-sm); font-weight: 700; color: var(--text-primary); }
+.eval-sub-lbl { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.eval-caption { font-size: var(--text-sm); color: var(--text-secondary); line-height: var(--leading-relaxed); margin-bottom: var(--space-3); }
+.eval-actions { display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap; }
+.eval-results-badge { font-size: var(--text-xs); font-weight: 600; color: var(--green); background: var(--green-m); padding: 2px var(--space-2); border-radius: var(--r-full); }
+.eval-delta { font-size: var(--text-xs); color: var(--text-muted); margin-left: var(--space-2); }
+/* Add-details drawer */
+.eval-drawer-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 300; align-items: center; justify-content: center; }
+.eval-drawer-overlay.open { display: flex; }
+.eval-drawer-box { background: var(--bg-base); border-radius: var(--r-xl); box-shadow: var(--shadow-xl); width: 460px; max-width: calc(100vw - 32px); overflow: hidden; }
+.eval-drawer-head { display: flex; align-items: center; justify-content: space-between; padding: var(--space-5) var(--space-6); border-bottom: 1px solid var(--border-subtle); }
+.eval-drawer-head h3 { font-size: var(--text-lg); font-weight: 700; }
+.eval-drawer-body { padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-4); }
+.eval-metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.eval-verdict-row { display: flex; gap: var(--space-2); }
+.eval-verdict-btn { flex: 1; padding: 8px; border: 1.5px solid var(--border-default); border-radius: var(--r-md); background: var(--bg-base); cursor: pointer; font-size: var(--text-sm); font-family: var(--font-ui); }
+.eval-verdict-btn.active { border-color: var(--brand); background: var(--brand-m); color: var(--brand); font-weight: 600; }
+.eval-drawer-foot { display: flex; justify-content: flex-end; gap: var(--space-3); padding: var(--space-4) var(--space-6); border-top: 1px solid var(--border-subtle); }
+
 /* Brand Drawer */
 .brand-drawer-overlay { display: none; position: fixed; inset: 0; z-index: 200; }
 .brand-drawer-overlay.open { display: flex; }
@@ -300,7 +332,7 @@
 <div class="sidebar-inner">
 
   <div class="logo">
-    <a href="dashboard.html" class="logo-link">
+    <a href="index.html" class="logo-link">
       <img src="assets/logo-normal.svg" alt="Panya" height="28">
     </a>
   </div>
@@ -308,7 +340,7 @@
   <div class="nav-section-label">เครื่องมือ</div>
 
   <div class="nav">
-    <a href="dashboard.html" class="nav-item">
+    <a href="index.html" class="nav-item">
       <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span>
       <span class="nav-label">แดชบอร์ด</span>
     </a>
@@ -533,6 +565,56 @@
         </div>
       </div>
 
+      <div class="brand-section">
+        <div class="brand-section-title">Evaluation Log</div>
+        <div id="evallog-bonchon">
+          <!-- entry 1 -->
+          <div class="eval-entry" data-brand="bonchon" data-id="bc1">
+            <div class="eval-entry-head">
+              <div class="eval-chips"><span class="chip">Facebook</span><span class="chip">Promotion</span></div>
+              <span class="eval-date">15 Jan 2025</span>
+            </div>
+            <div class="eval-scores">
+              <div class="eval-overall">67</div>
+              <div class="eval-sub">
+                <div class="eval-sub-item"><div class="eval-sub-val">67</div><div class="eval-sub-lbl">Hook</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">70</div><div class="eval-sub-lbl">Brand</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">72</div><div class="eval-sub-lbl">CTA</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">63</div><div class="eval-sub-lbl">Platform</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">60</div><div class="eval-sub-lbl">Clarity</div></div>
+              </div>
+            </div>
+            <div class="eval-caption">ดื่มฉลองส่งท้ายปีกับ Tiger 100 Rally Pro แบบจัดเต็ม — กรอบทุกคำ อร่อยทุกกัด 🍗🔥 #Bonchon #CrispyWings</div>
+            <div class="eval-actions" data-results="">
+              <button class="btn btn-sm btn-secondary" onclick="openEvalDetails('bonchon','bc1')">+ Add details</button>
+              <button class="btn btn-sm btn-ghost" onclick="toast('Result exported.','success')">Export Result</button>
+            </div>
+          </div>
+          <!-- entry 2 -->
+          <div class="eval-entry" data-brand="bonchon" data-id="bc2">
+            <div class="eval-entry-head">
+              <div class="eval-chips"><span class="chip">Instagram</span><span class="chip">Entertainment</span></div>
+              <span class="eval-date">8 Jan 2025</span>
+            </div>
+            <div class="eval-scores">
+              <div class="eval-overall">84</div>
+              <div class="eval-sub">
+                <div class="eval-sub-item"><div class="eval-sub-val">88</div><div class="eval-sub-lbl">Hook</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">85</div><div class="eval-sub-lbl">Brand</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">82</div><div class="eval-sub-lbl">CTA</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">83</div><div class="eval-sub-lbl">Platform</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">80</div><div class="eval-sub-lbl">Clarity</div></div>
+              </div>
+            </div>
+            <div class="eval-caption">กรอบทุกคำ อร่อยทุกกัด 🍗🔥 Bonchon Wings วันนี้ที่สาขาใกล้บ้านคุณ #Bonchon #CrispyWings</div>
+            <div class="eval-actions" data-results="">
+              <button class="btn btn-sm btn-secondary" onclick="openEvalDetails('bonchon','bc2')">+ Add details</button>
+              <button class="btn btn-sm btn-ghost" onclick="toast('Result exported.','success')">Export Result</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div><!-- /panel-bonchon -->
 
     <!-- ── HAIER ──────────────────────────────────── -->
@@ -638,6 +720,54 @@
         <div class="caption-sample">
           🏠 บ้านสะอาด ชีวิตดี เครื่องซักผ้า Haier Front Load ซักสะอาด ดูแลผ้าได้ยาวนานขึ้น สนใจทักมาสอบถามได้เลยนะคะ #Haier #เครื่องซักผ้า
           <div class="caption-meta"><span class="chip">Facebook</span><span class="score-pill st">71</span></div>
+        </div>
+      </div>
+
+      <div class="brand-section">
+        <div class="brand-section-title">Evaluation Log</div>
+        <div id="evallog-haier">
+          <div class="eval-entry" data-brand="haier" data-id="ha1">
+            <div class="eval-entry-head">
+              <div class="eval-chips"><span class="chip">Facebook</span><span class="chip">Product</span></div>
+              <span class="eval-date">12 Jan 2025</span>
+            </div>
+            <div class="eval-scores">
+              <div class="eval-overall">59</div>
+              <div class="eval-sub">
+                <div class="eval-sub-item"><div class="eval-sub-val">55</div><div class="eval-sub-lbl">Hook</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">62</div><div class="eval-sub-lbl">Brand</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">61</div><div class="eval-sub-lbl">CTA</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">58</div><div class="eval-sub-lbl">Platform</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">60</div><div class="eval-sub-lbl">Clarity</div></div>
+              </div>
+            </div>
+            <div class="eval-caption">แอร์ Haier ประหยัดไฟเบอร์ 5 เย็นเร็วทันใจ รับหน้าร้อนนี้ ❄️ #Haier #ประหยัดไฟ</div>
+            <div class="eval-actions" data-results="">
+              <button class="btn btn-sm btn-secondary" onclick="openEvalDetails('haier','ha1')">+ Add details</button>
+              <button class="btn btn-sm btn-ghost" onclick="toast('Result exported.','success')">Export Result</button>
+            </div>
+          </div>
+          <div class="eval-entry" data-brand="haier" data-id="ha2">
+            <div class="eval-entry-head">
+              <div class="eval-chips"><span class="chip">Instagram</span><span class="chip">Promotion</span></div>
+              <span class="eval-date">5 Jan 2025</span>
+            </div>
+            <div class="eval-scores">
+              <div class="eval-overall">73</div>
+              <div class="eval-sub">
+                <div class="eval-sub-item"><div class="eval-sub-val">75</div><div class="eval-sub-lbl">Hook</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">74</div><div class="eval-sub-lbl">Brand</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">70</div><div class="eval-sub-lbl">CTA</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">72</div><div class="eval-sub-lbl">Platform</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">71</div><div class="eval-sub-lbl">Clarity</div></div>
+              </div>
+            </div>
+            <div class="eval-caption">ตู้เย็น Haier 2 ประตู จุใจ ประหยัดไฟ ลดสูงสุด 30% เฉพาะเดือนนี้ 🧊 #Haier #ลดราคา</div>
+            <div class="eval-actions" data-results="">
+              <button class="btn btn-sm btn-secondary" onclick="openEvalDetails('haier','ha2')">+ Add details</button>
+              <button class="btn btn-sm btn-ghost" onclick="toast('Result exported.','success')">Export Result</button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -751,6 +881,54 @@
         </div>
       </div>
 
+      <div class="brand-section">
+        <div class="brand-section-title">Evaluation Log</div>
+        <div id="evallog-central">
+          <div class="eval-entry" data-brand="central" data-id="ce1">
+            <div class="eval-entry-head">
+              <div class="eval-chips"><span class="chip">Facebook</span><span class="chip">Promotion</span></div>
+              <span class="eval-date">20 Jun 2025</span>
+            </div>
+            <div class="eval-scores">
+              <div class="eval-overall">66</div>
+              <div class="eval-sub">
+                <div class="eval-sub-item"><div class="eval-sub-val">64</div><div class="eval-sub-lbl">Hook</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">68</div><div class="eval-sub-lbl">Brand</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">65</div><div class="eval-sub-lbl">CTA</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">67</div><div class="eval-sub-lbl">Platform</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">66</div><div class="eval-sub-lbl">Clarity</div></div>
+              </div>
+            </div>
+            <div class="eval-caption">เซ็นทรัล มิดเยียร์ เซล ลดทั้งห้าง สูงสุด 70% 🛍️ #CentralMidyearSale #ช้อปคุ้ม</div>
+            <div class="eval-actions" data-results="">
+              <button class="btn btn-sm btn-secondary" onclick="openEvalDetails('central','ce1')">+ Add details</button>
+              <button class="btn btn-sm btn-ghost" onclick="toast('Result exported.','success')">Export Result</button>
+            </div>
+          </div>
+          <div class="eval-entry" data-brand="central" data-id="ce2">
+            <div class="eval-entry-head">
+              <div class="eval-chips"><span class="chip">Instagram</span><span class="chip">Entertainment</span></div>
+              <span class="eval-date">10 Jun 2025</span>
+            </div>
+            <div class="eval-scores">
+              <div class="eval-overall">81</div>
+              <div class="eval-sub">
+                <div class="eval-sub-item"><div class="eval-sub-val">84</div><div class="eval-sub-lbl">Hook</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">82</div><div class="eval-sub-lbl">Brand</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">79</div><div class="eval-sub-lbl">CTA</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">80</div><div class="eval-sub-lbl">Platform</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">80</div><div class="eval-sub-lbl">Clarity</div></div>
+              </div>
+            </div>
+            <div class="eval-caption">แต่งตัวรับซัมเมอร์กับคอลเลกชันใหม่ที่เซ็นทรัล ☀️👗 #CentralTH #SummerStyle</div>
+            <div class="eval-actions" data-results="">
+              <button class="btn btn-sm btn-secondary" onclick="openEvalDetails('central','ce2')">+ Add details</button>
+              <button class="btn btn-sm btn-ghost" onclick="toast('Result exported.','success')">Export Result</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div><!-- /panel-central -->
 
     <!-- ── MK RESTAURANT ──────────────────────────── -->
@@ -858,6 +1036,54 @@
         <div class="caption-sample">
           วันหยุดนี้ชวนครอบครัวมากิน MK กันนะ 👨‍👩‍👧‍👦 สุกี้กำลังดี อิ่มอร่อย อบอุ่นทุกมื้อ #MKสุกี้ #กินข้าวด้วยกัน #WeekendFamily
           <div class="caption-meta"><span class="chip">Facebook</span><span class="score-pill av">66</span></div>
+        </div>
+      </div>
+
+      <div class="brand-section">
+        <div class="brand-section-title">Evaluation Log</div>
+        <div id="evallog-mk">
+          <div class="eval-entry" data-brand="mk" data-id="mk1">
+            <div class="eval-entry-head">
+              <div class="eval-chips"><span class="chip">Facebook</span><span class="chip">Product</span></div>
+              <span class="eval-date">15 May 2025</span>
+            </div>
+            <div class="eval-scores">
+              <div class="eval-overall">62</div>
+              <div class="eval-sub">
+                <div class="eval-sub-item"><div class="eval-sub-val">60</div><div class="eval-sub-lbl">Hook</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">65</div><div class="eval-sub-lbl">Brand</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">63</div><div class="eval-sub-lbl">CTA</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">61</div><div class="eval-sub-lbl">Platform</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">62</div><div class="eval-sub-lbl">Clarity</div></div>
+              </div>
+            </div>
+            <div class="eval-caption">MK สุกี้ เซตfamยกโขยง อิ่มคุ้มทั้งครอบครัว 🍲 #MKสุกี้ #อิ่มคุ้ม</div>
+            <div class="eval-actions" data-results="">
+              <button class="btn btn-sm btn-secondary" onclick="openEvalDetails('mk','mk1')">+ Add details</button>
+              <button class="btn btn-sm btn-ghost" onclick="toast('Result exported.','success')">Export Result</button>
+            </div>
+          </div>
+          <div class="eval-entry" data-brand="mk" data-id="mk2">
+            <div class="eval-entry-head">
+              <div class="eval-chips"><span class="chip">TikTok</span><span class="chip">Entertainment</span></div>
+              <span class="eval-date">1 May 2025</span>
+            </div>
+            <div class="eval-scores">
+              <div class="eval-overall">77</div>
+              <div class="eval-sub">
+                <div class="eval-sub-item"><div class="eval-sub-val">80</div><div class="eval-sub-lbl">Hook</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">78</div><div class="eval-sub-lbl">Brand</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">74</div><div class="eval-sub-lbl">CTA</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">76</div><div class="eval-sub-lbl">Platform</div></div>
+                <div class="eval-sub-item"><div class="eval-sub-val">75</div><div class="eval-sub-lbl">Clarity</div></div>
+              </div>
+            </div>
+            <div class="eval-caption">เต้นท่าMK ลุ้นรับส่วนลด! มาสนุกกับเมนูใหม่ 🕺🍜 #MKrestaurant #MKchallenge</div>
+            <div class="eval-actions" data-results="">
+              <button class="btn btn-sm btn-secondary" onclick="openEvalDetails('mk','mk2')">+ Add details</button>
+              <button class="btn btn-sm btn-ghost" onclick="toast('Result exported.','success')">Export Result</button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1240,7 +1466,143 @@ function updateColorPreview(input, idx) {
     prev.style.background = input.value;
   }
 }
+
+var _evalCtx = { brand: null, id: null, verdict: null };
+function evalKey(brand) { return 'panya_eval_results_' + brand; }
+function getEvalResults(brand, id) {
+  try { return (JSON.parse(localStorage.getItem(evalKey(brand)) || '{}'))[id] || null; } catch (e) { return null; }
+}
+function openEvalDetails(brand, id) {
+  _evalCtx = { brand: brand, id: id, verdict: null };
+  ['ev-reach','ev-likes','ev-comments','ev-shares','ev-er','ev-note'].forEach(function(f){ document.getElementById(f).value = ''; });
+  document.querySelectorAll('#ev-verdict .eval-verdict-btn').forEach(function(b){ b.classList.remove('active'); });
+  var saved = getEvalResults(brand, id);
+  if (saved) {
+    document.getElementById('ev-reach').value = saved.reach || '';
+    document.getElementById('ev-likes').value = saved.likes || '';
+    document.getElementById('ev-comments').value = saved.comments || '';
+    document.getElementById('ev-shares').value = saved.shares || '';
+    document.getElementById('ev-er').value = saved.er || '';
+    document.getElementById('ev-note').value = saved.note || '';
+    if (saved.verdict) {
+      _evalCtx.verdict = saved.verdict;
+      var btn = document.querySelector('#ev-verdict .eval-verdict-btn[data-v="' + saved.verdict + '"]');
+      if (btn) btn.classList.add('active');
+    }
+  }
+  document.getElementById('eval-drawer').classList.add('open');
+}
+function closeEvalDetails() { document.getElementById('eval-drawer').classList.remove('open'); }
+function selectVerdict(btn) {
+  document.querySelectorAll('#ev-verdict .eval-verdict-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  _evalCtx.verdict = btn.getAttribute('data-v');
+}
+function saveEvalDetails() {
+  var brand = _evalCtx.brand, id = _evalCtx.id;
+  if (!brand || !id) return;
+  var all = {};
+  try { all = JSON.parse(localStorage.getItem(evalKey(brand)) || '{}'); } catch (e) {}
+  all[id] = {
+    reach: document.getElementById('ev-reach').value,
+    likes: document.getElementById('ev-likes').value,
+    comments: document.getElementById('ev-comments').value,
+    shares: document.getElementById('ev-shares').value,
+    er: document.getElementById('ev-er').value,
+    note: document.getElementById('ev-note').value,
+    verdict: _evalCtx.verdict
+  };
+  localStorage.setItem(evalKey(brand), JSON.stringify(all));
+  decorateEvalEntry(brand, id, all[id]);
+  closeEvalDetails();
+  toast('Results saved', 'success');
+}
+function decorateEvalEntry(brand, id, res) {
+  var entry = document.querySelector('.eval-entry[data-brand="' + brand + '"][data-id="' + id + '"]');
+  if (!entry) return;
+  var actions = entry.querySelector('.eval-actions');
+  actions.setAttribute('data-results', '1');
+  // Remove any previously-added decorations so re-saving doesn't duplicate them
+  actions.querySelectorAll('.eval-results-badge, .eval-delta, .eval-pin').forEach(function(n){ n.remove(); });
+  var badge = document.createElement('span');
+  badge.className = 'eval-results-badge';
+  badge.textContent = 'Results added ✓';
+  actions.appendChild(badge);
+  var er = parseFloat(res.er || '0');
+  var delta = document.createElement('span');
+  delta.className = 'eval-delta';
+  delta.textContent = 'Real ER: ' + (res.er || '0') + '% · ' + (er >= 8 ? 'High' : er >= 4 ? 'Mid' : 'Low');
+  actions.appendChild(delta);
+  if (res.verdict === 'win') {
+    var pin = document.createElement('button');
+    pin.className = 'btn btn-sm btn-ghost eval-pin';
+    pin.textContent = '📌 Pin as Sample';
+    pin.onclick = function() { pinAsSample(brand, id); };
+    actions.appendChild(pin);
+  }
+}
+function pinAsSample(brand, id) {
+  var entry = document.querySelector('.eval-entry[data-brand="' + brand + '"][data-id="' + id + '"]');
+  if (!entry) return;
+  var caption = entry.querySelector('.eval-caption').textContent;
+  var platform = entry.querySelector('.eval-chips .chip').textContent;
+  var res = getEvalResults(brand, id) || {};
+  var panel = entry.closest('.brand-detail-panel');
+  var sampleSection = null;
+  panel.querySelectorAll('.brand-section-title').forEach(function(t) {
+    if (t.textContent.trim() === 'Sample Captions') sampleSection = t.parentNode;
+  });
+  if (!sampleSection) return;
+  var div = document.createElement('div');
+  div.className = 'caption-sample';
+  div.innerHTML = caption +
+    '<div class="caption-meta"><span class="chip">' + platform + '</span>' +
+    '<span class="score-pill ex">Real: ' + (res.er || '0') + '% ER</span></div>';
+  sampleSection.appendChild(div);
+  toast('Pinned to Sample Captions', 'success');
+}
+function restoreEvalResults() {
+  document.querySelectorAll('.eval-entry').forEach(function(entry) {
+    var brand = entry.getAttribute('data-brand'), id = entry.getAttribute('data-id');
+    var res = getEvalResults(brand, id);
+    if (res) decorateEvalEntry(brand, id, res);
+  });
+}
+document.addEventListener('DOMContentLoaded', restoreEvalResults);
 </script>
 <script src="nav.js"></script>
+<div class="eval-drawer-overlay" id="eval-drawer" onclick="if(event.target===this)closeEvalDetails()">
+  <div class="eval-drawer-box">
+    <div class="eval-drawer-head">
+      <h3>Add published results</h3>
+      <button class="modal-close" onclick="closeEvalDetails()">×</button>
+    </div>
+    <div class="eval-drawer-body">
+      <div class="eval-metric-grid">
+        <div><label class="modal-label">Reach</label><input class="modal-input" id="ev-reach" type="number" placeholder="0"></div>
+        <div><label class="modal-label">Likes</label><input class="modal-input" id="ev-likes" type="number" placeholder="0"></div>
+        <div><label class="modal-label">Comments</label><input class="modal-input" id="ev-comments" type="number" placeholder="0"></div>
+        <div><label class="modal-label">Shares</label><input class="modal-input" id="ev-shares" type="number" placeholder="0"></div>
+        <div><label class="modal-label">Engagement rate %</label><input class="modal-input" id="ev-er" type="number" placeholder="0"></div>
+      </div>
+      <div>
+        <label class="modal-label">Verdict</label>
+        <div class="eval-verdict-row" id="ev-verdict">
+          <button class="eval-verdict-btn" data-v="win" onclick="selectVerdict(this)">🏆 Win</button>
+          <button class="eval-verdict-btn" data-v="neutral" onclick="selectVerdict(this)">⚪ Neutral</button>
+          <button class="eval-verdict-btn" data-v="under" onclick="selectVerdict(this)">⚠️ Under</button>
+        </div>
+      </div>
+      <div>
+        <label class="modal-label">Why did it work / flop?</label>
+        <textarea class="drawer-textarea" id="ev-note" placeholder="e.g. promo timing nailed it"></textarea>
+      </div>
+    </div>
+    <div class="eval-drawer-foot">
+      <button class="btn btn-sm btn-ghost" onclick="closeEvalDetails()">Cancel</button>
+      <button class="btn btn-sm btn-primary" onclick="saveEvalDetails()">Save results</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

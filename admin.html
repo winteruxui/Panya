@@ -196,7 +196,7 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
 <div class="sidebar-inner">
 
   <div class="logo">
-    <a href="dashboard.html" class="logo-link">
+    <a href="index.html" class="logo-link">
       <img src="assets/logo-normal.svg" alt="Panya" height="28">
     </a>
   </div>
@@ -204,7 +204,7 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
   <div class="nav-section-label">เครื่องมือ</div>
 
   <div class="nav">
-    <a href="dashboard.html" class="nav-item">
+    <a href="index.html" class="nav-item">
       <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span>
       <span class="nav-label">แดชบอร์ด</span>
     </a>
@@ -282,15 +282,63 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
 
   <!-- Tabs -->
   <div class="tab-bar">
-    <div class="tab active" onclick="switchTab('overview', this)">Overview</div>
-    <div class="tab" onclick="switchTab('team', this)">Team</div>
+    <div class="tab active" onclick="switchTab('general', this)">General</div>
+    <div class="tab" onclick="switchTab('overview', this)">Overview</div>
+    <div class="tab" onclick="switchTab('team', this)">Team &amp; Roles</div>
     <div class="tab" onclick="switchTab('billing', this)">Billing</div>
     <div class="tab" onclick="switchTab('integrations', this)">Integrations</div>
     <div class="tab" onclick="switchTab('security', this)">Security</div>
+    <div class="tab" onclick="switchTab('ai', this)">AI &amp; Content</div>
+    <div class="tab" onclick="switchTab('notifications', this)">Notifications</div>
+    <div class="tab" onclick="switchTab('audit', this)">Audit Log</div>
+  </div>
+
+  <!-- General tab -->
+  <div class="tab-panel active" id="tab-general">
+    <div class="section">
+      <div class="section-head"><span class="section-title">Workspace</span></div>
+      <div style="padding:var(--space-6)">
+        <div style="margin-bottom:var(--space-5)">
+          <label class="modal-label" for="gen-name">Workspace name</label>
+          <input class="modal-input" id="gen-name" value="Panya">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-bottom:var(--space-5)">
+          <div>
+            <label class="modal-label" for="gen-lang">Default language</label>
+            <select class="modal-select" id="gen-lang">
+              <option value="th">ไทย (Thai)</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+          <div>
+            <label class="modal-label" for="gen-tz">Timezone</label>
+            <select class="modal-select" id="gen-tz">
+              <option value="Asia/Bangkok">Asia/Bangkok (GMT+7)</option>
+              <option value="UTC">UTC</option>
+            </select>
+          </div>
+          <div>
+            <label class="modal-label" for="gen-cur">Currency</label>
+            <select class="modal-select" id="gen-cur">
+              <option value="THB">฿ THB</option>
+              <option value="USD">$ USD</option>
+            </select>
+          </div>
+          <div>
+            <label class="modal-label" for="gen-date">Date format</label>
+            <select class="modal-select" id="gen-date">
+              <option value="dmy">31 May 2026</option>
+              <option value="ymd">2026-05-31</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-sm primary" onclick="saveGeneral()">Save changes</button>
+      </div>
+    </div>
   </div>
 
   <!-- Overview tab -->
-  <div class="tab-panel active" id="tab-overview">
+  <div class="tab-panel" id="tab-overview">
 
     <div class="kpi-row">
       <div class="kpi-card">
@@ -457,6 +505,22 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
           </tr>
         </tbody>
       </table>
+    </div>
+    <div class="section">
+      <div class="section-head"><span class="section-title">Roles &amp; Permissions</span></div>
+      <table class="data-table">
+        <thead><tr><th>Capability</th><th style="text-align:center">Admin</th><th style="text-align:center">Editor</th><th style="text-align:center">Viewer</th></tr></thead>
+        <tbody>
+          <tr><td>Create &amp; edit plans</td><td style="text-align:center"><input type="checkbox" checked disabled></td><td style="text-align:center"><input type="checkbox" checked></td><td style="text-align:center"><input type="checkbox"></td></tr>
+          <tr><td>Edit brands</td><td style="text-align:center"><input type="checkbox" checked disabled></td><td style="text-align:center"><input type="checkbox" checked></td><td style="text-align:center"><input type="checkbox"></td></tr>
+          <tr><td>Manage billing</td><td style="text-align:center"><input type="checkbox" checked disabled></td><td style="text-align:center"><input type="checkbox"></td><td style="text-align:center"><input type="checkbox"></td></tr>
+          <tr><td>Invite members</td><td style="text-align:center"><input type="checkbox" checked disabled></td><td style="text-align:center"><input type="checkbox"></td><td style="text-align:center"><input type="checkbox"></td></tr>
+          <tr><td>View insights</td><td style="text-align:center"><input type="checkbox" checked disabled></td><td style="text-align:center"><input type="checkbox" checked></td><td style="text-align:center"><input type="checkbox" checked></td></tr>
+        </tbody>
+      </table>
+      <div style="padding:var(--space-4) var(--space-6)">
+        <button class="btn-sm primary" onclick="window.toast('Role permissions saved','success',2500)">Save roles</button>
+      </div>
     </div>
   </div>
 
@@ -652,6 +716,87 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
     </div>
   </div>
 
+  <!-- Notifications tab -->
+  <div class="tab-panel" id="tab-notifications">
+    <div class="section">
+      <div class="section-head"><span class="section-title">Notification Preferences</span></div>
+      <table class="data-table">
+        <thead><tr><th>Event</th><th style="text-align:center">Email</th><th style="text-align:center">In-app</th></tr></thead>
+        <tbody id="notif-body"></tbody>
+      </table>
+      <div style="padding:var(--space-4) var(--space-6)">
+        <button class="btn-sm primary" onclick="saveNotif()">Save preferences</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI & Content tab -->
+  <div class="tab-panel" id="tab-ai">
+    <div class="section">
+      <div class="section-head"><span class="section-title">AI &amp; Content Defaults</span></div>
+      <div style="padding:var(--space-6)">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-bottom:var(--space-5)">
+          <div>
+            <label class="modal-label" for="ai-model">Default AI model</label>
+            <select class="modal-select" id="ai-model">
+              <option value="gpt-4o">OpenAI GPT-4o</option>
+              <option value="gpt-4o-mini">GPT-4o mini</option>
+            </select>
+          </div>
+          <div>
+            <label class="modal-label" for="ai-lang">Default output language</label>
+            <select class="modal-select" id="ai-lang">
+              <option value="th">Thai-first</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+          <div>
+            <label class="modal-label" for="ai-tone">Default tone</label>
+            <select class="modal-select" id="ai-tone">
+              <option>Playful</option><option>Professional</option><option>Bold</option>
+            </select>
+          </div>
+          <div>
+            <label class="modal-label" for="ai-cap">Max AI credits / user / month</label>
+            <input class="modal-input" id="ai-cap" type="number" value="1000">
+          </div>
+        </div>
+        <div style="margin-bottom:var(--space-5)">
+          <label class="modal-label" for="ai-banned">Banned words / guardrails (comma-separated)</label>
+          <input class="modal-input" id="ai-banned" placeholder="e.g. ถูกที่สุด, รับประกัน100%">
+        </div>
+        <label style="display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-5);font-size:var(--text-sm)">
+          <input type="checkbox" id="ai-translate" checked> Auto-translate generated content
+        </label>
+        <button class="btn-sm primary" onclick="saveAI()">Save changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audit Log tab -->
+  <div class="tab-panel" id="tab-audit">
+    <div class="section">
+      <div class="section-head">
+        <span class="section-title">Audit Log</span>
+        <div style="display:flex;gap:var(--space-2)">
+          <select class="btn-sm" id="audit-member" onchange="filterAudit()">
+            <option value="">All members</option>
+            <option>Patiphan S.</option><option>Nattaya K.</option>
+            <option>Wilasinee R.</option><option>Somchai P.</option>
+          </select>
+          <select class="btn-sm" id="audit-action" onchange="filterAudit()">
+            <option value="">All actions</option>
+            <option>plan</option><option>brand</option><option>member</option><option>billing</option>
+          </select>
+        </div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Time</th><th>Member</th><th>Action</th><th>Target</th></tr></thead>
+        <tbody id="audit-body"></tbody>
+      </table>
+    </div>
+  </div>
+
 </div>
 </main>
 
@@ -709,6 +854,43 @@ function switchTab(name, el) {
   if (panel) panel.classList.add('active');
 }
 
+function saveGeneral() {
+  var data = {
+    name: document.getElementById('gen-name').value,
+    lang: document.getElementById('gen-lang').value,
+    tz:   document.getElementById('gen-tz').value,
+    cur:  document.getElementById('gen-cur').value,
+    date: document.getElementById('gen-date').value
+  };
+  localStorage.setItem('panya_admin_general', JSON.stringify(data));
+  window.toast('Workspace settings saved', 'success', 2500);
+}
+function loadGeneral() {
+  var raw = localStorage.getItem('panya_admin_general');
+  if (!raw) return;
+  try {
+    var d = JSON.parse(raw);
+    if (d.name) document.getElementById('gen-name').value = d.name;
+    if (d.lang) document.getElementById('gen-lang').value = d.lang;
+    if (d.tz)   document.getElementById('gen-tz').value = d.tz;
+    if (d.cur)  document.getElementById('gen-cur').value = d.cur;
+    if (d.date) document.getElementById('gen-date').value = d.date;
+  } catch (e) {}
+}
+document.addEventListener('DOMContentLoaded', loadGeneral);
+
+function saveAI() {
+  var data = {
+    model: document.getElementById('ai-model').value,
+    lang:  document.getElementById('ai-lang').value,
+    tone:  document.getElementById('ai-tone').value,
+    cap:   document.getElementById('ai-cap').value,
+    banned:document.getElementById('ai-banned').value,
+    translate: document.getElementById('ai-translate').checked
+  };
+  localStorage.setItem('panya_admin_ai', JSON.stringify(data));
+  window.toast('AI & content defaults saved', 'success', 2500);
+}
 function dismissAlert() {
   var banner = document.getElementById('alert-banner');
   if (banner) {
@@ -720,7 +902,11 @@ function dismissAlert() {
 
 function renewKey() {
   window.toast('Opening API key settings…', 'info', 2000);
-  setTimeout(function() { switchTab('integrations', document.querySelectorAll('.tab')[3]); }, 800);
+  setTimeout(function() {
+    var tabs = document.querySelectorAll('.tab');
+    var target = Array.prototype.find.call(tabs, function(t) { return /switchTab\('integrations'/.test(t.getAttribute('onclick') || ''); });
+    if (target) switchTab('integrations', target);
+  }, 800);
 }
 
 // ── Invite modal ──────────────────────────────
@@ -783,6 +969,65 @@ function logout() {
   };
   document.getElementById('confirm-modal').style.display = 'flex';
 }
+
+// ── Notifications ────────────────────────────
+var NOTIF_EVENTS = [
+  ['plan_approval', 'Plan approvals'],
+  ['brief_submit',  'Brief submissions'],
+  ['key_expiry',    'API key expiry warnings'],
+  ['credit_threshold','AI credit threshold reached'],
+  ['weekly_digest', 'Weekly digest'],
+  ['member_joined', 'New member joined']
+];
+function renderNotif() {
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem('panya_admin_notif') || '{}'); } catch (e) {}
+  var html = NOTIF_EVENTS.map(function(ev) {
+    var key = ev[0], s = saved[key] || {};
+    var em = s.email !== false ? 'checked' : '';
+    var ia = s.inapp !== false ? 'checked' : '';
+    return '<tr><td>' + ev[1] + '</td>' +
+      '<td style="text-align:center"><input type="checkbox" data-ev="' + key + '" data-ch="email" ' + em + '></td>' +
+      '<td style="text-align:center"><input type="checkbox" data-ev="' + key + '" data-ch="inapp" ' + ia + '></td></tr>';
+  }).join('');
+  document.getElementById('notif-body').innerHTML = html;
+}
+function saveNotif() {
+  var data = {};
+  document.querySelectorAll('#notif-body input[type=checkbox]').forEach(function(cb) {
+    var ev = cb.getAttribute('data-ev'), ch = cb.getAttribute('data-ch');
+    data[ev] = data[ev] || {};
+    data[ev][ch] = cb.checked;
+  });
+  localStorage.setItem('panya_admin_notif', JSON.stringify(data));
+  window.toast('Notification preferences saved', 'success', 2500);
+}
+document.addEventListener('DOMContentLoaded', renderNotif);
+
+var AUDIT_ROWS = [
+  ['Just now', 'System', 'billing', 'OpenAI key expiry warning (3 days)'],
+  ['2 hours ago', 'Patiphan S.', 'plan', 'Created "Bonchon May 2026"'],
+  ['Yesterday, 4:12 PM', 'Nattaya K.', 'plan', 'Submitted Haier Jun brief for review'],
+  ['14 May, 11:30 AM', 'Patiphan S.', 'brand', 'Added MK Restaurant to Brand Library'],
+  ['13 May, 3:00 PM', 'System', 'plan', 'Central Retail Apr plan marked complete'],
+  ['12 May, 9:15 AM', 'Somchai P.', 'member', 'Joined workspace as Viewer'],
+  ['10 May, 2:40 PM', 'Wilasinee R.', 'billing', 'Updated Pro plan payment method']
+];
+function renderAudit() {
+  var m = document.getElementById('audit-member').value;
+  var a = document.getElementById('audit-action').value;
+  var html = AUDIT_ROWS.filter(function(r) {
+    return (!m || r[1] === m) && (!a || r[2] === a);
+  }).map(function(r) {
+    return '<tr><td style="color:var(--text-muted);font-size:12px">' + r[0] + '</td>' +
+      '<td>' + r[1] + '</td>' +
+      '<td><span class="role-badge role-editor">' + r[2] + '</span></td>' +
+      '<td style="font-size:13px">' + r[3] + '</td></tr>';
+  }).join('');
+  document.getElementById('audit-body').innerHTML = html || '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:var(--space-6)">No matching entries</td></tr>';
+}
+function filterAudit() { renderAudit(); }
+document.addEventListener('DOMContentLoaded', renderAudit);
 
 document.addEventListener('click', function(e) {
   var popup = document.getElementById('user-popup');

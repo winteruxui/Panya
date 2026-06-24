@@ -282,15 +282,60 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
 
   <!-- Tabs -->
   <div class="tab-bar">
-    <div class="tab active" onclick="switchTab('overview', this)">Overview</div>
+    <div class="tab active" onclick="switchTab('general', this)">General</div>
+    <div class="tab" onclick="switchTab('overview', this)">Overview</div>
     <div class="tab" onclick="switchTab('team', this)">Team</div>
     <div class="tab" onclick="switchTab('billing', this)">Billing</div>
     <div class="tab" onclick="switchTab('integrations', this)">Integrations</div>
     <div class="tab" onclick="switchTab('security', this)">Security</div>
   </div>
 
+  <!-- General tab -->
+  <div class="tab-panel active" id="tab-general">
+    <div class="section">
+      <div class="section-head"><span class="section-title">Workspace</span></div>
+      <div style="padding:var(--space-6)">
+        <div style="margin-bottom:var(--space-5)">
+          <label class="modal-label" for="gen-name">Workspace name</label>
+          <input class="modal-input" id="gen-name" value="Panya">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-bottom:var(--space-5)">
+          <div>
+            <label class="modal-label" for="gen-lang">Default language</label>
+            <select class="modal-select" id="gen-lang">
+              <option value="th">ไทย (Thai)</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+          <div>
+            <label class="modal-label" for="gen-tz">Timezone</label>
+            <select class="modal-select" id="gen-tz">
+              <option value="Asia/Bangkok">Asia/Bangkok (GMT+7)</option>
+              <option value="UTC">UTC</option>
+            </select>
+          </div>
+          <div>
+            <label class="modal-label" for="gen-cur">Currency</label>
+            <select class="modal-select" id="gen-cur">
+              <option value="THB">฿ THB</option>
+              <option value="USD">$ USD</option>
+            </select>
+          </div>
+          <div>
+            <label class="modal-label" for="gen-date">Date format</label>
+            <select class="modal-select" id="gen-date">
+              <option value="dmy">31 May 2026</option>
+              <option value="ymd">2026-05-31</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-sm primary" onclick="saveGeneral()">Save changes</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Overview tab -->
-  <div class="tab-panel active" id="tab-overview">
+  <div class="tab-panel" id="tab-overview">
 
     <div class="kpi-row">
       <div class="kpi-card">
@@ -708,6 +753,31 @@ function switchTab(name, el) {
   var panel = document.getElementById('tab-' + name);
   if (panel) panel.classList.add('active');
 }
+
+function saveGeneral() {
+  var data = {
+    name: document.getElementById('gen-name').value,
+    lang: document.getElementById('gen-lang').value,
+    tz:   document.getElementById('gen-tz').value,
+    cur:  document.getElementById('gen-cur').value,
+    date: document.getElementById('gen-date').value
+  };
+  localStorage.setItem('panya_admin_general', JSON.stringify(data));
+  window.toast('Workspace settings saved', 'success', 2500);
+}
+function loadGeneral() {
+  var raw = localStorage.getItem('panya_admin_general');
+  if (!raw) return;
+  try {
+    var d = JSON.parse(raw);
+    if (d.name) document.getElementById('gen-name').value = d.name;
+    if (d.lang) document.getElementById('gen-lang').value = d.lang;
+    if (d.tz)   document.getElementById('gen-tz').value = d.tz;
+    if (d.cur)  document.getElementById('gen-cur').value = d.cur;
+    if (d.date) document.getElementById('gen-date').value = d.date;
+  } catch (e) {}
+}
+document.addEventListener('DOMContentLoaded', loadGeneral);
 
 function dismissAlert() {
   var banner = document.getElementById('alert-banner');

@@ -428,7 +428,7 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
     <div class="table-card">
       <div class="table-head-bar">
         <span class="table-title">Top Performing Posts</span>
-        <a class="table-link" href="content-tools.html">View all →</a>
+        <a class="table-link" href="#evallog">View all →</a>
       </div>
       <table class="data-table">
         <thead>
@@ -662,7 +662,22 @@ function setFilter(chip, brand) {
   });
   // Sync the Evaluation Log master view to the same brand filter
   _evalBrand = brand;
+  updateScoreKpi();
   renderEvalLog();
+}
+
+/* Content Score Avg KPI is derived from the Evaluation Log (AI predicted
+   scores), scoped to the selected brand only (not the log's own filters). */
+function computeBrandAiAvg(brand) {
+  if (typeof panyaAllEvalEntries !== 'function') return null;
+  var rows = panyaAllEvalEntries().filter(function(e){ return brand === 'all' || e.brand === brand; });
+  if (!rows.length) return null;
+  return Math.round(rows.reduce(function(s,e){ return s + e.predicted.overall; }, 0) / rows.length);
+}
+function updateScoreKpi() {
+  var avg = computeBrandAiAvg(_evalBrand);
+  var el = document.getElementById('kpi-score');
+  if (el && avg !== null) el.textContent = avg;
 }
 
 function resetFilter() {
@@ -765,7 +780,7 @@ function renderEvalCard(e) {
     '</div>';
 }
 
-document.addEventListener('DOMContentLoaded', renderEvalLog);
+document.addEventListener('DOMContentLoaded', function(){ updateScoreKpi(); renderEvalLog(); });
 </script>
 <script src="eval-data.js"></script>
 <script src="nav.js"></script>

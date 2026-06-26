@@ -7,7 +7,7 @@
       "runtimeArgs": [
         "-NoProfile",
         "-Command",
-        "$root='C:\\Winter\\Panya\\Panya\\.claude\\worktrees\\romantic-rhodes-b4e46f'; $l=New-Object System.Net.HttpListener; $l.Prefixes.Add('http://localhost:4321/'); $l.Start(); Write-Output 'Ready'; while($l.IsListening){ $ctx=$l.GetContext(); $req=$ctx.Request; $res=$ctx.Response; $p=$req.Url.LocalPath; if($p -eq '/'){$p='/dashboard.html'}; $f=Join-Path $root $p.TrimStart('/'); if(Test-Path $f){$b=[System.IO.File]::ReadAllBytes($f); $ext=[System.IO.Path]::GetExtension($f); $mime=@{'.html'='text/html';'.css'='text/css';'.js'='application/javascript';}[$ext]; if(!$mime){$mime='application/octet-stream'}; $res.ContentType=$mime; $res.ContentLength64=$b.Length; $res.OutputStream.Write($b,0,$b.Length)}else{$res.StatusCode=404}; $res.OutputStream.Close() }"
+        "$root='C:\\Winter\\Panya\\Panya'; $l=New-Object System.Net.HttpListener; $l.Prefixes.Add('http://localhost:4321/'); $l.Start(); Write-Output 'Ready'; while($l.IsListening){ $ctx=$l.GetContext(); $req=$ctx.Request; $res=$ctx.Response; $p=$req.Url.LocalPath; if($p -eq '/'){$p='/index.html'}; $f=Join-Path $root $p.TrimStart('/'); if(Test-Path $f){$b=[System.IO.File]::ReadAllBytes($f); $ext=[System.IO.Path]::GetExtension($f); $mime=@{'.html'='text/html';'.css'='text/css';'.js'='application/javascript';}[$ext]; if(!$mime){$mime='application/octet-stream'}; $res.ContentType=$mime; $res.ContentLength64=$b.Length; $res.OutputStream.Write($b,0,$b.Length)}else{$res.StatusCode=404}; $res.OutputStream.Close() }"
       ],
       "port": 4321
     }

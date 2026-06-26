@@ -180,6 +180,30 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
 .el-empty { font-size: var(--text-sm); color: var(--text-muted); }
 .el-cta { display: inline-flex; align-items: center; gap: 5px; margin-top: var(--space-2); font-size: var(--text-xs); font-weight: 600; color: var(--brand); text-decoration: none; }
 .el-cta:hover { text-decoration: underline; }
+.el-actions { display: flex; gap: var(--space-2); margin-top: var(--space-2); flex-wrap: wrap; }
+.el-btn { padding: 6px 12px; border-radius: var(--r-md); border: none; background: var(--brand); color: #fff; font-family: var(--font-ui); font-size: var(--text-xs); font-weight: 600; cursor: pointer; }
+.el-btn:hover { background: var(--brand-dark); }
+.el-btn-ghost { padding: 6px 12px; border-radius: var(--r-md); border: 1px solid var(--border-default); background: var(--bg-surface); color: var(--text-secondary); font-family: var(--font-ui); font-size: var(--text-xs); font-weight: 500; cursor: pointer; }
+.el-btn-ghost:hover { border-color: var(--brand); color: var(--brand); }
+/* Add-results drawer */
+.eld-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 300; align-items: center; justify-content: center; }
+.eld-overlay.open { display: flex; }
+.eld-box { background: var(--bg-base); border-radius: var(--r-xl); box-shadow: var(--shadow-xl); width: 480px; max-width: calc(100vw - 32px); overflow: hidden; }
+.eld-head { display: flex; align-items: center; justify-content: space-between; padding: var(--space-5) var(--space-6); border-bottom: 1px solid var(--border-subtle); }
+.eld-head h3 { font-size: var(--text-lg); font-weight: 700; }
+.eld-close { background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 20px; line-height: 1; }
+.eld-close:hover { color: var(--text-primary); }
+.eld-body { padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-4); }
+.eld-cap { font-size: var(--text-xs); color: var(--text-secondary); background: var(--bg-elevated); padding: 8px 10px; border-radius: var(--r-md); line-height: var(--leading-relaxed); }
+.eld-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.eld-label { font-size: var(--text-xs); font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; display: block; margin-bottom: 6px; }
+.eld-input, .eld-textarea { width: 100%; padding: 9px 12px; border: 1.5px solid var(--border-default); border-radius: var(--r-md); font-family: var(--font-ui); font-size: var(--text-sm); color: var(--text-primary); background: var(--bg-base); }
+.eld-input:focus, .eld-textarea:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-m); }
+.eld-textarea { min-height: 70px; resize: vertical; line-height: var(--leading-relaxed); }
+.eld-verdict { display: flex; gap: var(--space-2); }
+.eld-vbtn { flex: 1; padding: 8px; border: 1.5px solid var(--border-default); border-radius: var(--r-md); background: var(--bg-base); cursor: pointer; font-size: var(--text-sm); font-family: var(--font-ui); }
+.eld-vbtn.active { border-color: var(--brand); background: var(--brand-m); color: var(--brand); font-weight: 600; }
+.eld-foot { display: flex; justify-content: flex-end; gap: var(--space-3); padding: var(--space-4) var(--space-6); border-top: 1px solid var(--border-subtle); }
 .evallog-none { padding: var(--space-8); text-align: center; color: var(--text-muted); font-size: var(--text-sm); }
 @media (max-width: 720px) { .el-zones { grid-template-columns: 1fr; } .el-zsep { display: none; } .evallog-summary { grid-template-columns: repeat(2, 1fr); } }
 </style>
@@ -751,12 +775,16 @@ function renderEvalCard(e) {
         '<div><div class="el-metric-val">' + esc(er) + '%</div><div class="el-metric-lbl">Eng. rate</div></div>' +
       '</div>' +
       '<div class="el-delta">AI predicted ' + p.overall + ' · Real ER ' + esc(er) + '% (' + panyaErBucket(er) + ')' +
-        (e.actual.note ? ' · “' + esc(e.actual.note) + '”' : '') + '</div>';
+        (e.actual.note ? ' · “' + esc(e.actual.note) + '”' : '') + '</div>' +
+      '<div class="el-actions">' +
+        '<button class="el-btn-ghost" onclick="openEvalDetails(\'' + e.brand + '\',\'' + e.id + '\')">แก้ไขผล</button>' +
+        (v === 'win' ? '<button class="el-btn" onclick="pinSampleFromInsights(\'' + e.brand + '\',\'' + e.id + '\')">📌 Pin as Sample</button>' : '') +
+      '</div>';
   } else {
     status = '<span class="el-status wait">⏳ Awaiting result</span>';
     right =
       '<div class="el-empty">No real result logged yet.</div>' +
-      '<a class="el-cta" href="brand-library.html">+ Add published results in Brand Library →</a>';
+      '<div class="el-actions"><button class="el-btn" onclick="openEvalDetails(\'' + e.brand + '\',\'' + e.id + '\')">+ เพิ่มผลจริง</button></div>';
   }
 
   return '' +
@@ -791,7 +819,106 @@ document.addEventListener('DOMContentLoaded', function(){
     if (el) setTimeout(function(){ el.scrollIntoView({ behavior: 'smooth' }); }, 60);
   }
 });
+
+/* ── Add-results drawer (evaluate happens here now) ─── */
+var _eld = { brand: null, id: null, verdict: null };
+function _seedEntry(brand, id) {
+  return (window.PANYA_EVAL_SEED || []).filter(function(e){ return e.brand === brand && e.id === id; })[0] || null;
+}
+function openEvalDetails(brand, id) {
+  _eld = { brand: brand, id: id, verdict: null };
+  ['eld-reach','eld-likes','eld-comments','eld-shares','eld-er','eld-note'].forEach(function(f){ document.getElementById(f).value = ''; });
+  document.querySelectorAll('#eld-verdict .eld-vbtn').forEach(function(b){ b.classList.remove('active'); });
+  var entry = _seedEntry(brand, id);
+  document.getElementById('eld-cap').textContent = entry ? entry.caption : '';
+  var saved = panyaGetActual(brand, id);
+  if (saved) {
+    document.getElementById('eld-reach').value = saved.reach || '';
+    document.getElementById('eld-likes').value = saved.likes || '';
+    document.getElementById('eld-comments').value = saved.comments || '';
+    document.getElementById('eld-shares').value = saved.shares || '';
+    document.getElementById('eld-er').value = saved.er || '';
+    document.getElementById('eld-note').value = saved.note || '';
+    if (saved.verdict) {
+      _eld.verdict = saved.verdict;
+      var vb = document.querySelector('#eld-verdict .eld-vbtn[data-v="' + saved.verdict + '"]');
+      if (vb) vb.classList.add('active');
+    }
+  }
+  document.getElementById('eld').classList.add('open');
+}
+function closeEvalDetails() { document.getElementById('eld').classList.remove('open'); }
+function selectVerdict(btn) {
+  document.querySelectorAll('#eld-verdict .eld-vbtn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  _eld.verdict = btn.getAttribute('data-v');
+}
+function saveEvalDetails() {
+  var brand = _eld.brand, id = _eld.id;
+  if (!brand || !id) return;
+  var all = {};
+  try { all = JSON.parse(localStorage.getItem(panyaEvalKey(brand)) || '{}'); } catch (e) {}
+  all[id] = {
+    reach: document.getElementById('eld-reach').value,
+    likes: document.getElementById('eld-likes').value,
+    comments: document.getElementById('eld-comments').value,
+    shares: document.getElementById('eld-shares').value,
+    er: document.getElementById('eld-er').value,
+    note: document.getElementById('eld-note').value,
+    verdict: _eld.verdict
+  };
+  localStorage.setItem(panyaEvalKey(brand), JSON.stringify(all));
+  closeEvalDetails();
+  updateScoreKpi();
+  renderEvalLog();
+  window.toast('บันทึกผลแล้ว', 'success', 2500);
+}
+/* Win → pin to the brand's Sample Captions (read by Brand Library). */
+function pinSampleFromInsights(brand, id) {
+  var entry = _seedEntry(brand, id);
+  if (!entry) return;
+  var res = panyaGetActual(brand, id) || {};
+  var key = 'panya_pinned_samples_' + brand;
+  var arr = [];
+  try { arr = JSON.parse(localStorage.getItem(key) || '[]'); } catch (e) {}
+  if (arr.some(function(x){ return x.id === id; })) { window.toast('ปักหมุดไว้แล้วใน Sample Captions', 'info', 2200); return; }
+  arr.push({ id: id, caption: entry.caption, platform: entry.platform, er: res.er || '0' });
+  localStorage.setItem(key, JSON.stringify(arr));
+  window.toast('ปักหมุดไปที่ Sample Captions (Brand Library) แล้ว', 'success', 2800);
+}
 </script>
+<div class="eld-overlay" id="eld" onclick="if(event.target===this)closeEvalDetails()">
+  <div class="eld-box">
+    <div class="eld-head"><h3>บันทึกผลจริงของโพสต์</h3><button class="eld-close" onclick="closeEvalDetails()">×</button></div>
+    <div class="eld-body">
+      <div class="eld-cap" id="eld-cap"></div>
+      <div class="eld-grid">
+        <div><label class="eld-label">Reach</label><input class="eld-input" id="eld-reach" type="number" placeholder="0"></div>
+        <div><label class="eld-label">Likes</label><input class="eld-input" id="eld-likes" type="number" placeholder="0"></div>
+        <div><label class="eld-label">Comments</label><input class="eld-input" id="eld-comments" type="number" placeholder="0"></div>
+        <div><label class="eld-label">Shares</label><input class="eld-input" id="eld-shares" type="number" placeholder="0"></div>
+        <div><label class="eld-label">Engagement rate %</label><input class="eld-input" id="eld-er" type="number" placeholder="0"></div>
+      </div>
+      <div>
+        <label class="eld-label">Verdict</label>
+        <div class="eld-verdict" id="eld-verdict">
+          <button class="eld-vbtn" data-v="win" onclick="selectVerdict(this)">🏆 Win</button>
+          <button class="eld-vbtn" data-v="neutral" onclick="selectVerdict(this)">⚪ Neutral</button>
+          <button class="eld-vbtn" data-v="under" onclick="selectVerdict(this)">⚠️ Under</button>
+        </div>
+      </div>
+      <div>
+        <label class="eld-label">ทำไมถึงเวิร์ค / ไม่เวิร์ค</label>
+        <textarea class="eld-textarea" id="eld-note" placeholder="เช่น โพสต์ช่วงเย็นได้ผลดีมาก"></textarea>
+      </div>
+    </div>
+    <div class="eld-foot">
+      <button class="el-btn-ghost" onclick="closeEvalDetails()">ยกเลิก</button>
+      <button class="el-btn" onclick="saveEvalDetails()">บันทึกผล</button>
+    </div>
+  </div>
+</div>
+
 <script src="eval-data.js"></script>
 <script src="nav.js"></script>
 </body>

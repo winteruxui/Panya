@@ -780,7 +780,17 @@ function renderEvalCard(e) {
     '</div>';
 }
 
-document.addEventListener('DOMContentLoaded', function(){ updateScoreKpi(); renderEvalLog(); });
+document.addEventListener('DOMContentLoaded', function(){
+  // Deep-link support: insights.html?brand=<brand>#evallog (e.g. from a plan)
+  var m = location.search.match(/[?&]brand=([a-z]+)/);
+  var brand = (m && BRAND_DATA[m[1]]) ? m[1] : null;
+  var chip = brand ? document.querySelector('.fchip[onclick*="\'' + brand + '\'"]') : null;
+  if (chip) { setFilter(chip, brand); } else { updateScoreKpi(); renderEvalLog(); }
+  if (location.hash === '#evallog') {
+    var el = document.getElementById('evallog');
+    if (el) setTimeout(function(){ el.scrollIntoView({ behavior: 'smooth' }); }, 60);
+  }
+});
 </script>
 <script src="eval-data.js"></script>
 <script src="nav.js"></script>

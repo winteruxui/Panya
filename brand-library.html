@@ -191,6 +191,7 @@
 .eval-actions { display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap; }
 .eval-results-badge { font-size: var(--text-xs); font-weight: 600; color: var(--green); background: var(--green-m); padding: 2px var(--space-2); border-radius: var(--r-full); }
 .eval-delta { font-size: var(--text-xs); color: var(--text-muted); margin-left: var(--space-2); }
+.eval-wait-badge { font-size: var(--text-xs); font-weight: 600; color: var(--amber); background: var(--amber-m); padding: 2px var(--space-2); border-radius: var(--r-full); }
 /* Add-details drawer */
 .eval-drawer-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 300; align-items: center; justify-content: center; }
 .eval-drawer-overlay.open { display: flex; }
@@ -570,7 +571,7 @@
       </div>
 
       <div class="brand-section">
-        <div class="brand-section-title">Evaluation Log</div>
+        <div class="brand-section-title" style="display:flex;align-items:center;justify-content:space-between">Evaluation Log<a href="insights.html#evallog" style="font-size:11px;font-weight:600;color:var(--brand);text-decoration:none;text-transform:none;letter-spacing:0">ดูทั้งหมดใน Insights →</a></div>
         <div id="evallog-bonchon">
           <!-- entry 1 -->
           <div class="eval-entry" data-brand="bonchon" data-id="bc1">
@@ -728,7 +729,7 @@
       </div>
 
       <div class="brand-section">
-        <div class="brand-section-title">Evaluation Log</div>
+        <div class="brand-section-title" style="display:flex;align-items:center;justify-content:space-between">Evaluation Log<a href="insights.html#evallog" style="font-size:11px;font-weight:600;color:var(--brand);text-decoration:none;text-transform:none;letter-spacing:0">ดูทั้งหมดใน Insights →</a></div>
         <div id="evallog-haier">
           <div class="eval-entry" data-brand="haier" data-id="ha1">
             <div class="eval-entry-head">
@@ -886,7 +887,7 @@
       </div>
 
       <div class="brand-section">
-        <div class="brand-section-title">Evaluation Log</div>
+        <div class="brand-section-title" style="display:flex;align-items:center;justify-content:space-between">Evaluation Log<a href="insights.html#evallog" style="font-size:11px;font-weight:600;color:var(--brand);text-decoration:none;text-transform:none;letter-spacing:0">ดูทั้งหมดใน Insights →</a></div>
         <div id="evallog-central">
           <div class="eval-entry" data-brand="central" data-id="ce1">
             <div class="eval-entry-head">
@@ -1044,7 +1045,7 @@
       </div>
 
       <div class="brand-section">
-        <div class="brand-section-title">Evaluation Log</div>
+        <div class="brand-section-title" style="display:flex;align-items:center;justify-content:space-between">Evaluation Log<a href="insights.html#evallog" style="font-size:11px;font-weight:600;color:var(--brand);text-decoration:none;text-transform:none;letter-spacing:0">ดูทั้งหมดใน Insights →</a></div>
         <div id="evallog-mk">
           <div class="eval-entry" data-brand="mk" data-id="mk1">
             <div class="eval-entry-head">
@@ -1527,7 +1528,7 @@ function decorateEvalEntry(brand, id, res) {
   var actions = entry.querySelector('.eval-actions');
   actions.setAttribute('data-results', '1');
   // Remove any previously-added decorations so re-saving doesn't duplicate them
-  actions.querySelectorAll('.eval-results-badge, .eval-delta, .eval-pin').forEach(function(n){ n.remove(); });
+  actions.querySelectorAll('.eval-results-badge, .eval-delta, .eval-pin, .eval-wait-badge').forEach(function(n){ n.remove(); });
   var badge = document.createElement('span');
   badge.className = 'eval-results-badge';
   badge.textContent = 'Results added ✓';
@@ -1572,7 +1573,23 @@ function restoreEvalResults() {
     if (res) decorateEvalEntry(brand, id, res);
   });
 }
-document.addEventListener('DOMContentLoaded', restoreEvalResults);
+/* Emphasize the learning action and show an "awaiting result" status on
+   entries that have no real result logged yet. */
+function enhanceEvalEntries() {
+  document.querySelectorAll('.eval-entry').forEach(function(entry) {
+    var addBtn = entry.querySelector('.eval-actions button[onclick^="openEvalDetails"]');
+    if (addBtn) { addBtn.classList.remove('btn-secondary'); addBtn.classList.add('btn-primary'); }
+    var actions = entry.querySelector('.eval-actions');
+    var hasResult = actions && actions.getAttribute('data-results') === '1';
+    if (actions && !hasResult && !actions.querySelector('.eval-wait-badge')) {
+      var wait = document.createElement('span');
+      wait.className = 'eval-wait-badge';
+      wait.textContent = '⏳ รอผลจริง';
+      actions.appendChild(wait);
+    }
+  });
+}
+document.addEventListener('DOMContentLoaded', function(){ restoreEvalResults(); enhanceEvalEntries(); });
 </script>
 <script src="nav.js"></script>
 <div class="eval-drawer-overlay" id="eval-drawer" onclick="if(event.target===this)closeEvalDetails()">

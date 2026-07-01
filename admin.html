@@ -185,6 +185,84 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
 .user-popup-item.danger:hover { background: rgba(239,68,68,0.08); color: #EF4444; }
 .u-chevron { transition: transform 150ms ease; flex-shrink: 0; color: #9A8070; }
 .user-row.menu-open .u-chevron { transform: rotate(180deg); }
+
+/* ── Brand access chips (Users tab) ─────────────────────── */
+.access-cell { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; max-width: 260px; }
+.access-chip { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: var(--r-full); background: var(--bg-elevated); border: 1px solid var(--border-default); color: var(--text-secondary); }
+.access-add { font-size: 11px; font-weight: 600; color: var(--brand); background: none; border: none; cursor: pointer; padding: 2px 4px; }
+.access-add:hover { text-decoration: underline; }
+.access-popover { position: fixed; z-index: 500; background: var(--bg-base); border: 1px solid var(--border-default); border-radius: var(--r-lg); box-shadow: var(--shadow-lg); width: 230px; max-height: 320px; overflow-y: auto; padding: var(--space-2); display: none; }
+.access-popover.open { display: block; }
+.access-popover-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 8px; border-radius: var(--r-md); font-size: var(--text-sm); color: var(--text-primary); }
+.access-popover-row:hover { background: var(--bg-elevated); }
+
+/* ── Brands tab ──────────────────────────────────────────── */
+.brand-cfg-btn { padding: var(--space-2) var(--space-4); border-radius: var(--r-md); border: 1px solid var(--border-default); background: var(--bg-surface); font-family: var(--font-ui); font-size: var(--text-xs); font-weight: 500; color: var(--text-secondary); cursor: pointer; }
+.brand-cfg-btn:hover { border-color: var(--brand); color: var(--brand); }
+
+/* Brand configure modal */
+.bcfg-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 1000; display: none; align-items: flex-start; justify-content: center; overflow-y: auto; padding: var(--space-8) var(--space-4); }
+.bcfg-overlay.open { display: flex; }
+.bcfg-box { background: var(--bg-base); border-radius: var(--r-xl); box-shadow: var(--shadow-xl); width: 700px; max-width: 100%; overflow: hidden; }
+.bcfg-head { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-5) var(--space-6); border-bottom: 1px solid var(--border-subtle); }
+.bcfg-avatar { width: 36px; height: 36px; border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: var(--text-base); background: var(--brand-m); color: var(--brand); flex-shrink: 0; }
+.bcfg-title { font-size: var(--text-lg); font-weight: 700; color: var(--text-primary); }
+.bcfg-sub { font-size: var(--text-xs); color: var(--text-muted); }
+.bcfg-close { margin-left: auto; background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 20px; }
+.bcfg-close:hover { color: var(--text-primary); }
+.bcfg-tabs { display: flex; gap: var(--space-2); padding: var(--space-4) var(--space-6) 0; }
+.bcfg-tab { padding: var(--space-2) var(--space-4); border-radius: var(--r-md); border: 1px solid var(--border-default); background: var(--bg-surface); font-size: var(--text-sm); font-weight: 500; color: var(--text-secondary); cursor: pointer; }
+.bcfg-tab.active { background: var(--brand-m); border-color: var(--brand); color: var(--brand); font-weight: 700; }
+.bcfg-body { padding: var(--space-6); max-height: 55vh; overflow-y: auto; }
+.bcfg-panel { display: none; }
+.bcfg-panel.active { display: block; }
+.bcfg-section-label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; margin: var(--space-5) 0 var(--space-3); }
+.bcfg-section-label:first-child { margin-top: 0; }
+.bcfg-chip-grid { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.bcfg-chip { padding: 8px 14px; border-radius: var(--r-md); border: 1px solid var(--border-default); background: var(--bg-surface); font-size: var(--text-sm); color: var(--text-secondary); cursor: pointer; transition: all var(--dur-fast); }
+.bcfg-chip:hover { border-color: var(--brand); }
+.bcfg-chip.active { background: var(--brand-m); border-color: var(--brand); color: var(--brand); font-weight: 600; }
+.bcfg-textarea { width: 100%; min-height: 80px; padding: 10px 14px; border: 1.5px solid var(--border-default); border-radius: var(--r-md); font-family: var(--font-ui); font-size: var(--text-sm); color: var(--text-primary); background: var(--bg-base); resize: vertical; line-height: var(--leading-relaxed); }
+.bcfg-textarea:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-m); }
+.bcfg-foot { display: flex; justify-content: flex-end; gap: var(--space-3); padding: var(--space-4) var(--space-6); border-top: 1px solid var(--border-subtle); }
+/* Guardrails */
+.bcfg-empty { font-size: var(--text-sm); color: var(--text-muted); margin-bottom: var(--space-3); }
+.bcfg-add-row { display: flex; gap: var(--space-2); margin-bottom: var(--space-4); }
+.bcfg-select-sm { padding: 9px 10px; border: 1.5px solid var(--border-default); border-radius: var(--r-md); font-family: var(--font-ui); font-size: var(--text-sm); background: var(--bg-base); color: var(--text-primary); }
+.bcfg-input { flex: 1; padding: 9px 12px; border: 1.5px solid var(--border-default); border-radius: var(--r-md); font-family: var(--font-ui); font-size: var(--text-sm); background: var(--bg-base); color: var(--text-primary); }
+.bcfg-add-btn { padding: 9px 16px; border: none; border-radius: var(--r-md); background: var(--brand); color: #fff; font-family: var(--font-ui); font-size: var(--text-sm); font-weight: 600; cursor: pointer; white-space: nowrap; }
+.bcfg-add-btn:hover { background: var(--brand-dark); }
+.bcfg-add-btn.full { width: 100%; }
+.guardrail-row { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border: 1px solid var(--border-subtle); border-radius: var(--r-md); margin-bottom: var(--space-2); }
+.guardrail-tag { font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 2px 8px; border-radius: var(--r-full); background: var(--red-m); color: var(--red); flex-shrink: 0; }
+.guardrail-text { flex: 1; font-size: var(--text-sm); color: var(--text-primary); }
+.guardrail-remove { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 16px; }
+.guardrail-remove:hover { color: var(--red); }
+/* Regulatory */
+.reg-card { border: 1px solid var(--border-default); border-radius: var(--r-lg); padding: var(--space-5); margin-bottom: var(--space-4); }
+.reg-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-2); }
+.reg-title { font-size: var(--text-base); font-weight: 700; color: var(--text-primary); }
+.reg-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: var(--r-full); background: var(--green-m); color: var(--green); flex-shrink: 0; }
+.reg-desc { font-size: var(--text-sm); color: var(--text-secondary); line-height: var(--leading-relaxed); margin-bottom: var(--space-2); }
+.reg-ref { font-size: var(--text-xs); color: var(--text-muted); }
+/* Voice examples */
+.voice-cols { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); }
+.voice-col-label { display: flex; align-items: center; gap: 6px; font-size: var(--text-sm); font-weight: 700; margin-bottom: var(--space-2); }
+.voice-good { color: var(--green); }
+.voice-bad { color: var(--red); }
+.voice-example { font-size: var(--text-sm); padding: var(--space-3); border-radius: var(--r-md); background: var(--bg-elevated); margin-bottom: var(--space-2); line-height: var(--leading-relaxed); }
+
+/* ── Learning tab ────────────────────────────────────────── */
+.trend-item { padding: var(--space-3) var(--space-4); border: 1px solid var(--border-subtle); border-radius: var(--r-md); margin-bottom: var(--space-2); font-size: var(--text-sm); }
+.trend-rank { font-weight: 700; color: var(--brand); margin-right: var(--space-2); }
+.trend-src { font-size: var(--text-xs); color: var(--text-muted); margin-top: 2px; }
+.keyword-cloud { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); padding: var(--space-5) var(--space-6); }
+.kw { color: var(--text-secondary); }
+.kw-hot { color: var(--brand); font-weight: 700; font-size: var(--text-lg); }
+.kw-warm { color: var(--amber); font-weight: 600; font-size: var(--text-base); }
+.signal-badge { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: var(--r-full); }
+.signal-neutral { background: var(--amber-m); color: var(--amber); }
+.signal-win { background: var(--green-m); color: var(--green); }
 </style>
 <link rel="stylesheet" href="ds.css">
 <link rel="stylesheet" href="shared.css">
@@ -289,10 +367,12 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
     <div class="tab active" onclick="switchTab('general', this)">General</div>
     <div class="tab" onclick="switchTab('overview', this)">Overview</div>
     <div class="tab" onclick="switchTab('team', this)">Team &amp; Roles</div>
+    <div class="tab" onclick="switchTab('brands', this)">Brands</div>
     <div class="tab" onclick="switchTab('billing', this)">Billing</div>
     <div class="tab" onclick="switchTab('integrations', this)">Integrations</div>
     <div class="tab" onclick="switchTab('security', this)">Security</div>
     <div class="tab" onclick="switchTab('ai', this)">AI &amp; Content</div>
+    <div class="tab" onclick="switchTab('learning', this)">Learning</div>
     <div class="tab" onclick="switchTab('notifications', this)">Notifications</div>
     <div class="tab" onclick="switchTab('audit', this)">Audit Log</div>
   </div>
@@ -426,13 +506,14 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
           <tr>
             <th>Member</th>
             <th>Role</th>
+            <th>Brand Access</th>
             <th>Status</th>
             <th>Last active</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr data-email="por.zax@gmail.com">
             <td>
               <div class="member-row">
                 <div class="m-avatar" style="background:var(--teal-m);color:var(--teal)">P</div>
@@ -443,11 +524,12 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
               </div>
             </td>
             <td><span class="role-badge role-admin">Admin</span></td>
+            <td><span style="font-size:12px;color:var(--text-muted)">All brands</span></td>
             <td><span class="status-dot dot-active"></span>Active</td>
             <td style="color:var(--text-muted);font-size:12px">Now</td>
             <td style="text-align:right"><span style="font-size:12px;color:var(--text-muted)">You</span></td>
           </tr>
-          <tr>
+          <tr data-email="nattaya@agencyname.co.th">
             <td>
               <div class="member-row">
                 <div class="m-avatar" style="background:var(--blue-m);color:var(--blue)">N</div>
@@ -458,6 +540,7 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
               </div>
             </td>
             <td><span class="role-badge role-editor">Editor</span></td>
+            <td class="access-cell" data-access-cell></td>
             <td><span class="status-dot dot-active"></span>Active</td>
             <td style="color:var(--text-muted);font-size:12px">Yesterday</td>
             <td style="text-align:right">
@@ -467,7 +550,7 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
               </div>
             </td>
           </tr>
-          <tr>
+          <tr data-email="wilasinee@agencyname.co.th">
             <td>
               <div class="member-row">
                 <div class="m-avatar" style="background:var(--purple-m);color:var(--purple)">W</div>
@@ -478,6 +561,7 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
               </div>
             </td>
             <td><span class="role-badge role-admin">Admin</span></td>
+            <td><span style="font-size:12px;color:var(--text-muted)">All brands</span></td>
             <td><span class="status-dot dot-active"></span>Active</td>
             <td style="color:var(--text-muted);font-size:12px">3 days ago</td>
             <td style="text-align:right">
@@ -487,7 +571,7 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
               </div>
             </td>
           </tr>
-          <tr>
+          <tr data-email="somchai@client.co.th">
             <td>
               <div class="member-row">
                 <div class="m-avatar" style="background:var(--gray-m);color:var(--gray)">S</div>
@@ -498,6 +582,7 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
               </div>
             </td>
             <td><span class="role-badge role-viewer">Viewer</span></td>
+            <td class="access-cell" data-access-cell></td>
             <td><span class="status-dot dot-pending"></span>Pending</td>
             <td style="color:var(--text-muted);font-size:12px">Invited 12 May</td>
             <td style="text-align:right">
@@ -525,6 +610,24 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
       <div style="padding:var(--space-4) var(--space-6)">
         <button class="btn-sm primary" onclick="window.toast('Role permissions saved','success',2500)">Save roles</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Brands tab -->
+  <div class="tab-panel" id="tab-brands">
+    <div class="section">
+      <div class="section-head">
+        <span class="section-title">Brands</span>
+        <button class="btn-sm primary" onclick="openAddBrandModal()">+ Add brand</button>
+      </div>
+      <div style="padding:var(--space-4) var(--space-6);border-bottom:1px solid var(--border-subtle)">
+        <input class="modal-input" id="brand-search" placeholder="Search brands" oninput="renderBrandsTable()">
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Name</th><th>Status</th><th>Users</th><th></th></tr></thead>
+        <tbody id="brands-table-body"></tbody>
+      </table>
+      <div style="padding:var(--space-4) var(--space-6);font-size:var(--text-xs);color:var(--text-muted)">Archiving a brand hides it from all users but does not delete any data.</div>
     </div>
   </div>
 
@@ -777,6 +880,73 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
     </div>
   </div>
 
+  <!-- Learning tab -->
+  <div class="tab-panel" id="tab-learning">
+    <div class="section">
+      <div class="section-head">
+        <span class="section-title">Trend Intelligence</span>
+        <span style="font-size:11px;color:var(--text-muted);font-family:var(--font-mono);padding:3px 10px;border:1px solid var(--border-default);border-radius:var(--r-md)">LAST UPDATED <strong id="trend-updated" style="color:var(--text-secondary)">2026-06-08</strong></span>
+      </div>
+      <div style="padding:var(--space-5) var(--space-6) 0;font-size:var(--text-xs);color:var(--text-muted)">Pull Thailand trend signals and generate the weekly prompt context for Ask Panya and Suggest Ideas.</div>
+      <div style="padding:var(--space-5) var(--space-6)">
+        <div class="bcfg-section-label" style="margin:0 0 var(--space-3)">Top trending now</div>
+        <div id="trend-list"></div>
+      </div>
+      <div class="bcfg-section-label" style="padding:0 var(--space-6)">Keyword cloud</div>
+      <div class="keyword-cloud" id="keyword-cloud"></div>
+      <div style="display:flex;gap:var(--space-3);padding:var(--space-5) var(--space-6)">
+        <button class="btn-sm" onclick="window.toast('Fetching YouTube Trending…','info',2000)">Fetch YouTube</button>
+        <button class="btn-sm" onclick="window.toast('Fetching Google Trends…','info',2000)">Fetch Google</button>
+        <button class="btn-sm primary" onclick="window.toast('Weekly summary generated','success',2500)">Generate Summary</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head">
+        <span class="section-title">Learning Lessons</span>
+        <button class="btn-sm" onclick="renderLessons()">Refresh</button>
+      </div>
+      <div style="padding:var(--space-5) var(--space-6);font-size:var(--text-xs);color:var(--text-muted);border-bottom:1px solid var(--border-subtle)">Review Prediction_Lessons before active lessons are reused in scoring prompts.</div>
+      <div class="kpi-row" style="grid-template-columns:repeat(4,1fr);padding:var(--space-5) var(--space-6) 0;margin-bottom:0">
+        <div class="kpi-card"><div class="kpi-label">Total Lessons</div><div class="kpi-value" id="lesson-total">0</div></div>
+        <div class="kpi-card"><div class="kpi-label">Active</div><div class="kpi-value" id="lesson-active">0</div></div>
+        <div class="kpi-card"><div class="kpi-label">Observe</div><div class="kpi-value" id="lesson-observe">0</div></div>
+        <div class="kpi-card"><div class="kpi-label">Evidence</div><div class="kpi-value" id="lesson-evidence">0</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--space-4);padding:var(--space-5) var(--space-6)">
+        <div>
+          <label class="modal-label">Brand</label>
+          <select class="modal-select" id="lesson-brand" onchange="renderLessons()">
+            <option value="">All brands</option>
+            <option value="bonchon">Bonchon</option>
+            <option value="haier">Haier Thailand</option>
+            <option value="central">Central Retail</option>
+            <option value="mk">MK Restaurant</option>
+          </select>
+        </div>
+        <div>
+          <label class="modal-label">Platform</label>
+          <select class="modal-select" id="lesson-platform" onchange="renderLessons()">
+            <option value="">All platforms</option>
+            <option>Facebook</option><option>Instagram</option><option>TikTok</option>
+          </select>
+        </div>
+        <div>
+          <label class="modal-label">Status</label>
+          <select class="modal-select" id="lesson-status" onchange="renderLessons()">
+            <option value="">All lessons</option>
+            <option value="active">Active</option>
+            <option value="paused">Paused</option>
+          </select>
+        </div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Lesson</th><th>Brand / Platform</th><th>Objective</th><th>Signal</th><th>Evidence</th><th>Status</th><th>Generated</th><th>Action</th></tr></thead>
+        <tbody id="lesson-body"></tbody>
+      </table>
+    </div>
+  </div>
+
   <!-- Audit Log tab -->
   <div class="tab-panel" id="tab-audit">
     <div class="section">
@@ -843,6 +1013,127 @@ html, body { height: 100%; font-family: var(--font-ui); background: var(--bg-bas
     <div class="confirm-btns">
       <button class="confirm-cancel" onclick="closeConfirm()">Cancel</button>
       <button class="confirm-delete" id="confirm-ok">Remove</button>
+    </div>
+  </div>
+</div>
+
+<!-- Brand access popover (Users tab) -->
+<div id="access-popover" class="access-popover" onclick="event.stopPropagation()"></div>
+
+<!-- Add Brand modal -->
+<div id="add-brand-modal" class="modal-overlay" style="display:none" onclick="if(event.target===this)closeAddBrandModal()">
+  <div class="modal-box">
+    <div class="modal-head"><h3>Add brand</h3><button class="modal-close" onclick="closeAddBrandModal()">×</button></div>
+    <div class="modal-body">
+      <div>
+        <label class="modal-label" for="new-brand-name">Brand name</label>
+        <input class="modal-input" id="new-brand-name" placeholder="e.g. Sizzler Thailand">
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="modal-cancel" onclick="closeAddBrandModal()">Cancel</button>
+      <button class="modal-confirm" onclick="saveNewBrand()">Add brand</button>
+    </div>
+  </div>
+</div>
+
+<!-- Brand Configure modal -->
+<div id="bcfg-overlay" class="bcfg-overlay" onclick="if(event.target===this)closeBrandConfig()">
+  <div class="bcfg-box">
+    <div class="bcfg-head">
+      <div class="bcfg-avatar" id="bcfg-avatar">B</div>
+      <div>
+        <div class="bcfg-title" id="bcfg-title">Brand</div>
+        <div class="bcfg-sub">Brand configuration</div>
+      </div>
+      <button class="bcfg-close" onclick="closeBrandConfig()">×</button>
+    </div>
+    <div class="bcfg-tabs">
+      <div class="bcfg-tab active" data-bcfg-tab="persona" onclick="switchBcfgTab('persona',this)">Persona</div>
+      <div class="bcfg-tab" data-bcfg-tab="guardrails" onclick="switchBcfgTab('guardrails',this)">Guardrails</div>
+      <div class="bcfg-tab" data-bcfg-tab="regulatory" onclick="switchBcfgTab('regulatory',this)">Regulatory</div>
+      <div class="bcfg-tab" data-bcfg-tab="voice" onclick="switchBcfgTab('voice',this)">Voice Examples</div>
+    </div>
+    <div class="bcfg-body">
+
+      <!-- Persona -->
+      <div class="bcfg-panel active" id="bcfg-persona">
+        <div class="bcfg-section-label">Industry</div>
+        <div class="bcfg-chip-grid" id="bcfg-industry-grid">
+          <!-- filled by JS -->
+        </div>
+        <div class="bcfg-section-label">Tone of voice</div>
+        <div class="bcfg-chip-grid" id="bcfg-tone-grid">
+          <!-- filled by JS -->
+        </div>
+        <div class="bcfg-section-label">Brand personality</div>
+        <textarea class="bcfg-textarea" id="bcfg-personality" placeholder="Describe the brand's personality…"></textarea>
+        <div class="bcfg-section-label">Key messages</div>
+        <textarea class="bcfg-textarea" id="bcfg-keymsg" placeholder="Core messages the brand always leads with…"></textarea>
+      </div>
+
+      <!-- Guardrails -->
+      <div class="bcfg-panel" id="bcfg-guardrails">
+        <div class="bcfg-empty" id="guardrail-empty">ยังไม่มี guardrails</div>
+        <div id="guardrail-list"></div>
+        <div class="bcfg-add-row">
+          <select class="bcfg-select-sm" id="guardrail-type">
+            <option value="ห้าม">ห้าม</option>
+            <option value="ต้อง">ต้อง</option>
+          </select>
+          <input class="bcfg-input" id="guardrail-input" placeholder="Add a guardrail…">
+          <button class="bcfg-add-btn" onclick="addGuardrail()">+ เพิ่ม</button>
+        </div>
+      </div>
+
+      <!-- Regulatory -->
+      <div class="bcfg-panel" id="bcfg-regulatory">
+        <div class="reg-card">
+          <div class="reg-head"><span class="reg-title">Office of the Consumer Protection Board (OCPB)</span><span class="reg-badge">Built-in</span></div>
+          <div class="reg-desc">Advertising must not be false, exaggerated, misleading, or omit material conditions that affect consumer decisions.</div>
+          <div class="reg-ref">Consumer Protection Act B.E. 2522, advertising provisions</div>
+        </div>
+        <div class="reg-card">
+          <div class="reg-head"><span class="reg-title">Personal Data Protection Committee (PDPC)</span><span class="reg-badge">Built-in</span></div>
+          <div class="reg-desc">Marketing that uses targeting, testimonials, screenshots, or customer data must have lawful basis and avoid exposing personal data.</div>
+          <div class="reg-ref">Personal Data Protection Act B.E. 2562</div>
+        </div>
+        <div class="reg-card">
+          <div class="reg-head"><span class="reg-title">Electronic Transactions Development Agency (ETDA)</span><span class="reg-badge">Built-in</span></div>
+          <div class="reg-desc">Online commerce and digital service claims should be accurate, traceable, and consistent with electronic transaction and platform obligations.</div>
+          <div class="reg-ref">Electronic Transactions Act and digital platform service rules</div>
+        </div>
+        <div class="reg-card">
+          <div class="reg-head"><span class="reg-title">Department of Internal Trade (DIT)</span><span class="reg-badge">Built-in</span></div>
+          <div class="reg-desc">Promotions, prices, discounts, stock availability, and fee conditions must be clear and not create unfair consumer misunderstanding.</div>
+          <div class="reg-ref">Price of Goods and Services Act and DIT announcements</div>
+        </div>
+      </div>
+
+      <!-- Voice Examples -->
+      <div class="bcfg-panel" id="bcfg-voice">
+        <div class="voice-cols">
+          <div>
+            <div class="voice-col-label voice-good">✅ ตัวอย่างที่ดี</div>
+            <div class="bcfg-empty" id="voice-good-empty">ยังไม่มีตัวอย่าง</div>
+            <div id="voice-good-list"></div>
+            <textarea class="bcfg-textarea" id="voice-good-input" placeholder="Paste an example caption…" style="min-height:60px"></textarea>
+            <button class="bcfg-add-btn full" style="margin-top:var(--space-2)" onclick="addVoiceExample('good')">+ เพิ่ม</button>
+          </div>
+          <div>
+            <div class="voice-col-label voice-bad">❌ ตัวอย่างที่ไม่ดี</div>
+            <div class="bcfg-empty" id="voice-bad-empty">ยังไม่มีตัวอย่าง</div>
+            <div id="voice-bad-list"></div>
+            <textarea class="bcfg-textarea" id="voice-bad-input" placeholder="Paste an example caption…" style="min-height:60px"></textarea>
+            <button class="bcfg-add-btn full" style="margin-top:var(--space-2)" onclick="addVoiceExample('bad')">+ เพิ่ม</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="bcfg-foot">
+      <button class="modal-cancel" onclick="closeBrandConfig()">Cancel</button>
+      <button class="modal-confirm" onclick="saveBrandConfig()">Save Configuration</button>
     </div>
   </div>
 </div>
@@ -1033,7 +1324,343 @@ function renderAudit() {
 function filterAudit() { renderAudit(); }
 document.addEventListener('DOMContentLoaded', renderAudit);
 
-document.addEventListener('click', function(e) {
+function escHtml(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; }); }
+
+// ── Brand access (merged into Users tab) ─────────────────
+var ADMIN_BRANDS = [
+  { key: 'bonchon',         name: 'Bonchon' },
+  { key: 'haier',           name: 'Haier Thailand' },
+  { key: 'central',         name: 'Central Retail' },
+  { key: 'mk',              name: 'MK Restaurant' },
+  { key: 'blackmore',       name: 'Blackmore' },
+  { key: 'dit',             name: 'DIT' },
+  { key: 'enfagrow',        name: 'Enfagrow' },
+  { key: 'hatachi-global',  name: 'Hatachi Global' },
+  { key: 'hatari',          name: 'Hatari' },
+  { key: 'krungsri-simple', name: 'Krungsri Simple' }
+];
+var DEFAULT_ACCESS = {
+  'nattaya@agencyname.co.th': ['bonchon', 'haier'],
+  'somchai@client.co.th': ['central']
+};
+function getAccessData() { try { return JSON.parse(localStorage.getItem('panya_user_access') || '{}'); } catch (e) { return {}; } }
+function saveAccessData(d) { localStorage.setItem('panya_user_access', JSON.stringify(d)); }
+function getUserAccess(email) {
+  var d = getAccessData();
+  if (d[email]) return d[email];
+  return DEFAULT_ACCESS[email] ? DEFAULT_ACCESS[email].slice() : [];
+}
+function setUserAccess(email, arr) {
+  var d = getAccessData();
+  d[email] = arr;
+  saveAccessData(d);
+}
+function renderAccessCells() {
+  document.querySelectorAll('[data-access-cell]').forEach(function (td) {
+    var email = td.closest('tr').getAttribute('data-email');
+    var arr = getUserAccess(email);
+    var chips = arr.map(function (k) {
+      var b = ADMIN_BRANDS.filter(function (x) { return x.key === k; })[0];
+      return '<span class="access-chip">' + escHtml(b ? b.name : k) + '</span>';
+    }).join('');
+    td.innerHTML = chips + '<button class="access-add" onclick="openAccessPopover(event,\'' + email + '\')">+ Add</button>';
+  });
+}
+var _accessEmail = null;
+function openAccessPopover(evt, email) {
+  evt.stopPropagation();
+  _accessEmail = email;
+  var pop = document.getElementById('access-popover');
+  var arr = getUserAccess(email);
+  pop.innerHTML = ADMIN_BRANDS.map(function (b) {
+    var checked = arr.indexOf(b.key) > -1 ? 'checked' : '';
+    return '<label class="access-popover-row"><span>' + escHtml(b.name) + '</span><input type="checkbox" data-brand="' + b.key + '" ' + checked + ' onchange="toggleUserBrand(this)"></label>';
+  }).join('');
+  var rect = evt.target.getBoundingClientRect();
+  pop.style.top = (rect.bottom + 6) + 'px';
+  pop.style.left = Math.min(rect.left, window.innerWidth - 246) + 'px';
+  pop.classList.add('open');
+}
+function toggleUserBrand(cb) {
+  var brand = cb.getAttribute('data-brand');
+  var arr = getUserAccess(_accessEmail);
+  if (cb.checked) { if (arr.indexOf(brand) === -1) arr.push(brand); }
+  else { arr = arr.filter(function (k) { return k !== brand; }); }
+  setUserAccess(_accessEmail, arr);
+  renderAccessCells();
+}
+document.addEventListener('click', function (e) {
+  var pop = document.getElementById('access-popover');
+  if (pop && pop.classList.contains('open') && !e.target.closest('#access-popover') && !e.target.closest('.access-add')) {
+    pop.classList.remove('open');
+  }
+});
+document.addEventListener('DOMContentLoaded', renderAccessCells);
+
+// ── Brands tab ────────────────────────────────────────────
+var DEFAULT_BRANDS = [
+  { slug: 'bonchon',         name: 'Bonchon',         status: 'active', users: 8 },
+  { slug: 'haier',           name: 'Haier Thailand',  status: 'active', users: 13 },
+  { slug: 'central',         name: 'Central Retail',  status: 'active', users: 6 },
+  { slug: 'mk',              name: 'MK Restaurant',   status: 'active', users: 5 },
+  { slug: 'blackmore',       name: 'Blackmore',       status: 'active', users: 12 },
+  { slug: 'dit',             name: 'DIT',             status: 'active', users: 3 },
+  { slug: 'enfagrow',        name: 'Enfagrow',        status: 'active', users: 4 },
+  { slug: 'hatachi-global',  name: 'Hatachi Global',  status: 'active', users: 2 },
+  { slug: 'hatari',          name: 'Hatari',          status: 'active', users: 5 },
+  { slug: 'krungsri-simple', name: 'Krungsri Simple', status: 'active', users: 4 }
+];
+function getBrands() {
+  var raw = localStorage.getItem('panya_admin_brands');
+  if (!raw) return DEFAULT_BRANDS.slice();
+  try { return JSON.parse(raw); } catch (e) { return DEFAULT_BRANDS.slice(); }
+}
+function saveBrands(arr) { localStorage.setItem('panya_admin_brands', JSON.stringify(arr)); }
+function renderBrandsTable() {
+  var q = (document.getElementById('brand-search').value || '').toLowerCase();
+  var brands = getBrands().filter(function (b) { return b.name.toLowerCase().indexOf(q) > -1; });
+  var html = brands.map(function (b) {
+    var statusHtml = b.status === 'active'
+      ? '<span class="status-dot dot-active"></span>Active'
+      : '<span class="status-dot dot-inactive"></span>Archived';
+    return '<tr>' +
+      '<td>' + escHtml(b.name) + '</td>' +
+      '<td>' + statusHtml + '</td>' +
+      '<td>' + b.users + '</td>' +
+      '<td style="text-align:right"><div style="display:flex;gap:var(--space-2);justify-content:flex-end">' +
+        '<button class="brand-cfg-btn" onclick="openBrandConfig(\'' + b.slug + '\')">Configure ⚙</button>' +
+        '<button class="btn-sm" onclick="renameBrand(\'' + b.slug + '\')">Rename</button>' +
+        '<button class="btn-sm danger" onclick="toggleArchiveBrand(\'' + b.slug + '\')">' + (b.status === 'active' ? 'Archive' : 'Restore') + '</button>' +
+      '</div></td>' +
+    '</tr>';
+  }).join('');
+  document.getElementById('brands-table-body').innerHTML = html || '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:var(--space-6)">No matching brands</td></tr>';
+}
+var _brandModalEditSlug = null;
+function openAddBrandModal(editSlug) {
+  _brandModalEditSlug = editSlug || null;
+  var b = editSlug ? getBrands().filter(function (x) { return x.slug === editSlug; })[0] : null;
+  document.getElementById('new-brand-name').value = b ? b.name : '';
+  document.querySelector('#add-brand-modal .modal-head h3').textContent = editSlug ? 'Rename brand' : 'Add brand';
+  document.querySelector('#add-brand-modal .modal-confirm').textContent = editSlug ? 'Save' : 'Add brand';
+  document.getElementById('add-brand-modal').style.display = 'flex';
+  setTimeout(function () { document.getElementById('new-brand-name').focus(); }, 50);
+}
+function closeAddBrandModal() { document.getElementById('add-brand-modal').style.display = 'none'; }
+function saveNewBrand() {
+  var name = document.getElementById('new-brand-name').value.trim();
+  if (!name) return;
+  var brands = getBrands();
+  if (_brandModalEditSlug) {
+    var b = brands.filter(function (x) { return x.slug === _brandModalEditSlug; })[0];
+    if (b) b.name = name;
+    window.toast('Brand renamed', 'success', 2000);
+  } else {
+    var slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || ('brand-' + Date.now());
+    brands.push({ slug: slug, name: name, status: 'active', users: 0 });
+    window.toast('Brand "' + name + '" added', 'success', 2500);
+  }
+  saveBrands(brands);
+  closeAddBrandModal();
+  renderBrandsTable();
+}
+function renameBrand(slug) { openAddBrandModal(slug); }
+function toggleArchiveBrand(slug) {
+  var brands = getBrands();
+  var b = brands.filter(function (x) { return x.slug === slug; })[0];
+  if (!b) return;
+  b.status = b.status === 'active' ? 'archived' : 'active';
+  saveBrands(brands);
+  renderBrandsTable();
+  window.toast(b.status === 'active' ? 'Brand restored' : 'Brand archived', 'success', 2000);
+}
+document.addEventListener('DOMContentLoaded', renderBrandsTable);
+
+// ── Brand Configure modal (Persona / Guardrails / Regulatory / Voice) ──
+var BCFG_INDUSTRIES = ['Agriculture & Food','Automotive','Electronics & Tech','Telecommunications','Healthcare & Medical','Pharmaceuticals & Supplements','Tourism & Hospitality','Real Estate','Fashion & Retail','Home & Consumer Goods','Finance & Banking','Insurance','Food & Beverage','Energy','Education','Media & Entertainment','Beauty & Personal Care','Baby & Child Products','Sports & Fitness','Pets & Animals','Transportation & Logistics','Professional & Business Services','Industrial & Manufacturing','Government & Public Sector','Nonprofit & Social Impact','Others'];
+var BCFG_TONES = ['Friendly', 'Professional', 'Playful', 'Authoritative', 'Inspirational'];
+var _bcfgSlug = null, _bcfgGuardrails = [], _bcfgVoiceGood = [], _bcfgVoiceBad = [];
+function bcfgKey(slug) { return 'panya_brand_config_' + slug; }
+function getBrandConfig(slug) { try { return JSON.parse(localStorage.getItem(bcfgKey(slug)) || '{}'); } catch (e) { return {}; } }
+function saveBrandConfigData(slug, data) { localStorage.setItem(bcfgKey(slug), JSON.stringify(data)); }
+function openBrandConfig(slug) {
+  var b = getBrands().filter(function (x) { return x.slug === slug; })[0];
+  if (!b) return;
+  _bcfgSlug = slug;
+  document.getElementById('bcfg-avatar').textContent = b.name.charAt(0).toUpperCase();
+  document.getElementById('bcfg-title').textContent = b.name;
+
+  var cfg = getBrandConfig(slug);
+  document.getElementById('bcfg-industry-grid').innerHTML = BCFG_INDUSTRIES.map(function (ind) {
+    return '<div class="bcfg-chip' + (cfg.industry === ind ? ' active' : '') + '" data-industry="' + escHtml(ind) + '" onclick="selectBcfgChip(this)">' + escHtml(ind) + '</div>';
+  }).join('');
+  document.getElementById('bcfg-tone-grid').innerHTML = BCFG_TONES.map(function (t) {
+    return '<div class="bcfg-chip' + (cfg.tone === t ? ' active' : '') + '" data-tone="' + t + '" onclick="selectBcfgChip(this)">' + t + '</div>';
+  }).join('');
+  document.getElementById('bcfg-personality').value = cfg.personality || '';
+  document.getElementById('bcfg-keymsg').value = cfg.keymsg || '';
+
+  _bcfgGuardrails = cfg.guardrails || [];
+  renderGuardrails();
+  _bcfgVoiceGood = cfg.voiceGood || [];
+  _bcfgVoiceBad = cfg.voiceBad || [];
+  renderVoiceExamples();
+
+  switchBcfgTab('persona', document.querySelector('[data-bcfg-tab="persona"]'));
+  document.getElementById('bcfg-overlay').classList.add('open');
+}
+function closeBrandConfig() { document.getElementById('bcfg-overlay').classList.remove('open'); _bcfgSlug = null; }
+function switchBcfgTab(name, el) {
+  document.querySelectorAll('.bcfg-tab').forEach(function (t) { t.classList.remove('active'); });
+  document.querySelectorAll('.bcfg-panel').forEach(function (p) { p.classList.remove('active'); });
+  el.classList.add('active');
+  document.getElementById('bcfg-' + name).classList.add('active');
+}
+function selectBcfgChip(el) {
+  var grid = el.parentNode;
+  grid.querySelectorAll('.bcfg-chip').forEach(function (c) { c.classList.remove('active'); });
+  el.classList.add('active');
+}
+function renderGuardrails() {
+  document.getElementById('guardrail-empty').style.display = _bcfgGuardrails.length ? 'none' : 'block';
+  document.getElementById('guardrail-list').innerHTML = _bcfgGuardrails.map(function (g, i) {
+    return '<div class="guardrail-row"><span class="guardrail-tag">' + escHtml(g.type) + '</span><span class="guardrail-text">' + escHtml(g.text) + '</span><button class="guardrail-remove" onclick="removeGuardrail(' + i + ')">×</button></div>';
+  }).join('');
+}
+function addGuardrail() {
+  var type = document.getElementById('guardrail-type').value;
+  var text = document.getElementById('guardrail-input').value.trim();
+  if (!text) return;
+  _bcfgGuardrails.push({ type: type, text: text });
+  document.getElementById('guardrail-input').value = '';
+  renderGuardrails();
+}
+function removeGuardrail(i) { _bcfgGuardrails.splice(i, 1); renderGuardrails(); }
+function renderVoiceExamples() {
+  document.getElementById('voice-good-empty').style.display = _bcfgVoiceGood.length ? 'none' : 'block';
+  document.getElementById('voice-good-list').innerHTML = _bcfgVoiceGood.map(function (t, i) {
+    return '<div class="voice-example">' + escHtml(t) + '<div style="text-align:right"><button class="guardrail-remove" onclick="removeVoiceExample(\'good\',' + i + ')">×</button></div></div>';
+  }).join('');
+  document.getElementById('voice-bad-empty').style.display = _bcfgVoiceBad.length ? 'none' : 'block';
+  document.getElementById('voice-bad-list').innerHTML = _bcfgVoiceBad.map(function (t, i) {
+    return '<div class="voice-example">' + escHtml(t) + '<div style="text-align:right"><button class="guardrail-remove" onclick="removeVoiceExample(\'bad\',' + i + ')">×</button></div></div>';
+  }).join('');
+}
+function addVoiceExample(kind) {
+  var input = document.getElementById('voice-' + kind + '-input');
+  var text = input.value.trim();
+  if (!text) return;
+  (kind === 'good' ? _bcfgVoiceGood : _bcfgVoiceBad).push(text);
+  input.value = '';
+  renderVoiceExamples();
+}
+function removeVoiceExample(kind, i) {
+  (kind === 'good' ? _bcfgVoiceGood : _bcfgVoiceBad).splice(i, 1);
+  renderVoiceExamples();
+}
+function saveBrandConfig() {
+  if (!_bcfgSlug) return;
+  var industryEl = document.querySelector('#bcfg-industry-grid .bcfg-chip.active');
+  var toneEl = document.querySelector('#bcfg-tone-grid .bcfg-chip.active');
+  var data = {
+    industry: industryEl ? industryEl.getAttribute('data-industry') : '',
+    tone: toneEl ? toneEl.getAttribute('data-tone') : '',
+    personality: document.getElementById('bcfg-personality').value,
+    keymsg: document.getElementById('bcfg-keymsg').value,
+    guardrails: _bcfgGuardrails,
+    voiceGood: _bcfgVoiceGood,
+    voiceBad: _bcfgVoiceBad
+  };
+  saveBrandConfigData(_bcfgSlug, data);
+  closeBrandConfig();
+  window.toast('Brand configuration saved', 'success', 2500);
+}
+
+// ── Learning tab ──────────────────────────────────────────
+var TREND_ITEMS = [
+  { rank: 1, title: 'กกท 2026', src: 'กกท 2026 - Google Trends' },
+  { rank: 2, title: 'วอลเลย์บอลหญิงทีมชาติไทย', src: 'วอลเลย์บอลหญิง - Google Trends' },
+  { rank: 3, title: 'จีน พบ ไทย', src: 'จีน พบ ไทย - Google Trends, ไทย พบ คูเวต - Google Trends' },
+  { rank: 4, title: 'ตรวจหวย 1 มิถุนายน 2569', src: 'ตรวจหวย 1 มิถุนายน 2569 - Google Trends' },
+  { rank: 5, title: 'ไทย พบ คูเวต', src: 'ไทย พบ คูเวต - Google Trends' },
+  { rank: 6, title: 'teach you a lesson', src: 'teach you a lesson - Google Trends' },
+  { rank: 7, title: 'หวยลาววันนี้ออกอะไร', src: 'หวยลาววันนี้ออกอะไร - Google Trends' },
+  { rank: 8, title: 'ราคาทอง 1 บาท วันนี้', src: 'ราคาทอง 1 บาท วันนี้ - Google Trends' }
+];
+function renderTrends() {
+  document.getElementById('trend-list').innerHTML = TREND_ITEMS.map(function (t) {
+    return '<div class="trend-item"><span class="trend-rank">' + t.rank + '.</span>' + escHtml(t.title) + '<div class="trend-src">' + escHtml(t.src) + '</div></div>';
+  }).join('');
+}
+var KEYWORD_CLOUD = [
+  { t: 'meta', c: 'kw-hot' }, { t: 'ตรวจหวย', c: 'kw-hot' }, { t: 'ผลสลากกินแบ่งรัฐบาล', c: 'kw-hot' },
+  { t: 'ฟุตบอลโลก 2026', c: 'kw-warm' }, { t: 'วอลเลย์บอลหญิงทีมชาติไทย', c: 'kw-warm' },
+  { t: 'จีน พบ ไทย', c: 'kw' }, { t: 'ไทย พบ คูเวต', c: 'kw' }, { t: 'เลขเด็ดงวดนี้', c: 'kw' },
+  { t: 'ราคาทองวันนี้', c: 'kw' }, { t: 'spain', c: 'kw' }, { t: 'lotto', c: 'kw' }, { t: 'teach you a lesson', c: 'kw' }
+];
+function renderKeywordCloud() {
+  document.getElementById('keyword-cloud').innerHTML = KEYWORD_CLOUD.map(function (k) {
+    return '<span class="' + k.c + '">' + escHtml(k.t) + '</span>';
+  }).join('');
+}
+var DEFAULT_LESSONS = [
+  { id: 'lsn1', text: 'For Maybelline on Facebook, neutral outcomes suggest clarity and platform/brief fit are not enough alone; look for a clearer differentiator before scoring high.', tag: 'general:neutral', brand: '', brandName: 'Maybelline', platform: 'Facebook', objective: 'general', signal: 'neutral', evidence: 1, status: 'active', generated: 'May 18, 2026' },
+  { id: 'lsn2', text: 'For Bonchon on Facebook, neutral outcomes suggest brand fit and hook are not enough alone; look for a clearer differentiator before scoring high.', tag: 'general:neutral', brand: 'bonchon', brandName: 'Bonchon', platform: 'Facebook', objective: 'general', signal: 'neutral', evidence: 1, status: 'active', generated: 'May 18, 2026' },
+  { id: 'lsn3', text: 'For Toyota on Facebook, posts that win tend to be strongest on clarity and platform/brief fit. Use this as positive evidence when scoring similar ideas.', tag: 'general:win', brand: '', brandName: 'Toyota', platform: 'Facebook', objective: 'general', signal: 'win', evidence: 1, status: 'active', generated: 'May 18, 2026' }
+];
+function getLessons() {
+  var raw = localStorage.getItem('panya_learning_lessons');
+  if (!raw) return DEFAULT_LESSONS.slice();
+  try { return JSON.parse(raw); } catch (e) { return DEFAULT_LESSONS.slice(); }
+}
+function saveLessons(arr) { localStorage.setItem('panya_learning_lessons', JSON.stringify(arr)); }
+function renderLessons() {
+  var brand = document.getElementById('lesson-brand').value;
+  var platform = document.getElementById('lesson-platform').value;
+  var status = document.getElementById('lesson-status').value;
+  var all = getLessons();
+  document.getElementById('lesson-total').textContent = all.length;
+  document.getElementById('lesson-active').textContent = all.filter(function (l) { return l.status === 'active'; }).length;
+  document.getElementById('lesson-observe').textContent = all.filter(function (l) { return l.status === 'observe'; }).length;
+  document.getElementById('lesson-evidence').textContent = all.reduce(function (s, l) { return s + (l.evidence || 0); }, 0);
+
+  var rows = all.filter(function (l) {
+    if (brand && l.brand !== brand) return false;
+    if (platform && l.platform !== platform) return false;
+    if (status && l.status !== status) return false;
+    return true;
+  });
+  document.getElementById('lesson-body').innerHTML = rows.map(function (l) {
+    var sigClass = l.signal === 'win' ? 'signal-win' : 'signal-neutral';
+    var sigLabel = l.signal === 'win' ? 'Win pattern' : 'Neutral pattern';
+    var statusHtml = l.status === 'active'
+      ? '<span class="status-dot dot-active"></span>Active'
+      : '<span class="status-dot dot-inactive"></span>Paused';
+    var actionLabel = l.status === 'active' ? 'Pause' : 'Resume';
+    return '<tr>' +
+      '<td style="max-width:320px"><div>' + escHtml(l.text) + '</div><div style="font-size:11px;color:var(--text-muted);font-family:var(--font-mono);margin-top:4px">' + escHtml(l.tag) + '</div></td>' +
+      '<td><div style="font-weight:600">' + escHtml(l.brandName) + '</div><div style="font-size:12px;color:var(--text-muted)">' + escHtml(l.platform) + '</div></td>' +
+      '<td>' + escHtml(l.objective) + '</td>' +
+      '<td><span class="signal-badge ' + sigClass + '">' + sigLabel + '</span></td>' +
+      '<td>' + l.evidence + '</td>' +
+      '<td>' + statusHtml + '</td>' +
+      '<td style="font-size:12px;color:var(--text-muted)">' + escHtml(l.generated) + '</td>' +
+      '<td><button class="btn-sm" onclick="toggleLesson(\'' + l.id + '\')">' + actionLabel + '</button></td>' +
+    '</tr>';
+  }).join('') || '<tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:var(--space-6)">No lessons match these filters</td></tr>';
+}
+function toggleLesson(id) {
+  var all = getLessons();
+  var l = all.filter(function (x) { return x.id === id; })[0];
+  if (!l) return;
+  l.status = l.status === 'active' ? 'paused' : 'active';
+  saveLessons(all);
+  renderLessons();
+  window.toast(l.status === 'active' ? 'Lesson resumed' : 'Lesson paused', 'success', 2000);
+}
+document.addEventListener('DOMContentLoaded', function () { renderTrends(); renderKeywordCloud(); renderLessons(); });
+
+document.addEventListener('click', function (e) {
   var popup = document.getElementById('user-popup');
   if (popup && popup.classList.contains('open')) {
     if (!e.target.closest('.sidebar-user')) { popup.classList.remove('open'); }
